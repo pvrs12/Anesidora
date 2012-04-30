@@ -81,7 +81,7 @@ function handlePartnerLogin(response, status, xhr) {
 }
 function userLogin(response, syncTime) {
     console.log(getSyncTime(syncTime));
-    var request = "{'loginType':'user','username':'USERNAME GOES HERE','password':'PASSWORD HERE','partnerAuthToken':'" + response.result.partnerAuthToken + "','syncTime':" + getSyncTime(syncTime) + "}";
+    var request = "{'loginType':'user','username':'USERNAME HERE','password':'PASSWORD HERE','partnerAuthToken':'" + response.result.partnerAuthToken + "','syncTime':" + getSyncTime(syncTime) + "}";
     console.log(request);
     console.log(encrypt(request));
     request = encrypt(request);
