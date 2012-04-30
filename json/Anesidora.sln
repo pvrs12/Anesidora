@@ -1,0 +1,86 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "JSON", "JSON", "{0F23777E-2214-44EA-9558-7B023AA91E01}"
+	ProjectSection(SolutionItems) = preProject
+		.\background.htm = .\background.htm
+		.\manifest.json = .\manifest.json
+		.\options.htm = .\options.htm
+		.\popup.htm = .\popup.htm
+		.\toast.htm = .\toast.htm
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "css", "css", "{309E864A-11CB-4D46-8DD1-188D102AE049}"
+	ProjectSection(SolutionItems) = preProject
+		.\css\options.css = .\css\options.css
+		.\css\popup.css = .\css\popup.css
+		.\css\toast.css = .\css\toast.css
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "js", "js", "{AEE63BED-0110-45B6-9668-9184E8EC7214}"
+	ProjectSection(SolutionItems) = preProject
+		.\js\activehotkeys.js = .\js\activehotkeys.js
+		.\js\anesidora.js = .\js\anesidora.js
+		.\js\background.js = .\js\background.js
+		.\js\crypt.js = .\js\crypt.js
+		.\js\jquery.hoverIntent.js = .\js\jquery.hoverIntent.js
+		.\js\jquery.js = .\js\jquery.js
+		.\js\jquery.ui.js = .\js\jquery.ui.js
+		.\js\keys.js = .\js\keys.js
+		.\js\last.fm.js = .\js\last.fm.js
+		.\js\md5.js = .\js\md5.js
+		.\js\options.js = .\js\options.js
+		.\js\popup.js = .\js\popup.js
+		.\js\toast.js = .\js\toast.js
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "images", "images", "{83E8C34B-7E01-4E80-8D06-AED05EB57775}"
+	ProjectSection(SolutionItems) = preProject
+		.\images\anesidora-128.png = .\images\anesidora-128.png
+		.\images\anesidora-16.png = .\images\anesidora-16.png
+		.\images\anesidora-19.png = .\images\anesidora-19.png
+		.\images\anesidora-48.png = .\images\anesidora-48.png
+		.\images\bgbot.png = .\images\bgbot.png
+		.\images\bgmid.png = .\images\bgmid.png
+		.\images\bgmidbak.png = .\images\bgmidbak.png
+		.\images\bgtop.png = .\images\bgtop.png
+		.\images\bgtopbak.png = .\images\bgtopbak.png
+		.\images\cover.png = .\images\cover.png
+		.\images\moreInfo.png = .\images\moreInfo.png
+		.\images\moreInfohover.png = .\images\moreInfohover.png
+		.\images\next.png = .\images\next.png
+		.\images\nexthover.png = .\images\nexthover.png
+		.\images\page_bg.jpg = .\images\page_bg.jpg
+		.\images\pause.png = .\images\pause.png
+		.\images\pausehover.png = .\images\pausehover.png
+		.\images\play.png = .\images\play.png
+		.\images\playhover.png = .\images\playhover.png
+		.\images\prev.png = .\images\prev.png
+		.\images\prevhover.png = .\images\prevhover.png
+		.\images\skip.png = .\images\skip.png
+		.\images\skiphover.png = .\images\skiphover.png
+		.\images\sleep.png = .\images\sleep.png
+		.\images\sleepcheck.png = .\images\sleepcheck.png
+		.\images\sleephover.png = .\images\sleephover.png
+		.\images\thumbdown.png = .\images\thumbdown.png
+		.\images\thumbdownhover.png = .\images\thumbdownhover.png
+		.\images\thumbup.png = .\images\thumbup.png
+		.\images\thumbUpCheck.png = .\images\thumbUpCheck.png
+		.\images\thumbUpCheckhover.png = .\images\thumbUpCheckhover.png
+		.\images\thumbuphover.png = .\images\thumbuphover.png
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SubversionScc) = preSolution
+		Svn-Managed = True
+		Manager = AnkhSVN - Subversion Support for Visual Studio
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{309E864A-11CB-4D46-8DD1-188D102AE049} = {0F23777E-2214-44EA-9558-7B023AA91E01}
+		{AEE63BED-0110-45B6-9668-9184E8EC7214} = {0F23777E-2214-44EA-9558-7B023AA91E01}
+		{83E8C34B-7E01-4E80-8D06-AED05EB57775} = {0F23777E-2214-44EA-9558-7B023AA91E01}
+	EndGlobalSection
+EndGlobal

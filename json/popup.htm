@@ -1,0 +1,82 @@
+﻿<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Anesidora</title>
+    <link href="css/popup.css" rel="stylesheet" type="text/css" />
+    <link href="css/anesidora/jquery-ui-1.8.6.custom.css" rel="stylesheet" type="text/css" />
+    <script type="text/javascript" src="js/jquery.js"></script>
+    <script type="text/javascript" src="js/jquery.hoverIntent.js"></script>
+    <script type="text/javascript" src="js/jquery.ui.js"></script>
+    <script type="text/javascript" src="js/popup.js"></script>
+</head>
+<body>
+    <div id="bgTop">
+    </div>
+    <div id="bgMid">
+    </div>
+    <div id="bgBottom">
+    </div>
+    <div id="anesidora">
+        <a id="coverLink" href="#">
+            <img title="Click to view album details" id="coverArt" src="./images/cover.png" />
+        </a>
+        <div class="scrollerContainer" id="nowPlayingContainer">
+            <div class="scrollerText" id="nowPlaying">
+                <a id="artistLink" href="#"></a><span id="dash">Play to resume last station</span>
+                <a id="titleLink" href="#"></a>
+            </div>
+        </div>
+        <div class="details">
+            <a href="#"></a> <a href="#"></a>
+            <div class="details-arrow-border">
+            </div>
+            <div class="details-arrow">
+            </div>
+        </div>
+        <div id="scrubber">
+        </div>
+        <img title="Play" id="playButton" src="images/play.png" />
+        <img title="Pause" id="pauseButton" src="images/pause.png" />
+        <img title="Next song" id="skipButton" src="images/skip.png" />
+        <img title="Dislike this song" id="tDownButton" src="images/thumbdown.png" />
+        <img title="Like this song" id="tUpButton" src="images/thumbup.png" />
+        <img title="I'm tired of this song" id="sleepButton" src="images/sleep.png" />
+        <input title="More" type="checkbox" id="moreInfoToggle" /><label id="moreInfoButton"
+            for="moreInfoToggle">...</label>
+        <div title="Volume" id="volume">
+        </div>
+        <img title="View stations" id="nextButton" src="images/next.png" />
+        <div id="moreInfo">
+            <p id="narrative">
+            </p>
+        </div>
+        <img title="View player" id="prevButton" src="images/prev.png" />
+        <select id="stationList" multiple="multiple">
+        </select>
+        <select id="searchResults" multiple="multiple">
+        </select>
+        <input type="checkbox" id="quickMixToggle" /><label title="Quick Mix" id="quickMixButton"
+            for="quickMixToggle"></label>
+        <input type="checkbox" id="newStationToggle" /><label title="New Station" id="newStationButton"
+            for="newStationToggle"></label>
+        <input type="checkbox" id="deleteStationToggle" /><label title="Delete Station" id="deleteStationButton"
+            for="deleteStationToggle"></label>
+        <form id="searchForm" action="">
+        <input id="search" />
+        </form>
+        <button id="okayButton">
+        </button>
+        <div id="confirmDelete" title="Delete this station?">
+        </div>
+        <form id="login" action="">
+        <input id="username" placeholder="E-Mail" />
+        <div id="unWarning" class="ui-icon ui-icon-alert">
+        </div>
+        <input id="password" type="password" placeholder="Password" />
+        <div id="pwWarning" class="ui-icon ui-icon-alert">
+        </div>
+        <input id="save" type="submit" value="Save" />
+        </form>
+    </div>
+</body>
+</html>

@@ -1,0 +1,346 @@
+﻿::-webkit-scrollbar
+{
+    width: 10px;
+}
+::-webkit-scrollbar-button:start:decrement, ::-webkit-scrollbar-button:end:increment
+{
+    visibility: hidden;
+}
+::-webkit-scrollbar-track-piece
+{
+    background-color: transparent;
+}
+::-webkit-scrollbar-thumb:vertical
+{
+    background-color: #8397aa;
+    -webkit-border-radius: 5px;
+    border: 2px solid white;
+    -webkit-background-clip: padding-box;
+}
+*
+{
+    outline: none;
+    font-family: Verdana,Arial;
+    font-size: 12px;
+    font-weight: normal;
+}
+body
+{
+    width: 286px;
+    height: 44px;
+}
+a
+{
+    font-family: Verdana,Arial;
+    font-size: 12px;
+    text-decoration: none;
+    color: Black;
+}
+a:hover
+{
+    text-decoration: underline;
+}
+.deadLink
+{
+    text-decoration: none;
+}
+#bgTop
+{
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    height: 21px;
+    width: 100%;
+    background-image: url('../images/bgtop.png');
+}
+#bgMid
+{
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    top: 21px;
+    left: 0px;
+    background-image: url('../images/bgmid.png');
+    background-repeat: repeat-y;
+}
+#bgBottom
+{
+    position: absolute;
+    bottom: 0px;
+    left: 0px;
+    height: 30px;
+    width: 100%;
+    background-image: url('../images/bgbot.png');
+}
+#anesidora
+{
+    position: absolute;
+    left: 8px;
+    top: 0px;
+}
+#coverArt
+{
+    width: 44px;
+    height: 44px;
+    border: 1px solid #8397aa;
+    left: -1px;
+    position: absolute;
+    top: 7px;
+}
+#nowPlayingContainer
+{
+    left: 51px;
+    top: 8px;
+    width: 200px;
+}
+.scrollerContainer
+{
+    width: 200px;
+    position: absolute;
+    height: 14px;
+    display: block;
+    overflow: hidden;
+}
+.scrollerText
+{
+    left: 0px;
+    position: absolute;
+    white-space: nowrap;
+}
+.details
+{
+    background-color: rgba(255,255,255,.8);
+    border: 2px solid #8397aa;
+    z-index: 65535;
+    margin: 10px auto;
+    padding: 1px 0px 3px 0px;
+    position: relative;
+    left: 50px;
+    top: 16px;
+    text-align: center;
+    width: 100px;
+    -webkit-border-radius: 10px;
+    -webkit-box-shadow: 0 0 5px #888888;
+    line-height: 10px;
+}
+.details a
+{
+    font-family: Verdana,Arial;
+    font-size: 10px;
+    font-weight: normal;
+}
+.details-arrow-border
+{
+    border-color: transparent transparent #8397aa transparent;
+    border-style: solid;
+    border-width: 5px;
+    height: 0;
+    width: 0;
+    position: absolute;
+    top: -12px;
+    left: 10px;
+}
+.details-arrow
+{
+    border-color: transparent transparent #FFFFFF transparent;
+    border-style: solid;
+    border-width: 5px;
+    height: 0;
+    width: 0;
+    position: absolute;
+    top: -9px;
+    left: 10px;
+}
+#scrubber
+{
+    position: absolute;
+    top: 24px;
+    left: 54px;
+    width: 194px;
+}
+#playButton
+{
+    left: 51px;
+    top: 34px;
+    position: absolute;
+}
+#pauseButton
+{
+    left: 51px;
+    top: 34px;
+    position: absolute;
+}
+#skipButton
+{
+    left: 89px;
+    top: 34px;
+    position: absolute;
+}
+#tDownButton
+{
+    left: 117px;
+    top: 34px;
+    position: absolute;
+}
+#tUpButton
+{
+    left: 155px;
+    top: 34px;
+    position: absolute;
+}
+#sleepButton
+{
+    left: 193px;
+    top: 34px;
+    position: absolute;
+}
+#moreInfoButton
+{
+    left: 231px;
+    top: 34px;
+    width: 20px;
+    height: 15px;
+    position: absolute;
+}
+#moreInfo
+{
+    top: 60px;
+    width: 286px;
+    position: absolute;
+}
+#narrative
+{
+    font: 12px Verdana;
+    margin: 0px;
+    padding-bottom: 6px;
+}
+.prevSong
+{
+    height: 30px;
+}
+#volume
+{
+    position: absolute;
+    left: 260px;
+    top: 11px;
+    height: 37px;
+}
+#nextButton
+{
+    left: 273px;
+    position: absolute;
+    top: 8px;
+}
+#prevButton
+{
+    left: 301px;
+    position: absolute;
+    top: 8px;
+}
+#stationList
+{
+    left: 321px;
+    top: 4px;
+    height: 52px;
+    width: 246px;
+    position: absolute;
+    -webkit-border-radius: 5px;
+    border: 1px solid #8397aa;
+    font-family: Verdana,Arial;
+    font-size: 12px;
+}
+option:focus
+{
+    background: #8397aa;
+    color: pink;
+}
+#searchResults
+{
+    left: 321px;
+    top: 4px;
+    width: 246px;
+    position: absolute;
+}
+#quickMixButton
+{
+    position: absolute;
+    top: 4px;
+    left: 573px;
+    width: 14px;
+    height: 14px;
+}
+#newStationButton
+{
+    position: absolute;
+    top: 22px;
+    left: 573px;
+    width: 14px;
+    height: 14px;
+}
+#deleteStationButton
+{
+    position: absolute;
+    top: 40px;
+    left: 573px;
+    width: 14px;
+    height: 14px;
+}
+#search
+{
+    position: absolute;
+    left: 321px;
+    width: 242px;
+}
+#okayButton
+{
+    position: absolute;
+    left: 573px;
+    width: 16px;
+    height: 16px;
+}
+#unWarning
+{
+    position: absolute;
+    left: 603px;
+    top: 11px;
+}
+#username
+{
+    position: absolute;
+    left: 601px;
+    top: 7px;
+    width: 232px;
+    height: 17px;
+    padding-top: 2px;
+}
+#pwWarning
+{
+    position: absolute;
+    left: 603px;
+    top: 34px;
+}
+#password
+{
+    position: absolute;
+    left: 601px;
+    top: 30px;
+    width: 232px;
+    height: 16px;
+    padding-top: 2px;
+}
+#save
+{
+    position: absolute;
+    left: 842px;
+    top: 6px;
+    height: 48px;
+    width: 48px;
+}
+.ui-icon-moreinfo
+{
+    background-image: url('../images/moreInfo.png');
+}
+.ui-icon-moreinfohover
+{
+    background-image: url('../images/moreInfohover.png');
+}
