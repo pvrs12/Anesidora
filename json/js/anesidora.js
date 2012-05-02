@@ -24,197 +24,64 @@ function stringToBytes(str) {
     return re;
 }
 var clientStartTime = 0;
+var syncTime = 0;
+var userAuthToken = "";
+var userId = "";
+var partnerId;
+var stationList;
+var currentPlaylist;
+var previousPlaylist;
 function getSyncTime(syncTime) {
     return parseInt(syncTime) + (parseInt((new Date().getTime() + '').substr(0, 10)) - clientStartTime);
 }
-function time() {
-    //console.log('timeOffset: '+timeOffset);
-    var n = parseInt((new Date().getTime() + '').substr(0, 10));
-    n = n - timeOffset;
-    return n+'';
-}
-function station(name, id) {
-    this.name = name;
-    this.id = id;
-}
-function song(artist, title, album, artUrl, artistId, url, stationId, musicId, userSeed, rating, songType, albumUrl, artistUrl, titleUrl) {
-    this.art = artUrl;
-    this.artist = artist;
-    this.album = album;
-    this.title = title;
-    this.artistId = artistId;
-    this.url = url;
-    this.stationId = stationId;
-    this.musicId = musicId;
-    this.userSeed = userSeed;
-    this.rating = rating;
-    this.songType = songType;
-    this.albumUrl = albumUrl;
-    this.artistUrl = artistUrl;
-    this.titleUrl = titleUrl
-    this.testStrategy = "undefined";
-    this.disliked = false;
-    this.startTime = null;
-}
-function searchResults(songResults, stationResults, artistsResults) {
-    this.songs = songResults;
-    this.stations = stationResults;
-    this.artists = artistsResults;
-}
-var searchResults = new searchResults();
-var songs = new Array();
-var prevSongs = new Array();
-
 function partnerLogin() {
-    var request = "{'username':'android','password':'AC7IBG09A3DTSYM4R41UJWL07VLN8JI7','version':'5','deviceModel':'android-generic','includeUrls':true}";
-    sendRequest("auth.partnerLogin",request,handlePartnerLogin);
+    if (localStorage.username != "" && localStorage.password != "") {
+        var request = "{'username':'android','password':'AC7IBG09A3DTSYM4R41UJWL07VLN8JI7','version':'5','deviceModel':'android-generic','includeUrls':true}";
+        sendRequest(true, false, "auth.partnerLogin", request, handlePartnerLogin);
+    }
 }
 function handlePartnerLogin(response, status, xhr) {
     var b = stringToBytes(decrypt(response.result.syncTime));
     // skip 4 bytes of garbage
-    var syncTime = "";
+    var s =""
     for (var i = 4; i < b.length; i++) {
-        syncTime += String.fromCharCode(b[i]);
+        s += String.fromCharCode(b[i]);
     }
+    syncTime = parseInt(s);
     clientStartTime = parseInt((new Date().getTime() + '').substr(0, 10));
-    userLogin(response, syncTime);
+    userLogin(response);
 }
-function userLogin(response, syncTime) {
-    console.log(getSyncTime(syncTime));
-    var request = "{'loginType':'user','username':'USERNAME HERE','password':'PASSWORD HERE','partnerAuthToken':'" + response.result.partnerAuthToken + "','syncTime':" + getSyncTime(syncTime) + "}";
-    console.log(request);
-    console.log(encrypt(request));
-    request = encrypt(request);
-    sendRequest("auth.userLogin&auth_token=" + encodeURIComponent(response.result.partnerAuthToken) + "&partner_id=" + response.result.partnerId, request, handleUserLogin);
+function userLogin(response) {
+    partnerId = response.result.partnerId;
+    var request = "{'loginType':'user','username':'" + localStorage.username + "','password':'" + localStorage.password + "','partnerAuthToken':'" + response.result.partnerAuthToken + "','syncTime':" + getSyncTime(syncTime) + "}";
+    sendRequest(true, true, "auth.userLogin&auth_token=" + encodeURIComponent(response.result.partnerAuthToken) + "&partner_id=" + response.result.partnerId, request, handleUserLogin);
 }
+//Set this up to store good user login information. Need to probe the JSON method and see how it responds with bad
+//login info so we can know that un/pw is bad before assuming it is.
+//seems error 1002 is bad login info.
 function handleUserLogin(response, status, xhr) {
-    console.log(response);
- }
-function auth(username, password) {
-    if (!username || !password) {
-        username = localStorage.username;
-        password = localStorage.password;
-    }
-    data = "<?xml version=\"1.0\"?><methodCall><methodName>listener.authenticateListener</methodName><params>";
-    data += "<param><value><int>{0}</int></value></param>";
-    data += "<param><value><string>{1}</string></value></param>";
-    data += "<param><value><string>{2}</string></value></param>";
-    data += "<param><value><string>html5tuner</string></value></param>";
-    data += "<param><value><string/></value></param>";
-    data += "<param><value><string/></value></param>";
-    data += "<param><value><string>HTML5</string></value></param>";
-    data += "<param><value><boolean>1</boolean></value></param>";
-    data += "</params></methodCall>";
-    data = encrypt(data.format(time(), username, password));
-    sendRequest(handleAuth, "authenticateListener", data, { "username": username, "password": password });
-}
-function handleAuth(response, info) {
-    authToken = response.evaluate(
-            "//member[name='authToken']/value/text()",
-            response,
-            null,
-            XPathResult.STRING_TYPE)
-            .stringValue;
-    listenerId = response.evaluate(
-            "//member[name='listenerId']/value/text()",
-            response,
-            null,
-            XPathResult.STRING_TYPE)
-            .stringValue;
-    if (response.evaluate("//member[name='listenerState']/value/text()", response, null, XPathResult.STRING_TYPE).stringValue == "SUBSCRIBER") {
-        localStorage.PandoraOneUser = "true";
-    }
-    localStorage.username = info["username"];
-    localStorage.password = info["password"];
-}
-function getStations() {
-    var stations = new Array();
-    var http = new XMLHttpRequest();
-    var data = "<?xml version=\"1.0\"?><methodCall><methodName>station.getStations</methodName><params>";
-    data += "<param><value><int>{0}</int></value></param>";
-    data += "<param><value><string>{1}</string></value></param></params></methodCall>";
-    data = encrypt(data.format(time(), authToken));
-    sendRequest(handleStations, "getStations", data, null);
-}
-function handleStations(response, info) {
-    userStations = new Array();
-    var stationNameList = response.evaluate("/methodResponse/params/param/value/array/data/value/struct/member[name='stationName']/value/text()", response, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE);
-    var stationIdList = response.evaluate("/methodResponse/params/param/value/array/data/value/struct/member[name='stationId']/value/text()", response, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE);
-    //console.log(stationNameList.snapshotLength);
-    for (var i = 0; i < stationNameList.snapshotLength; i++) {
-        //console.log(i);
-        if (!stationNameList.snapshotItem(i).nodeValue.match("QuickMix")) {
-            userStations.push(new station(stationNameList.snapshotItem(i).nodeValue, stationIdList.snapshotItem(i).nodeValue));
-        }
-        else {
-            userStations.unshift(new station("Custom QuickMix", stationIdList.snapshotItem(i).nodeValue));
-            localStorage.userStation = stationIdList.snapshotItem(i).nodeValue;
-        }
-    }
-};
-function getFragment(stationId) {
-    if (stationId != localStorage.lastStation) {
-        songs = new Array();
-    }
-    var data = "<?xml version=\"1.0\"?><methodCall><methodName>playlist.getFragment</methodName>";
-    data += "<params><param><value><int>{0}</int></value></param>";
-    data += "<param><value><string>{1}</string></value></param>";
-    data += "<param><value><string>{2}</string></value></param>";
-    data += "<param><value><string>0</string></value></param>";
-    data += "<param><value><string></string></value></param>";
-    data += "<param><value><string></string></value></param>";
-    if (localStorage.PandoraOneUser == "true") {
-        data += "<param><value><string>mp3-hifi</string></value></param>";
-    }
-    else {
-        data += "<param><value><string>mp3</string></value></param>";
-    }
-    data += "<param><value><string>0</string></value></param>";
-    data += "<param><value><string>0</string></value></param>";
-    data += "</params></methodCall>";
-    data = encrypt(data.format(time(), authToken, stationId));
-    sendRequest(handleFragment, "getFragment", data, null);
-}
-function handleFragment(response, info) {
-    var artistDetailURL = response.evaluate("//member[name='artistDetailURL']/value/text()", response, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE);
-    var artRadio = response.evaluate("//member[name='artRadio']/value", response, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE);
-    var songDetailURL = response.evaluate("//member[name='songDetailURL']/value/text()", response, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE);
-    var albumDetailURL = response.evaluate("//member[name='albumDetailURL']/value/text()", response, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE);
-    var stationId = response.evaluate("//member[name='stationId']/value/text()", response, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE);
-    var songTitle = response.evaluate("//member[name='songTitle']/value/text()", response, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE);
-    var songType = response.evaluate("//member[name='songType']/value/int/text()", response, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE);
-    var userSeed = response.evaluate("//member[name='userSeed']/value/text()", response, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE);
-    var albumTitle = response.evaluate("//member[name='albumTitle']/value/text()", response, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE);
-    var artistSummary = response.evaluate("//member[name='artistSummary']/value/text()", response, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE);
-    var rating = response.evaluate("//member[name='rating']/value/int/text()", response, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE);
-    var audioURL = response.evaluate("//member[name='audioURL']/value/text()", response, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE);
-    var musicId = response.evaluate("//member[name='musicId']/value/text()", response, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE);
-    var artistId = response.evaluate("//member[name='artistMusicId']/value/text()", response, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE);
-
-    for (var i = 0; i < 4; i++) {
-        songs.push(
-            new song(
-                artistSummary.snapshotItem(i).nodeValue,
-                songTitle.snapshotItem(i).nodeValue,
-                albumTitle.snapshotItem(i).nodeValue,
-                (artRadio.snapshotItem(i).firstChild ? artRadio.snapshotItem(i).firstChild.nodeValue : "images/cover.png"),
-                artistId.snapshotItem(i).nodeValue,
-                audioURL.snapshotItem(i).nodeValue.slice(0, -48) + decrypt(audioURL.snapshotItem(i).nodeValue.substr(-48)),
-                stationId.snapshotItem(i).nodeValue,
-                musicId.snapshotItem(i).nodeValue,
-                userSeed.snapshotItem(i).nodeValue,
-                rating.snapshotItem(i).nodeValue,
-                (songType.snapshotItem(i) ? songType.snapshotItem(i).nodeValue : ""),
-                albumDetailURL.snapshotItem(i).nodeValue,
-                artistDetailURL.snapshotItem(i).nodeValue,
-                songDetailURL.snapshotItem(i).nodeValue
-            )
-        );
-    }
+    userAuthToken = response.result.userAuthToken;
+    userId = response.result.userId;
+    getStationList();
 }
 
-
-
+function getStationList() {
+    var request = "{'userAuthToken':'" + userAuthToken + "','syncTime':" + getSyncTime(syncTime) + "}";
+    sendRequest(false, true,"user.getStationList", request, handleGetStationList);
+}
+function handleGetStationList(response, status, xhr) {
+    stationList = response.result.stations;
+}
+function getPlaylist(stationToken) {
+    var request = "{'stationToken':'" + stationToken + "','additionalAudioUrl':'HTTP_192_MP3','userAuthToken':'" + userAuthToken + "','syncTime':" + getSyncTime(syncTime) + "}";
+    sendRequest(true,true,"station.getPlaylist",request,handleGetPlaylist);
+}
+function handleGetPlaylist(response, status, xhr) {
+    if (currentPlaylist = null) {
+        previousPlaylist = currentPlaylist;
+    }
+    currentPlaylist = response.result.items;
+}
 function addFeedback(rating, songNum) {
     if (curSong.rating == "1" && rating == "1") {  // Bug fix for addFeedback being executed by bind()
         return;
@@ -415,15 +282,31 @@ function handleBookmark() {
 //    http.send(data);
 //}
 //Backup sendrequest which uses jQuery.
-function sendRequest(method, request, handler) {
+function sendRequest(secure, encrypted, method, request, handler) {
+    if (secure) {
+        var url = "https://tuner.pandora.com/services/json/?method=";
+    }
+    else {
+        var url = "http://tuner.pandora.com/services/json/?method=";
+    }
+    if (userAuthToken != "") {
+        var parameters = "&auth_token=" + encodeURIComponent(userAuthToken) + "&partner_id=" + partnerId + "&user_id=" + userId;
+    }
+    else {
+        var parameters = "";
+    }
+    if (encrypted) {
+        request = encrypt(request);
+    }
     $.ajax({
+        async: false,
         type: "POST",
-        url: 'https://tuner.pandora.com/services/json/?method='+method,
+        url: url + method + parameters,
         contentType: "text/plain",
         data: request,
         dataType: "json",
         success: handler
-        });
+    });
 }
 //Defunct for the time being.
 //function handleError(faultString) {

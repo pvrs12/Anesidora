@@ -398,9 +398,10 @@ function () {
     $('#pwWarning').hide();
     $('#login')
         .bind('submit', function () {
-            background.sync();
-            background.auth($('#username').val().replace(/&/, "&amp;").replace(/</, "&lt;").replace(/>/, "&gt;"), $('#password').val().replace(/&/, "&amp;").replace(/</, "&lt;").replace(/>/, "&gt;"));
-            if (!background.listenerId) {
+            localStorage.username = $('#username').val();
+            localStorage.password = $('#password').val();
+            background.partnerLogin();
+            if (background.userAuthToken == "") {
                 $('#unWarning').show();
                 $('#pwWarning').show();
                 $('#username').css({ 'padding-left': '16px', 'width': '216px' });
@@ -408,9 +409,8 @@ function () {
                 return false;
             }
             else {
-                background.getStations();
-                for (i = 0; i < background.userStations.length; i++) {
-                    $('#stationList').append(new Option(background.userStations[i].name, background.userStations[i].id));
+                for (i = 0; i < background.stationList.length; i++) {
+                    $('#stationList').append(new Option(background.stationList[i].stationName, background.stationList[i].stationToken));
                 }
                 $('#anesidora').animate({ left: '-294px' }, 500);
                 return false;
@@ -419,10 +419,10 @@ function () {
 
     ///////////////////
     //  Misc loads   //
-    ///////////////////
-    if (typeof background.userStations != 'undefined') {
-        for (i = 0; i < background.userStations.length; i++) {
-            $('#stationList').append(new Option(background.userStations[i].name, background.userStations[i].id));
+        ///////////////////
+    if (background.stationList != "") {
+        for (i = 0; i < background.stationList.length; i++) {
+            $('#stationList').append(new Option(background.stationList[i].stationName, background.stationList[i].stationToken));
         }
     }
     if (!localStorage.password) {
