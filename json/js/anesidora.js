@@ -77,39 +77,28 @@ function getPlaylist(stationToken) {
     sendRequest(true,true,"station.getPlaylist",request,handleGetPlaylist);
 }
 function handleGetPlaylist(response, status, xhr) {
-    if (currentPlaylist = null) {
-        previousPlaylist = currentPlaylist;
-    }
     currentPlaylist = response.result.items;
 }
-function addFeedback(rating, songNum) {
+function addFeedback(trackToken,positive ) {
     if (curSong.rating == "1" && rating == "1") {  // Bug fix for addFeedback being executed by bind()
         return;
     }
-    var data = "<?xml version=\"1.0\"?><methodCall><methodName>station.addFeedback</methodName>";
-    data += "<params><param><value><int>{0}</int></value></param>";
-    data += "<param><value><string>{1}</string></value></param>";
-    data += "<param><value><string>{2}</string></value></param>";
-    data += "<param><value><string>{3}</string></value></param>";
-    data += "<param><value><string>{4}</string></value></param>";
-    data += "<param><value>{5}</value></param>";
-    data += "<param><value><boolean>{6}</boolean></value></param>";
-    data += "<param><value><boolean>0</boolean></value></param>";
-    data += "<param><value><int>{7}</int></value></param>";
-    data += "</params></methodCall>";
-    if (songNum == -1) {
-        data = data.format(time(), authToken, curSong.stationId, curSong.musicId, curSong.userSeed, curSong.testStrategy, rating, curSong.songType);
-        curSong.rating = rating;
+    var request = "{'trackToken':'" + trackToken + "','positive':"+positive+",'userAuthToken':'" + userAuthToken + "','syncTime':" + getSyncTime(syncTime) + "}";
+    sendRequest(true, true, "station.getPlaylist", request, handleGetPlaylist);
+    if (positive) {
+        currentPlaylist.curSong.songRating = 1 
     }
-    else {
-        data = data.format(time(), authToken, prevSongs[songNum].stationId, prevSongs[songNum].musicId, prevSongs[songNum].userSeed, prevSongs[songNum].testStrategy, rating, prevSongs[songNum].songType);
-        prevSongs[songNum].rating = rating;
-        if (rating == "0") {
-            prevSongs[songNum].disliked = true;
-        }
-    }
-    data = encrypt(data);
-    sendRequest(handleFeedback, "station.addFeedback", data, rating);
+//    if (songNum == -1) {
+//        data = data.format(time(), authToken, curSong.stationId, curSong.musicId, curSong.userSeed, curSong.testStrategy, rating, curSong.songType);
+//        curSong.rating = rating;
+//    }
+//    else {
+//        data = data.format(time(), authToken, prevSongs[songNum].stationId, prevSongs[songNum].musicId, prevSongs[songNum].userSeed, prevSongs[songNum].testStrategy, rating, prevSongs[songNum].songType);
+//        prevSongs[songNum].rating = rating;
+//        if (rating == "0") {
+//            prevSongs[songNum].disliked = true;
+//        }
+//    }
 }
 function handleFeedback(response, info) {
     //console.log(info);
@@ -235,53 +224,7 @@ function narrative(stationId, musicId) {
 function handleNarrative(response, info) {
     curSong.narrative = response.evaluate("//value/text()", response, null, XPathResult.STRING_TYPE, null).stringValue;
 }
-function bookmarkSong(stationId, musicId) {
-    var http = new XMLHttpRequest();
-    var data = "<?xml version=\"1.0\"?>";
-    data += "<methodCall><methodName>station.createBookmark</methodName>";
-    data += "<params><param><value><int>{0}</int></value></param>";
-    data += "<param><value><string>{1}</string></value></param>";
-    data += "<param><value><string>{2}</string></value></param>";
-    data += "<param><value><string>{3}</string></value></param>";
-    data += "</params></methodCall>";
-    data = data.format(time(), authToken, stationId, musicId);
-    data = encrypt(data);
-    sendRequest(handleBookmark, "createBookmark", data, null);
-}
-function bookmarkArtist(musicId) {
-    var http = new XMLHttpRequest();
-    var data = "<?xml version=\"1.0\"?>";
-    data += "<methodCall><methodName>station.createArtistBookmark</methodName>";
-    data += "<params><param><value><int>{0}</int></value></param>";
-    data += "<param><value><string>{1}</string></value></param>";
-    data += "<param><value><string>{2}</string></value></param>";
-    data += "</params></methodCall>";
-    data = data.format(time(), authToken, musicId);
-    data = encrypt(data);
-    sendRequest(handleBookmark, "createArtistBookmark", data, null);
-}
-function handleBookmark() {
-}
-//function sendRequest(method, data, handler) {
-//    var URL = "https://tuner.pandora.com/services/json/?method=";
-//    var http = new XMLHttpRequest();
-//    var timeout = setTimeout(
-//                    function () {
-//                        http.abort();
-//                        location.reload();
-//                    },
-//                  3000);
-//    http.open("POST", URL, false);
-//    http.onreadystatechange = function () {
-//        if (http.readyState == 4 && http.status == 200) {
-//            clearTimeout(timeout);
-//            //console.log(http.responseText);
-//            handler(http.responseXML, info);
-//        }
-//    }
-//    http.send(data);
-//}
-//Backup sendrequest which uses jQuery.
+
 function sendRequest(secure, encrypted, method, request, handler) {
     if (secure) {
         var url = "https://tuner.pandora.com/services/json/?method=";

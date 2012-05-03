@@ -17,7 +17,7 @@ $(document).ready(function () {
             $('#lastFmLogin').show();
         }
     }
-    
+
     $('#reset').bind('click', function () {
         localStorage.username = '';
         localStorage.password = '';
@@ -66,7 +66,11 @@ $(document).ready(function () {
         }
         return false;
     });
-    
+    $('#facebookForm').bind('submit', function () {
+        localStorage.facebookUsername = $('#facebookUsername').val();
+        window.open("https://www.facebook.com/dialog/oauth?client_id=124332377700986&response_type=token&scope=publish_stream&redirect_uri=https://www.facebook.com/connect/login_success.html");
+    });
+
     // Setup Play HotKey Option
     if (localStorage.hotkeyPlay) LoadHotKeyTextValue($('#play'), JSON.parse(localStorage.hotkeyPlay));
     $('#play').bind('keydown', function (e) {
@@ -78,19 +82,19 @@ $(document).ready(function () {
     $('#skip').bind('keydown', function (e) {
         localStorage.hotkeySkip = SetHotKey($('#skip'), e);
     });
-    
+
     // Setup Like HotKey Option
     if (localStorage.hotkeyLike) LoadHotKeyTextValue($('#like'), JSON.parse(localStorage.hotkeyLike));
     $('#like').bind('keydown', function (e) {
         localStorage.hotkeyLike = SetHotKey($('#like'), e);
     });
-    
+
     // Setup DisLike HotKey Option
     if (localStorage.hotkeyDisLike) LoadHotKeyTextValue($('#dislike'), JSON.parse(localStorage.hotkeyDisLike));
     $('#dislike').bind('keydown', function (e) {
         localStorage.hotkeyDisLike = SetHotKey($('#dislike'), e);
     });
-    
+
     // Setup tired HotKey Option
     if (localStorage.hotkeyTired) LoadHotKeyTextValue($('#tired'), JSON.parse(localStorage.hotkeyTired));
     $('#tired').bind('keydown', function (e) {

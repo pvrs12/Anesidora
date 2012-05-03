@@ -5,70 +5,83 @@
     <link href="css/options.css" rel="stylesheet" type="text/css" />
     <script src="js/jquery.js"></script>
     <script src="js/options.js"></script>
-    
 </head>
 <body style="background: #ffffff url('images/page_bg.jpg') repeat-x">
-<div id="mainWrapper" style="width: 100%;">
-    <div id="options" style="margin: auto; top: 0px; height: 700px; width: 400px;">
-
-        <div id="container" style="position: relative; top: 75px;">
-            <fieldset style="border: 1px solid black; font-style: italic;">
-                <legend>Player Settings</legend>
-                <label style="display: block; font-weight: bold;" for='notifications'>
-                    <input id='notifications' type='checkbox' />Show notifications</label>
-                <label style="display: block; font-weight: bold;" for='autostations'>
-                    <input id='autostations' type='checkbox' />Automatically expand popup to fit all
-                    stations.</label>
-                <button id="reset" style="margin-top: 20px; text-align: center; width: 100%; border: 1px solid black; background-color: gray; color: white; font-weight: bold;">
-                    Reset user information</button>
-            </fieldset>
-            <br />
-            <fieldset style="border: 1px solid black; font-style: italic;">
-                <legend>Last.fm Settings</legend>
-                <label style="display: block; font-weight: bold;" for="lastFmToggle">
-                    <input id="lastFmToggle" type="checkbox" />Enable Last.fm scrobbling</label>
-                <div id="lastFmLogin">
-                    <form id="lastFmForm" action="">
-                    <input id="lastFmUsername" type="text" placeholder="Username" />
-                    <input id="lastFmPassword" type="password" placeholder="Password" />
-                    <button id="lastFmAuth" type="submit">
-                        Submit
-                    </button>
+    <div id="mainWrapper" style="width: 100%;">
+        <div id="options" style="margin: auto; top: 0px; height: 700px; width: 400px;">
+            <div id="container" style="position: relative; top: 75px;">
+                <fieldset style="border: 1px solid black; font-style: italic;">
+                    <legend>Player Settings</legend>
+                    <label style="display: block; font-weight: bold;" for='notifications'>
+                        <input id='notifications' type='checkbox' />Show notifications</label>
+                    <label style="display: block; font-weight: bold;" for='autostations'>
+                        <input id='autostations' type='checkbox' />Automatically expand popup to fit all
+                        stations.</label>
+                    <button id="reset" style="margin-top: 20px; text-align: center; width: 100%; border: 1px solid black;
+                        background-color: gray; color: white; font-weight: bold;">
+                        Reset user information</button>
+                </fieldset>
+                <br />
+                <fieldset style="border: 1px solid black; font-style: italic;">
+                    <legend>Last.fm Settings</legend>
+                    <label style="display: block; font-weight: bold;" for="lastFmToggle">
+                        <input id="lastFmToggle" type="checkbox" />Enable Last.fm scrobbling</label>
+                    <div id="lastFmLogin">
+                        <form id="lastFmForm" action="">
+                        <input id="lastFmUsername" type="text" placeholder="Username" />
+                        <input id="lastFmPassword" type="password" placeholder="Password" />
+                        <button id="lastFmAuth" type="submit">
+                            Submit
+                        </button>
+                        </form>
+                    </div>
+                    <span id="lastFmStatus"></span>
+                </fieldset>
+                <br />
+                <fieldset style="border: 1px solid black; font-style: italic;">
+                    <legend>HotKeys</legend>
+                    <label for="play" style="float: left; width: 85px; font-weight: bold; padding-top: 4px;">
+                        Play/Pause</label>
+                    <input id='play' type='text' style='display: block' />
+                    <label for="skip" style="float: left; width: 85px; font-weight: bold; padding-top: 4px;">
+                        Skip</label>
+                    <input id='skip' type='text' style='display: block' />
+                    <label for="like" style="float: left; width: 85px; font-weight: bold; padding-top: 4px;">
+                        Like</label>
+                    <input id='like' type='text' style='display: block' />
+                    <label for="dislike" style="float: left; width: 85px; font-weight: bold; padding-top: 4px;">
+                        Dislike</label>
+                    <input id='dislike' type='text' style='display: block' />
+                    <label for="tired" style="float: left; width: 85px; font-weight: bold; padding-top: 4px;">
+                        Tired</label>
+                    <input id='tired' type='text' style='display: block' />
+                </fieldset>
+                <fieldset style="border: 1px solid black; font-style: italic;">
+                    <legend>Facebook</legend>
+                    <form id="facebookForm" action="">
+                    
+                    <label for="facebookUsername" style="float: left; width: 85px; font-weight: bold;
+                        padding-top: 4px;">
+                        Username</label>
+                    <input id="facebookUsername" type='text' style='display: block' />http://facebook.com/[username]
+                    <button id="facebookLogin" type="submit">Login</button>
+                    </form>
+                </fieldset>
+                <div id="donate" style="position: absolute; width: 500px; top: 480px;">
+                    <span style="font: 12px Verdana;">If you like this extension please consider helping
+                        the developer.</span>
+                    <form style="margin-top: 10px;" action="https://www.paypal.com/cgi-bin/webscr" method="post"
+                    target="_blank">
+                    <input type="hidden" name="cmd" value="_s-xclick" />
+                    <input type="hidden" name="hosted_button_id" value="2BLABVGAC3RFL" />
+                    <input type="image" src="https://www.paypal.com/en_US/i/btn/btn_donate_LG.gif" border="0"
+                        name="submit" alt="PayPal - The safer, easier way to pay online!" />
+                    <img alt="" border="0" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1"
+                        height="1" />
                     </form>
                 </div>
-                <span id="lastFmStatus"></span>
-            </fieldset>
-            <br />
-            <fieldset style="border: 1px solid black; font-style: italic;">
-                <legend>HotKeys</legend>
-                <label for="play" style="float: left; width: 85px; font-weight: bold; padding-top: 4px;">Play/Pause</label>
-                <input id='play' type='text' style='display: block' />
-                <label for="skip" style="float: left; width: 85px; font-weight: bold; padding-top: 4px;">Skip</label>
-                <input id='skip' type='text' style='display: block' />
-                <label for="like" style="float: left; width: 85px; font-weight: bold; padding-top: 4px;">Like</label>
-                <input id='like' type='text' style='display: block' />
-                <label for="dislike" style="float: left; width: 85px; font-weight: bold; padding-top: 4px;">Dislike</label>
-                <input id='dislike' type='text' style='display: block' />
-                <label for="tired" style="float: left; width: 85px; font-weight: bold; padding-top: 4px;">Tired</label>
-                <input id='tired' type='text' style='display: block' />
-            </fieldset>
-
-            
-            <div id="donate" style="position: absolute; width: 500px; top: 480px;">
-                <span style="font: 12px Verdana;">If you like this extension please consider helping
-                    the developer.</span>
-                <form style="margin-top: 10px;" action="https://www.paypal.com/cgi-bin/webscr" method="post"
-                target="_blank">
-                <input type="hidden" name="cmd" value="_s-xclick" />
-                <input type="hidden" name="hosted_button_id" value="2BLABVGAC3RFL" />
-                <input type="image" src="https://www.paypal.com/en_US/i/btn/btn_donate_LG.gif" border="0"
-                    name="submit" alt="PayPal - The safer, easier way to pay online!" />
-                <img alt="" border="0" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1"
-                    height="1" />
-                </form>
             </div>
         </div>
     </div>
-</div>
 </body>
 </html>

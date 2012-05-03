@@ -37,7 +37,7 @@ function () {
     $('#skipButton').bind('click', background.nextSong);
     $('#tUpButton').bind('click', function () {
         background.addFeedback("1", "-1");
-        if (background.curSong.rating == "1") {
+        if (background.currentPlaylist[background.curSong].songRating == "1") {
             $(this).unbind('click').attr('src', 'images/thumbUpCheck.png');
         }
     });
@@ -50,8 +50,8 @@ function () {
     .button()
     .bind('click', function () {
         if ($(this).is(':checked')) {
-            if (background.curSong) {
-                if (background.curSong.narrative) {
+            if (background.currentSong) {
+                if (background.currentSong.narrative) {
                     $('#narrative').text(background.curSong.narrative);
                     $('body').animate({ height: $('#moreInfo').height() + 45 }, 300);
                 }
@@ -79,10 +79,10 @@ function () {
 
     });
     $('.prevSongArtist').live('click', function () {
-        chrome.tabs.create({ "url": background.prevSongs[$(this).parents('.prevSong').attr('songNum')].artistUrl })
+        chrome.tabs.create({ "url": background.prevSongs[$(this).parents('.prevSong').attr('songNum')].artistDetailUrl })
     });
     $('.prevSongTitle').live('click', function () {
-        chrome.tabs.create({ "url": background.prevSongs[$(this).parents('.prevSong').attr('songNum')].titleUrl })
+        chrome.tabs.create({ "url": background.prevSongs[$(this).parents('.prevSong').attr('songNum')].songDetailUrl })
     });
     $('.prevSongLike').live('click', function () {
         background.addFeedback("1", $(this).attr('songNum'));
@@ -390,11 +390,12 @@ function () {
     $('#search').hide();
     $('#okayButton').hide();
     $('#unWarning').hide();
-    $('#username').keypress(function (event) {
-        if (event.keyCode == 9) {
-            $('#password').focus();
-        }
-    });
+//    $('#username').keypress(function (event) {
+//        if (event.keyCode == 9) {
+//            $('#password').focus();
+//            return false;
+//        }
+//    });
     $('#pwWarning').hide();
     $('#login')
         .bind('submit', function () {
@@ -419,8 +420,8 @@ function () {
 
     ///////////////////
     //  Misc loads   //
-        ///////////////////
-    if (background.stationList != "") {
+    ///////////////////
+    if (typeof background.stationList != "undefined") {
         for (i = 0; i < background.stationList.length; i++) {
             $('#stationList').append(new Option(background.stationList[i].stationName, background.stationList[i].stationToken));
         }
@@ -466,12 +467,12 @@ function goToPlayer() {
 function toggleDetails(source, position) {
     if ($('.details').is(':hidden')) {
         if (source == "artist") {
-            $('.details>a:first').text('Artist Details').unbind().bind('click', function () { chrome.tabs.create({ "url": background.curSong.artistUrl }); $('.details').hide(); });
-            $('.details>a:last').text('Bookmark Artist').unbind().bind('click', function () { background.bookmarkArtist(background.curSong.artistId); $('.details').hide(); });
+            $('.details>a:first').text('Artist Details').unbind().bind('click', function () { chrome.tabs.create({ "url": background.currentPlaylist[background.curSong].artistDetailUrl }); $('.details').hide(); });
+//            $('.details>a:last').text('Share Artist').unbind().bind('click', function () { background.bookmarkArtist(background.curSong.artistId); $('.details').hide(); });
         }
         else {
-            $('.details>a:first').text('Song Details').unbind().bind('click', function () { chrome.tabs.create({ "url": background.curSong.titleUrl }); $('.details').hide(); });
-            $('.details>a:last').text('Bookmark Song').unbind().bind('click', function () { background.bookmarkSong(background.curSong.stationId, background.curSong.musicId); $('.details').hide(); });
+            $('.details>a:first').text('Song Details').unbind().bind('click', function () { chrome.tabs.create({ "url": background.currentPlaylist[background.curSong].songDetailUrl }); $('.details').hide(); });
+            $('.details>a:last').text('Share Song').unbind().bind('click', function () { background.shareSong(background.curSong.stationId, background.curSong.musicId); $('.details').hide(); });
         }
         $('.details').css('left', position - 22);
         $('.details').show();
@@ -481,11 +482,11 @@ function toggleDetails(source, position) {
     }
 }
 function updatePlayer() {
-    $('#coverArt').unbind().bind('click', function () { chrome.tabs.create({ "url": background.curSong.albumUrl }) }).attr('src', background.curSong.art);
-    $('#artistLink').unbind().bind('click', function (e) { toggleDetails("artist", e.pageX); /*chrome.tabs.create({ "url": background.curSong.artistUrl }) */ }).text(background.curSong.artist);
-    $('#titleLink').unbind().bind('click', function (e) { toggleDetails("song", e.pageX); /* chrome.tabs.create({ "url": background.curSong.titleUrl }) */ }).text(background.curSong.title);
+    $('#coverArt').unbind().bind('click', function () { chrome.tabs.create({ "url": background.currentSong.albumDetailUrl }) }).attr('src', background.currentSong.albumArtUrl);
+    $('#artistLink').unbind().bind('click', function (e) { toggleDetails("artist", e.pageX); /*chrome.tabs.create({ "url": background.curSong.artistUrl }) */ }).text(background.currentSong.artistName);
+    $('#titleLink').unbind().bind('click', function (e) { toggleDetails("song", e.pageX); /* chrome.tabs.create({ "url": background.curSong.titleUrl }) */ }).text(background.currentSong.songName);
     $('#dash').text(" - ");
-    if (background.curSong.rating != '1') {
+    if (background.currentSong.songRating != '1') {
         $('#tUpButton').unbind('click').bind('click', function () { background.addFeedback("1", "-1"); $(this).attr('src', 'images/thumbUpCheck.png'); }).attr('src', 'images/thumbup.png');
     }
     else {
@@ -503,15 +504,15 @@ function updatePlayer() {
     if (background.prevSongs.length > 0) {
         for (x = background.prevSongs.length - 1; x >= 0; x--) {
             var html = '<div class="prevSong" songNum="'+x+'">';
-            html += '<img style="height:24px; width:24px; margin:2px 6px 0px 0px; border: 1px solid #8397aa; float:left; position:relative;" src="' + background.prevSongs[x].art + '" />';
+            html += '<img style="height:24px; width:24px; margin:2px 6px 0px 0px; border: 1px solid #8397aa; float:left; position:relative;" src="' + background.prevSongs[x].albumArtUrl + '" />';
             html += '<div class="scrollerContainer" style="position:relative; width:254px;">';
             html += '<div class="scrollerText">';
-            html += '<a class="prevSongArtist" href="#">' + background.prevSongs[x].artist + '</a>';
+            html += '<a class="prevSongArtist" href="#">' + background.prevSongs[x].artistName + '</a>';
             html += ' - ';
-            html += '<a class="prevSongTitle" href="#">' + background.prevSongs[x].title + '</a>';
+            html += '<a class="prevSongTitle" href="#">' + background.prevSongs[x].songName + '</a>';
             html += '</div>';
             html += '</div>';
-            if (background.prevSongs[x].rating == "1") {
+            if (background.prevSongs[x].songRating == "1") {
                 html += '<span style="font-weight:bold">Liked</span>';
             }
             else if (background.prevSongs[x].disliked) {

@@ -1,6 +1,7 @@
 var callback;
 var toastCallback;
-var curSong;
+var currentSong;
+var prevSongs = new Array();
 $(document).ready(
 function () {
     if (localStorage.volume) {
@@ -18,7 +19,7 @@ function () {
         if (toastCallback) {
             toastCallback();
         };
-        curSong.startTime = Math.round(new Date().getTime() / 1000);
+        currentSong.startTime = Math.round(new Date().getTime() / 1000);
         if (localStorage.lastFm == "true") {
             lastFmNowPlaying();
         }
@@ -46,8 +47,7 @@ function () {
                                 { content: "Dislike", description: "Dislike current song" },
                                 { content: "Tired", description: "Sleep current song" },
                                 { content: "Station", description: "[Station name]" },
-                                { content: "Volume", description: "[Volume]" },
-                                {content: "Bookmark", decscription: "[Artst/Song]"}];                                
+                                { content: "Volume", description: "[Volume]" }];                                
             if (text.toLowerCase().match('station')) {
                 suggestions = [];
                 var string = text.toLowerCase().replace("station ", "");
@@ -101,14 +101,6 @@ function () {
                 mp3Player.volume = text.toLowerCase().replace("volume ", "") / 100;
 
             }
-            if (text.toLowerCase().match('bookmark')) {
-                if (text.toLowerCase().match('artist')) {
-                    bookmarkArtist(curSong.artistId);
-                }
-                if (text.toLowerCase().match('song')) {
-                    bookmarkSong(curSong.stationId, curSong.musicId);
-                }
-            }
         }
     );
     chrome.extension.onRequest.addListener(function (request, sender, callback) {
@@ -158,30 +150,26 @@ function play(stationToken) {
     }
     if (stationToken != localStorage.lastStation) {
         getPlaylist(stationToken);
-        curSong = 0;
-        chrome.browserAction.setTitle({ "title": currentPlaylist[curSong].artistName + " - " + currentPlaylist[curSong].songName });
-        document.getElementById("mp3Player").setAttribute("src", currentPlaylist[curSong].additionalAudioUrl);
+        currentSong = currentPlaylist.shift();
+        chrome.browserAction.setTitle({ "title": currentSong.artistName + " - " + currentSong.songName });
+        document.getElementById("mp3Player").setAttribute("src", currentSong.additionalAudioUrl);
         localStorage.lastStation = stationToken;
     }
     document.getElementById("mp3Player").play();
 }
 function nextSong() {
-//    if (curSong.rating != '1') {
-//        if (prevSongs.push(curSong) == 5) {
-//            prevSongs.shift();
-//        }
-//    }
-//    curSong = songs.shift();
-//    if (localStorage.notifications == "true" && !toastCallback) {
-//        var toast = window.webkitNotifications.createHTMLNotification('./toast.htm');
-//        toast.show();
-    //    }
-    curSong++;
-    if (curSong = 4) {
-        getPlayist(localStorage.lastStation);
+    if (currentSong.songRating != '1') {
+        if (prevSongs.push(currentSong) == 5) {
+            prevSongs.shift();
+        }
     }
-    chrome.browserAction.setTitle({ "title": currentPlaylist[curSong].artistName + " - " + currentPlaylist[curSong].songName });
-    document.getElementById("mp3Player").setAttribute("src", currentPlaylist[curSong].additionalAudioUrl);
+    currentSong = currentPlaylist.shift();
+    if (localStorage.notifications == "true" && !toastCallback) {
+        var toast = window.webkitNotifications.createHTMLNotification('./toast.htm');
+        toast.show();
+    }
+    chrome.browserAction.setTitle({ "title": currentSong.artistName + " - " + currentSong.songName });
+    document.getElementById("mp3Player").setAttribute("src", currentSong.additionalAudioUrl);
     document.getElementById("mp3Player").play();
 }
 
