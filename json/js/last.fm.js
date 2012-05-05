@@ -25,16 +25,16 @@ function lastFmSession(username, password) {
     http.send();
 }
 function lastFmNowPlaying() {
-    var sig = "album" + curSong.album
+    var sig = "album" + currentSong.albumName
     sig += "api_key" + API_KEY;
-    sig += "artist" + curSong.artist;
+    sig += "artist" + currentSong.artistName;
     sig += "method" + "track.updateNowPlaying";
     sig += "sk" + localStorage.lastFmSession;
-    sig += "track" + curSong.title;
+    sig += "track" + currentSong.songName;
     sig += API_SEC;
     sig = MD5(sig);
     var URL = "http://ws.audioscrobbler.com/2.0/?method=track.updateNowPlaying&api_key=" + API_KEY + "&sk=" + localStorage.lastFmSession + "&api_sig=" + sig;
-    URL += "&artist=" + escape(curSong.artist) + "&track=" + escape(curSong.title) + "&album=" + escape(curSong.album);
+    URL += "&artist=" + escape(currentSong.artistName) + "&track=" + escape(currentSong.songName) + "&album=" + escape(currentSong.albumName);
     var http = new XMLHttpRequest();
     var timeout = setTimeout(
                     function () {
@@ -51,17 +51,17 @@ function lastFmNowPlaying() {
     http.send();
 }
 function lastFmScrobble() {
-    var sig = "album" + curSong.album;
+    var sig = "album" + currentSong.albumName;
     sig += "api_key" + API_KEY;
-    sig += "artist" + curSong.artist;
+    sig += "artist" + currentSong.artistName;
     sig += "method" + "track.scrobble";
     sig += "sk" + localStorage.lastFmSession;
-    sig += "timestamp" + curSong.startTime;
-    sig += "track" + curSong.title;
+    sig += "timestamp" + currentSong.startTime;
+    sig += "track" + currentSong.songName;
     sig += API_SEC;
     sig = MD5(sig);
     var URL = "http://ws.audioscrobbler.com/2.0/?method=track.scrobble&api_key=" + API_KEY + "&sk=" + localStorage.lastFmSession + "&api_sig=" + sig;
-    URL += "&album=" + escape(curSong.album) + "&artist=" + escape(curSong.artist) + "&track=" + escape(curSong.title) + "&timestamp=" + escape(curSong.startTime);
+    URL += "&album=" + escape(currentSong.albumName) + "&artist=" + escape(currentSong.artistName) + "&track=" + escape(currentSong.songName) + "&timestamp=" + escape(currentSong.startTime);
     var http = new XMLHttpRequest();
     var timeout = setTimeout(
                     function () {

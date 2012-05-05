@@ -36,13 +36,13 @@ function () {
     $('#pauseButton').bind('click', function () { background.mp3Player.pause(); $(this).hide(); $('#playButton').show(); });
     $('#skipButton').bind('click', background.nextSong);
     $('#tUpButton').bind('click', function () {
-        background.addFeedback("1", "-1");
-        if (background.currentPlaylist[background.curSong].songRating == "1") {
+        background.addFeedback(currentSong.trackToken, true);
+        if (background.currentSong.songRating == "1") {
             $(this).unbind('click').attr('src', 'images/thumbUpCheck.png');
         }
     });
     $('#tDownButton').bind('click', function () {
-        background.addFeedback("0", "-1");
+        background.addFeedback(currentSong.trackToken, false);
         setTimeout(background.nextSong(), 1000); // Small delay to stop extension from freezing for some reason
     });
     $('#sleepButton').bind('click', function () { background.addTiredSong(); background.nextSong(); });
@@ -467,12 +467,14 @@ function goToPlayer() {
 function toggleDetails(source, position) {
     if ($('.details').is(':hidden')) {
         if (source == "artist") {
-            $('.details>a:first').text('Artist Details').unbind().bind('click', function () { chrome.tabs.create({ "url": background.currentPlaylist[background.curSong].artistDetailUrl }); $('.details').hide(); });
+            $('.details>a:first').text('Artist Details').unbind().bind('click', function () { chrome.tabs.create({ "url": background.currentSong.artistDetailUrl }); $('.details').hide(); });
 //            $('.details>a:last').text('Share Artist').unbind().bind('click', function () { background.bookmarkArtist(background.curSong.artistId); $('.details').hide(); });
         }
         else {
-            $('.details>a:first').text('Song Details').unbind().bind('click', function () { chrome.tabs.create({ "url": background.currentPlaylist[background.curSong].songDetailUrl }); $('.details').hide(); });
-            $('.details>a:last').text('Share Song').unbind().bind('click', function () { background.shareSong(background.curSong.stationId, background.curSong.musicId); $('.details').hide(); });
+            $('.details>a:first').text('Song Details').unbind().bind('click', function () { chrome.tabs.create({ "url": background.currentSong.songDetailUrl }); $('.details').hide(); });
+            if (localStorage.accessToken && localStorage.facebookId) {
+                $('.details>a:last').text('Share Song').unbind().bind('click', function () { background.shareSong(); $('.details').hide(); });
+            }
         }
         $('.details').css('left', position - 22);
         $('.details').show();

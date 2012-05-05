@@ -78,15 +78,16 @@ function getPlaylist(stationToken) {
 }
 function handleGetPlaylist(response, status, xhr) {
     currentPlaylist = response.result.items;
+    currentPlaylist.pop(); //Pop goes the advertisment.
 }
-function addFeedback(trackToken,positive ) {
-    if (curSong.rating == "1" && rating == "1") {  // Bug fix for addFeedback being executed by bind()
+function addFeedback(trackToken, positive) {
+    if (currentSong.songRating == true&& positive == true) {  // Bug fix for addFeedback being executed by bind()
         return;
     }
     var request = "{'trackToken':'" + trackToken + "','positive':"+positive+",'userAuthToken':'" + userAuthToken + "','syncTime':" + getSyncTime(syncTime) + "}";
     sendRequest(true, true, "station.getPlaylist", request, handleGetPlaylist);
     if (positive) {
-        currentPlaylist.curSong.songRating = 1 
+        currentSong.songRating = 1 
     }
 //    if (songNum == -1) {
 //        data = data.format(time(), authToken, curSong.stationId, curSong.musicId, curSong.userSeed, curSong.testStrategy, rating, curSong.songType);
@@ -103,6 +104,19 @@ function addFeedback(trackToken,positive ) {
 function handleFeedback(response, info) {
     //console.log(info);
 
+}
+function shareSong() {
+    $.ajax({
+        url: "https://graph.facebook.com/512418304/feed?access_token=" +
+            localStorage.accessToken +
+            "&message='I'm listening to " + currentSong.songName + " by " + currentSong.artistName +
+            "&picture=" + currentSong.albumArtUrl +
+            "&link=" + encodeURI(currentSong.songExplorerUrl) +
+            "&name=" + currentSong.songName +
+            "&caption=by " + currentSong.artistName + " on " + currentSong.albumName,
+        type: "POST",
+        statusCode: { 400: function () { $('#fbCanDie').attr('src', "https://www.facebook.com/dialog/oauth?client_id=124332377700986&response_type=token&scope=publish_stream&redirect_uri=https://www.facebook.com/connect/login_success.html"); shareSong(); } }
+    });
 }
 function addTiredSong() {
     var data = "<?xml version=\"1.0\"?><methodCall><methodName>listener.addTiredSong</methodName><params>"

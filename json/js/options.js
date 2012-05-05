@@ -17,7 +17,6 @@ $(document).ready(function () {
             $('#lastFmLogin').show();
         }
     }
-
     $('#reset').bind('click', function () {
         localStorage.username = '';
         localStorage.password = '';

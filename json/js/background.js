@@ -164,6 +164,9 @@ function nextSong() {
         }
     }
     currentSong = currentPlaylist.shift();
+    if (currentPlaylist.length == 0) {
+        getPlaylist(localStorage.lastStation);
+    }
     if (localStorage.notifications == "true" && !toastCallback) {
         var toast = window.webkitNotifications.createHTMLNotification('./toast.htm');
         toast.show();
@@ -172,4 +175,5 @@ function nextSong() {
     document.getElementById("mp3Player").setAttribute("src", currentSong.additionalAudioUrl);
     document.getElementById("mp3Player").play();
 }
+
 
