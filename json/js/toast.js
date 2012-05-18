@@ -36,7 +36,7 @@ function loadToast() {
 //        background.nextSong();
     });
     $('#sleepButton').bind('click', function () {
-        background.tiredSong(); background.nextSong();
+        background.sleepSong(); background.nextSong();
     });
     $('#dash').text(" - ");
     if (background.curSong.rating != '1') {
