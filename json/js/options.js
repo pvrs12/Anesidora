@@ -67,8 +67,9 @@ $(document).ready(function () {
     });
     $('#facebookForm').bind('submit', function () {
         localStorage.facebookUsername = $('#facebookUsername').val();
-        window.open("https://www.facebook.com/dialog/oauth?client_id=124332377700986&response_type=token&scope=publish_stream&redirect_uri=https://www.facebook.com/connect/login_success.html");
+        window.open("https://www.facebook.com/dialog/oauth?client_id=124332377700986&response_type=token&scope=publish_stream,offline_access&redirect_uri=https://www.facebook.com/connect/login_success.html");
     });
+
 
     // Setup Play HotKey Option
     if (localStorage.hotkeyPlay) LoadHotKeyTextValue($('#play'), JSON.parse(localStorage.hotkeyPlay));

@@ -1,6 +1,6 @@
 ﻿var background = chrome.extension.getBackgroundPage();
 background.setCallbacks(updatePlayer, drawPlayer);
-$(document).delay(50).ready(
+$(document).ready(
 function () {
     //////////////////////////////
     //  Load jQuery bindings    //
@@ -36,29 +36,29 @@ function () {
     $('#pauseButton').bind('click', function () { background.mp3Player.pause(); $(this).hide(); $('#playButton').show(); });
     $('#skipButton').bind('click', background.nextSong);
     $('#tUpButton').bind('click', function () {
-        background.addFeedback(currentSong.trackToken, true);
-        if (background.currentSong.songRating == "1") {
+        background.addFeedback(-1, true);
+        if (background.currentSong.songRating == true) {
             $(this).unbind('click').attr('src', 'images/thumbUpCheck.png');
         }
     });
     $('#tDownButton').bind('click', function () {
-        background.addFeedback(currentSong.trackToken, false);
+        background.addFeedback(-1, false);
         setTimeout(background.nextSong(), 1000); // Small delay to stop extension from freezing for some reason
     });
-    $('#sleepButton').bind('click', function () { background.addTiredSong(); background.nextSong(); });
+    $('#sleepButton').bind('click', function () { background.sleepSong(); background.nextSong(); });
     $('#moreInfoToggle')
     .button()
     .bind('click', function () {
         if ($(this).is(':checked')) {
             if (background.currentSong) {
-                if (background.currentSong.narrative) {
-                    $('#narrative').text(background.curSong.narrative);
-                    $('body').animate({ height: $('#moreInfo').height() + 45 }, 300);
-                }
-                else {
-                    $('#narrative').html('<a id="narrativeLink" href="#">Why was this song played?</a>');
-                    $('body').animate({ height: $('#moreInfo').height() + 45 }, 300);
-                }
+                //                if (background.currentSong.narrative) {
+                //                    $('#narrative').text(background.curSong.narrative);
+                //                    $('body').animate({ height: $('#moreInfo').height() + 45 }, 300);
+                //                }
+                //                else {
+                //                    $('#narrative').html('<a id="narrativeLink" href="#">Why was this song played?</a>');
+                //                    $('body').animate({ height: $('#moreInfo').height() + 45 }, 300);
+                //                }
 
                 if (background.prevSongs.length > 0) {
                     $('body').animate({ height: $('#moreInfo').height() + 50 }, 300);
@@ -85,11 +85,11 @@ function () {
         chrome.tabs.create({ "url": background.prevSongs[$(this).parents('.prevSong').attr('songNum')].songDetailUrl })
     });
     $('.prevSongLike').live('click', function () {
-        background.addFeedback("1", $(this).attr('songNum'));
+        background.addFeedback(background.prevSongs[(this).attr('songNum')].trackToken, true);
         $(this).parent().replaceWith('<span style="font-weight:bold">Liked</span>');
     });
     $('.prevSongDislike').live('click', function () {
-        background.addFeedback("0", $(this).attr('songNum'));
+        background.addFeedback(background.prevSongs[(this).attr('songNum')].trackToken, false);
         $(this).parent().replaceWith('<span style="font-weight:bold">Disliked</span>');
     });
     $('#volume').slider({
@@ -390,12 +390,12 @@ function () {
     $('#search').hide();
     $('#okayButton').hide();
     $('#unWarning').hide();
-//    $('#username').keypress(function (event) {
-//        if (event.keyCode == 9) {
-//            $('#password').focus();
-//            return false;
-//        }
-//    });
+    //    $('#username').keypress(function (event) {
+    //        if (event.keyCode == 9) {
+    //            $('#password').focus();
+    //            return false;
+    //        }
+    //    });
     $('#pwWarning').hide();
     $('#login')
         .bind('submit', function () {
@@ -435,19 +435,17 @@ function () {
     else {
         $('#prevButton').bind('click', function () { goToPlayer(); });
     }
-    if (background.mp3Player.paused) {
+    if (background.mp3Player.src != "") {
         if (background.mp3Player.currentTime > 0) {
             updatePlayer();
             drawPlayer();
         }
-        $('#pauseButton').hide();
-
     }
     else {
-        $('#playButton').hide();
-        $('#moreInfoToggle').button('enable');
         updatePlayer();
+        $('#moreInfoToggle').button('enable');
     }
+    $('body').delay(100).height('44px');
 });
 function goToPlayer() {
     $(':checkbox').attr('checked', false).button('refresh');
@@ -472,7 +470,7 @@ function toggleDetails(source, position) {
         }
         else {
             $('.details>a:first').text('Song Details').unbind().bind('click', function () { chrome.tabs.create({ "url": background.currentSong.songDetailUrl }); $('.details').hide(); });
-            if (localStorage.accessToken && localStorage.facebookId) {
+            if (localStorage.accessToken && localStorage.facebookUsername) {
                 $('.details>a:last').text('Share Song').unbind().bind('click', function () { background.shareSong(); $('.details').hide(); });
             }
         }
@@ -484,15 +482,17 @@ function toggleDetails(source, position) {
     }
 }
 function updatePlayer() {
-    $('#coverArt').unbind().bind('click', function () { chrome.tabs.create({ "url": background.currentSong.albumDetailUrl }) }).attr('src', background.currentSong.albumArtUrl);
-    $('#artistLink').unbind().bind('click', function (e) { toggleDetails("artist", e.pageX); /*chrome.tabs.create({ "url": background.curSong.artistUrl }) */ }).text(background.currentSong.artistName);
-    $('#titleLink').unbind().bind('click', function (e) { toggleDetails("song", e.pageX); /* chrome.tabs.create({ "url": background.curSong.titleUrl }) */ }).text(background.currentSong.songName);
-    $('#dash').text(" - ");
-    if (background.currentSong.songRating != '1') {
-        $('#tUpButton').unbind('click').bind('click', function () { background.addFeedback("1", "-1"); $(this).attr('src', 'images/thumbUpCheck.png'); }).attr('src', 'images/thumbup.png');
-    }
-    else {
-        $('#tUpButton').unbind('click').attr('src', 'images/thumbUpCheck.png');
+    if (background.currentSong) {
+        $('#coverArt').unbind().bind('click', function () { chrome.tabs.create({ "url": background.currentSong.albumDetailUrl }) }).attr('src', background.currentSong.albumArtUrl);
+        $('#artistLink').unbind().bind('click', function (e) { toggleDetails("artist", e.pageX); /*chrome.tabs.create({ "url": background.curSong.artistUrl }) */ }).text(background.currentSong.artistName);
+        $('#titleLink').unbind().bind('click', function (e) { toggleDetails("song", e.pageX); /* chrome.tabs.create({ "url": background.curSong.titleUrl }) */ }).text(background.currentSong.songName);
+        $('#dash').text(" - ");
+        if (background.currentSong.songRating==false) {
+            $('#tUpButton').unbind('click').bind('click', function () { background.addFeedback(-1, true); $(this).attr('src', 'images/thumbUpCheck.png'); }).attr('src', 'images/thumbup.png');
+        }
+        else {
+            $('#tUpButton').unbind('click').attr('src', 'images/thumbUpCheck.png');
+        }
     }
     if (background.mp3Player.paused) {
         $('#playButton').show();
@@ -514,7 +514,7 @@ function updatePlayer() {
             html += '<a class="prevSongTitle" href="#">' + background.prevSongs[x].songName + '</a>';
             html += '</div>';
             html += '</div>';
-            if (background.prevSongs[x].songRating == "1") {
+            if (background.prevSongs[x].songRating) {
                 html += '<span style="font-weight:bold">Liked</span>';
             }
             else if (background.prevSongs[x].disliked) {
@@ -532,12 +532,12 @@ function updatePlayer() {
         }
     }
     if ($('#moreInfoToggle').attr('checked')) {
-        if (background.curSong.narrative) {
-            $('#narrative').text(background.curSong.narrative);
-        }
-        else {
-            $('#narrative').html('<a id="narrativeLink" href="#">Why was this song played?</a>');
-        }
+//        if (background.curSong.narrative) {
+//            $('#narrative').text(background.curSong.narrative);
+//        }
+//        else {
+//            $('#narrative').html('<a id="narrativeLink" href="#">Why was this song played?</a>');
+//        }
         $('body').height($('#moreInfo').height() + 50);
     }
     $('.scrollerText').hoverIntent({
@@ -554,6 +554,10 @@ function updatePlayer() {
         },
         interval: 500
     });
+    $('#scrubber')
+    .slider({
+        value: 0
+    })
 }
 function drawPlayer() {
     $('#scrubber')

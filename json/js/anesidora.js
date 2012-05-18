@@ -28,7 +28,7 @@ var syncTime = 0;
 var userAuthToken = "";
 var userId = "";
 var partnerId;
-var stationList;
+var stationList=[];
 var currentPlaylist;
 var previousPlaylist;
 function getSyncTime(syncTime) {
@@ -62,7 +62,9 @@ function userLogin(response) {
 function handleUserLogin(response, status, xhr) {
     userAuthToken = response.result.userAuthToken;
     userId = response.result.userId;
-    getStationList();
+    if (stationList.length == 0) {
+        getStationList();
+    }
 }
 
 function getStationList() {
@@ -73,6 +75,7 @@ function handleGetStationList(response, status, xhr) {
     stationList = response.result.stations;
 }
 function getPlaylist(stationToken) {
+    sessionStorage.currentStation = stationToken;
     var request = "{'stationToken':'" + stationToken + "','additionalAudioUrl':'HTTP_192_MP3','userAuthToken':'" + userAuthToken + "','syncTime':" + getSyncTime(syncTime) + "}";
     sendRequest(true,true,"station.getPlaylist",request,handleGetPlaylist);
 }
@@ -80,36 +83,34 @@ function handleGetPlaylist(response, status, xhr) {
     currentPlaylist = response.result.items;
     currentPlaylist.pop(); //Pop goes the advertisment.
 }
-function addFeedback(trackToken, positive) {
-    if (currentSong.songRating == true&& positive == true) {  // Bug fix for addFeedback being executed by bind()
+function addFeedback(songNum, rating) {
+    if (currentSong.songRating == true&& rating == true) {  // Bug fix for addFeedback being executed by bind()
         return;
     }
-    var request = "{'trackToken':'" + trackToken + "','positive':"+positive+",'userAuthToken':'" + userAuthToken + "','syncTime':" + getSyncTime(syncTime) + "}";
-    sendRequest(true, true, "station.getPlaylist", request, handleGetPlaylist);
-    if (positive) {
-        currentSong.songRating = 1 
+    if (songNum == -1) {
+        var request = "{'trackToken':'" + currentSong.trackToken + "','isPositive':" + rating + ",'userAuthToken':'" + userAuthToken + "','syncTime':" + getSyncTime(syncTime) + "}";
+        currentSong.songRating = rating;
+        if (rating == false) {
+            currentSong.disliked = true;
+        }
     }
-//    if (songNum == -1) {
-//        data = data.format(time(), authToken, curSong.stationId, curSong.musicId, curSong.userSeed, curSong.testStrategy, rating, curSong.songType);
-//        curSong.rating = rating;
-//    }
-//    else {
-//        data = data.format(time(), authToken, prevSongs[songNum].stationId, prevSongs[songNum].musicId, prevSongs[songNum].userSeed, prevSongs[songNum].testStrategy, rating, prevSongs[songNum].songType);
-//        prevSongs[songNum].rating = rating;
-//        if (rating == "0") {
-//            prevSongs[songNum].disliked = true;
-//        }
-//    }
+    else {
+        var request = "{'trackToken':'" + prevSongs[songNum].trackToken + "','isPositive':" + rating + ",'userAuthToken':'" + userAuthToken + "','syncTime':" + getSyncTime(syncTime) + "}";
+        prevSongs[songNum].songRating = rating;
+        if (rating == false) {
+            prevSongs[songNum].disliked = rating;
+        }
+    }
+    sendRequest(false, true, "station.addFeedback", request, handleAddFeedback);
 }
-function handleFeedback(response, info) {
-    //console.log(info);
+function handleAddFeedback(response, status, xhr) {
 
 }
 function shareSong() {
     $.ajax({
         url: "https://graph.facebook.com/512418304/feed?access_token=" +
             localStorage.accessToken +
-            "&message='I'm listening to " + currentSong.songName + " by " + currentSong.artistName +
+            "&message=I'm listening to " + currentSong.songName + " by " + currentSong.artistName +
             "&picture=" + currentSong.albumArtUrl +
             "&link=" + encodeURI(currentSong.songExplorerUrl) +
             "&name=" + currentSong.songName +
@@ -118,19 +119,11 @@ function shareSong() {
         statusCode: { 400: function () { $('#fbCanDie').attr('src', "https://www.facebook.com/dialog/oauth?client_id=124332377700986&response_type=token&scope=publish_stream&redirect_uri=https://www.facebook.com/connect/login_success.html"); shareSong(); } }
     });
 }
-function addTiredSong() {
-    var data = "<?xml version=\"1.0\"?><methodCall><methodName>listener.addTiredSong</methodName><params>"
-    data += "<param><value><int>{0}</int></value></param>";
-    data += "<param><value><string>{1}</string></value></param>";
-    data += "<param><value><string>{2}</string></value></param>";
-    data += "<param><value><string>{3}</string></value></param>";
-    data += "<param><value><string>{4}</string></value></param>";
-    data += "</params></methodCall>";
-    data = data.format(time(), authToken, curSong.musicId, curSong.userSeed, curSong.stationId);
-    data = encrypt(data);
-    sendRequest(handleTiredSong, "addTiredSong", data, null);
+function sleepSong() {
+    var request = "{'trackToken':'" + currentSong.trackToken + "','userAuthToken':'" + userAuthToken + "','syncTime':" + getSyncTime(syncTime) + "}";
+    sendRequest(false, true, "user.sleepSong", request, handleSleepSong);
 }
-function handleTiredSong(response, info) {
+function handleSleepSong(response, info) {
 
 }
 function setQuickMix(mixStations) {
@@ -222,24 +215,16 @@ function removeStation(stationId) {
 function handleRemoveStation(response, info) {
 
 }
-function narrative(stationId, musicId) {
-    var http = new XMLHttpRequest();
-    var data = "<?xml version=\"1.0\"?>";
-    data += "<methodCall><methodName>playlist.narrative</methodName>";
-    data += "<params><param><value><int>{0}</int></value></param>";
-    data += "<param><value><string>{1}</string></value></param>";
-    data += "<param><value><string>{2}</string></value></param>";
-    data += "<param><value><string>{3}</string></value></param>";
-    data += "</params></methodCall>";
-    data = data.format(time(), authToken, stationId, musicId);
-    data = encrypt(data);
-    sendRequest(handleNarrative, "narrative", data, null);
+function explainTrack() {
+    var request = "{'trackToken':'" + currentSong.trackToken + "','userAuthToken':'" + userAuthToken + "','syncTime':" + getSyncTime(syncTime) + "}";
+    sendRequest(false, true, "track.explainTrack", request, handleExplainTrack);
 }
-function handleNarrative(response, info) {
-    curSong.narrative = response.evaluate("//value/text()", response, null, XPathResult.STRING_TYPE, null).stringValue;
+function handleExplainTrack(response, status, xhr) {
+    console.log(response);
 }
 
 function sendRequest(secure, encrypted, method, request, handler) {
+    var failed = false;
     if (secure) {
         var url = "https://tuner.pandora.com/services/json/?method=";
     }
@@ -262,7 +247,29 @@ function sendRequest(secure, encrypted, method, request, handler) {
         contentType: "text/plain",
         data: request,
         dataType: "json",
-        success: handler
+        success: function (response, status, xhr) {
+            if (response.stat == "fail") {
+                switch (response.code) {
+                    case 0:
+                        return;
+                    case 1001:
+                        partnerLogin();
+                        break;
+                    default:
+                        console.log(response);
+
+                }
+                if (method == "station.getPlaylist" && failed == false) {
+                    getPlaylist(sessionStorage.currentStation);
+                    failed = true;
+                }
+
+            }
+            else {
+                handler(response, status, xhr);
+            }
+        }
+
     });
 }
 //Defunct for the time being.

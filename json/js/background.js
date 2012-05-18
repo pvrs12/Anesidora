@@ -34,8 +34,7 @@ function () {
         callback.drawPlayer()
     })
     .bind('error', function () {
-        songs = new Array();
-        getFragment(localStorage.lastStation);
+        getPlaylist(localStorage.lastStation);
         nextSong();
     });
     chrome.omnibox.onInputChanged.addListener(
@@ -87,7 +86,7 @@ function () {
                 addFeedback("0", "-1");
             }
             if (text.toLowerCase().match('tired')) {
-                addTiredSong();
+                sleepSong();
             }
             if (text.toLowerCase().match('station')) {
                 var string = text.toLowerCase().replace("station ", "");
@@ -130,7 +129,7 @@ function () {
                 setTimeout(nextSong(), 1000); // Small delay to stop extension from freezing for some reason
                 break;
             case "tired":
-                addTiredSong();
+                sleepSong();
                 setTimeout(nextSong(), 1000); // Small delay to stop extension from freezing for some reason
                 break;
             default:
@@ -145,17 +144,26 @@ if (localStorage.username != '' && localStorage.password != '') {
     partnerLogin();
 }
 function play(stationToken) {
-    if (userAuthToken == "") {
-        partnerLogin();
-    }
     if (stationToken != localStorage.lastStation) {
         getPlaylist(stationToken);
-        currentSong = currentPlaylist.shift();
-        chrome.browserAction.setTitle({ "title": currentSong.artistName + " - " + currentSong.songName });
-        document.getElementById("mp3Player").setAttribute("src", currentSong.additionalAudioUrl);
+        while (currentSong == undefined) {
+            currentSong = currentPlaylist.shift();
+        }
         localStorage.lastStation = stationToken;
+        
     }
+    else {
+        if (currentSong == undefined) {
+            getPlaylist(localStorage.lastStation);
+            while (currentSong == undefined) {
+                currentSong = currentPlaylist.shift();
+            }
+        }
+    }
+    chrome.browserAction.setTitle({ "title": currentSong.artistName + " - " + currentSong.songName });
+    document.getElementById("mp3Player").setAttribute("src", currentSong.additionalAudioUrl);
     document.getElementById("mp3Player").play();
+    
 }
 function nextSong() {
     if (currentSong.songRating != '1') {
