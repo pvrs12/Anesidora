@@ -20,6 +20,6 @@
    },
    "options_page": "options.htm",
    "permissions": [ "http://tuner.pandora.com/*", "https://tuner.pandora.com/*" ,"http://www.pandora.com/*", "https://www.pandora.com/*", "http://ws.audioscrobbler.com/*","http://*.facebook.com/*", "https://*.facebook.com/*","notifications","tabs" ],
-   "version": "1.6.1",
+   "version": "1.6.3",
    "update_url": "http://anesidora.us/updates.xml"
 }

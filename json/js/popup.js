@@ -565,13 +565,12 @@ function drawPlayer() {
         value: (background.mp3Player.currentTime / background.mp3Player.duration) * 100
     })
     .attr("title",
-    ((background.mp3Player.currentTime / 60).toFixed(0).length == 1 ? '0' + (background.mp3Player.currentTime / 60).toFixed(0) : (background.mp3Player.currentTime / 60).toFixed(0))
-     + ":" +
-     ((background.mp3Player.currentTime % 60).toFixed(0).length == 1 ? '0' + (background.mp3Player.currentTime % 60).toFixed(0) : (background.mp3Player.currentTime % 60).toFixed(0))
-
-     + "/" +
-         ((background.mp3Player.duration / 60).toFixed(0).length == 1 ? '0' + (background.mp3Player.duration / 60).toFixed(0) : (background.mp3Player.duration / 60).toFixed(0))
-     + ":" +
-     ((background.mp3Player.duration % 60).toFixed(0).length == 1 ? '0' + (background.mp3Player.duration % 60).toFixed(0) : (background.mp3Player.duration % 60).toFixed(0))
+    Math.floor(background.mp3Player.currentTime / 60) +
+    ":" +
+    (Math.ceil(background.mp3Player.currentTime % 60).length == 1 ? '0' + Math.ceil(background.mp3Player.currentTime % 60) : Math.ceil(background.mp3Player.currentTime % 60)) + 
+    "/" +
+    Math.floor(background.mp3Player.duration / 60) +
+    ":" +
+    (Math.ceil(background.mp3Player.duration % 60).length == 1 ? '0' + Math.ceil(background.mp3Player.duration % 60) : Math.ceil(background.mp3Player.duration % 60)) + 
      );
 }

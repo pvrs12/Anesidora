@@ -32,6 +32,15 @@ function () {
     })
     .bind('timeupdate', function () {
         callback.drawPlayer()
+        if ((this.duration - this.currentTime) < 5 && localStorage.notifications == "true") {
+            if (toastCallback) {
+                toastCallback();
+            }
+            else {
+                var toast = window.webkitNotifications.createHTMLNotification('./toast.htm');
+                toast.show();
+            }
+        }
     })
     .bind('error', function () {
         getPlaylist(localStorage.lastStation);
@@ -46,7 +55,7 @@ function () {
                                 { content: "Dislike", description: "Dislike current song" },
                                 { content: "Tired", description: "Sleep current song" },
                                 { content: "Station", description: "[Station name]" },
-                                { content: "Volume", description: "[Volume]" }];                                
+                                { content: "Volume", description: "[Volume]"}];
             if (text.toLowerCase().match('station')) {
                 suggestions = [];
                 var string = text.toLowerCase().replace("station ", "");
@@ -66,15 +75,15 @@ function () {
         function (text) {
             console.log(text);
             if (text.toLowerCase().match('play')) {
-                if (document.getElementById("mp3Player").src != "") {
-                    document.getElementById("mp3Player").play();
+                if (mp3Player.src != "") {
+                    mp3Player.play();
                 }
                 else {
                     play(localStorage.lastStation);
                 }
             }
             if (text.toLowerCase().match('pause')) {
-                document.getElementById("mp3Player").pause();
+                mp3Player.pause();
             }
             if (text.toLowerCase().match('skip')) {
                 nextSong();
@@ -145,43 +154,51 @@ if (localStorage.username != '' && localStorage.password != '') {
 }
 function play(stationToken) {
     if (stationToken != localStorage.lastStation) {
+        currentSong = undefined;
         getPlaylist(stationToken);
-        while (currentSong == undefined) {
-            currentSong = currentPlaylist.shift();
-        }
         localStorage.lastStation = stationToken;
-        
+        nextSong();
     }
     else {
         if (currentSong == undefined) {
             getPlaylist(localStorage.lastStation);
-            while (currentSong == undefined) {
-                currentSong = currentPlaylist.shift();
-            }
+        }
+        if (document.getElementById("mp3Player").currentTime > 0) {
+            mp3Player.play();
+        }
+        else {
+            nextSong();
         }
     }
-    chrome.browserAction.setTitle({ "title": currentSong.artistName + " - " + currentSong.songName });
-    document.getElementById("mp3Player").setAttribute("src", currentSong.additionalAudioUrl);
-    document.getElementById("mp3Player").play();
-    
 }
 function nextSong() {
+    if (currentSong == undefined) {
+        while (currentSong == undefined) {
+            currentSong = currentPlaylist.shift();
+        }
+    }
+    else {
+        currentSong = currentPlaylist.shift();
+    }
     if (currentSong.songRating != '1') {
         if (prevSongs.push(currentSong) == 5) {
             prevSongs.shift();
         }
     }
-    currentSong = currentPlaylist.shift();
     if (currentPlaylist.length == 0) {
         getPlaylist(localStorage.lastStation);
     }
-    if (localStorage.notifications == "true" && !toastCallback) {
-        var toast = window.webkitNotifications.createHTMLNotification('./toast.htm');
-        toast.show();
+    if (localStorage.notifications == "true") {
+        if (toastCallback) {
+            toastCallback();
+        }
+        else {
+            var toast = window.webkitNotifications.createHTMLNotification('./toast.htm');
+            toast.show();
+        }
     }
     chrome.browserAction.setTitle({ "title": currentSong.artistName + " - " + currentSong.songName });
-    document.getElementById("mp3Player").setAttribute("src", currentSong.additionalAudioUrl);
-    document.getElementById("mp3Player").play();
+    mp3Player.setAttribute("src", currentSong.additionalAudioUrl);
+    mp3Player.play();
 }
-
 

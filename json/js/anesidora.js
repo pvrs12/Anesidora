@@ -108,7 +108,7 @@ function handleAddFeedback(response, status, xhr) {
 }
 function shareSong() {
     $.ajax({
-        url: "https://graph.facebook.com/512418304/feed?access_token=" +
+        url: "https://graph.facebook.com/" + localStorage.facebookUsername + "/feed?access_token=" +
             localStorage.accessToken +
             "&message=I'm listening to " + currentSong.songName + " by " + currentSong.artistName +
             "&picture=" + currentSong.albumArtUrl +

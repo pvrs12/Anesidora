@@ -1,10 +1,13 @@
 ﻿var background = chrome.extension.getBackgroundPage();
-background.toastCallback = updateToast;
+background.toastCallback = updatetoast;
 var closeTimer;
-function loadToast() {
+function loadtoast() {
     //////////////////////////////
     //  Load jQuery bindings    //
     //////////////////////////////
+    $(window).unload(function () {
+        background.toastCallback = null;
+    });
     $('img:gt(0)')
         .mouseover(function () {
             var src = $(this).attr("src").replace(".png", "hover.png");
@@ -30,7 +33,7 @@ function loadToast() {
     });
     $('#skipButton').bind('click', background.nextSong);
     $('#tDownButton').bind('click', function () {
-        background.addFeedback("0", "-1");
+        background.addFeedback(-1, false);
         setTimeout(background.nextSong(), 1000); // Small delay to stop extension from freezing for some reason
 //        background.rateSong(background.curSong.stationId, background.curSong.musicId, background.curSong.userSeed, background.curSong.testStrategy, "0", background.curSong.songType);
 //        background.nextSong();
@@ -39,12 +42,10 @@ function loadToast() {
         background.sleepSong(); background.nextSong();
     });
     $('#dash').text(" - ");
-    if (background.curSong.rating != '1') {
+    if (background.currentSong.songRating != true) {
         $('#tUpButton').bind('click', function () {
-            background.addFeedback("1", "-1");
-            if (background.curSong.rating == "1") {
-                $(this).unbind('click').attr('src', 'images/thumbUpCheck.png');
-            }
+            background.addFeedback(-1, true);
+            $(this).unbind('click').attr('src', 'images/thumbUpCheck.png');
         }).attr('src', 'images/thumbup.png');
     }
     else {
@@ -53,7 +54,7 @@ function loadToast() {
     closeTimer = setTimeout(function () {
         background.toastCallback = null;
         window.close();
-    }, 7000);
+    }, 10000);
     $(window)
     .bind('mouseover', function () {
         clearTimeout(closeTimer);
@@ -66,16 +67,16 @@ function loadToast() {
             }, 5000);
         }
     });
-    updateToast();
+    updatetoast();
 }
-function updateToast() {
+function updatetoast() {
     $('#coverArt').unbind().bind('click', function () {
-        chrome.tabs.create({ "url": background.curSong.albumUrl });
-    }).attr('src', background.curSong.art);
+        chrome.tabs.create({ "url": background.currentSong.albumDetailUrl });
+    }).attr('src', background.currentSong.albumArtUrl);
     $('#artistLink').unbind().bind('click', function () {
-        chrome.tabs.create({ "url": background.curSong.artistUrl });
-    }).text(background.curSong.artist);
+        chrome.tabs.create({ "url": background.currentSong.artistDetailUrl });
+    }).text(background.currentSong.artistName);
     $('#titleLink').unbind().bind('click', function () {
-        chrome.tabs.create({ "url": background.curSong.titleUrl });
-    }).text(background.curSong.title);
+        chrome.tabs.create({ "url": background.currentSong.songDetailUrl });
+    }).text(background.currentSong.songName);
 }
