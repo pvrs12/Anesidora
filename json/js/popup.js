@@ -236,26 +236,17 @@ function () {
                 $('#searchResults').empty();
                 if (background.searchResults.songs.length) {
                     $('#searchResults').append('<optgroup label=\'Songs\'></optgroup>');
-                    for (x = 0; x < background.searchResults.songs.length; x++) {
-                        $('#searchResults optgroup[label=Songs]').append(new Option(background.searchResults.songs[x].name, background.searchResults.songs[x].value));
+                    for (song in background.searchResults.songs) {
+                        $('#searchResults optgroup[label=Songs]').append(new Option(background.searchResults.songs[song].artistName + " - " + background.searchResults.songs[song].songName, background.searchResults.songs[song].musicToken));
                     }
-
-                }
-                if (background.searchResults.stations.length) {
-                    $('#searchResults').append('<optgroup label=\'Stations\'></optgroup>');
-                    for (x = 0; x < background.searchResults.stations.length; x++) {
-                        $('#searchResults optgroup[label=Stations]').append(new Option(background.searchResults.stations[x].name, background.searchResults.stations[x].value));
-                    }
-
                 }
                 if (background.searchResults.artists.length) {
                     $('#searchResults').append('<optgroup label=\'Artists\'></optgroup>');
-                    for (x = 0; x < background.searchResults.artists.length; x++) {
-                        $('#searchResults optgroup[label=Artists]').append(new Option(background.searchResults.artists[x].name, background.searchResults.artists[x].value));
+                    for (artist in background.searchResults.artists) {
+                        $('#searchResults optgroup[label=Artists]').append(new Option(background.searchResults.artists[artist].artistName, background.searchResults.artists[artist].musicToken));
                     }
 
                 }
-
             })
             .show();
         }
@@ -414,6 +405,7 @@ function () {
                     $('#stationList').append(new Option(background.stationList[i].stationName, background.stationList[i].stationToken));
                 }
                 $('#anesidora').animate({ left: '-294px' }, 500);
+                $(this).remove();
                 return false;
             }
         });
@@ -426,10 +418,13 @@ function () {
             $('#stationList').append(new Option(background.stationList[i].stationName, background.stationList[i].stationToken));
         }
     }
-    if (!localStorage.password) {
+    if (localStorage.username && localStorage.password) {
+        $('#login').remove();
+    }
+    else {
         $('#anesidora').css('left', '-594px');
     }
-    else if (!localStorage.lastStation) {
+    if (background.userAuthToken && !localStorage.lastStation) {
         $('#anesidora').css('left', '-294px');
     }
     else {
@@ -445,7 +440,6 @@ function () {
         updatePlayer();
         $('#moreInfoToggle').button('enable');
     }
-    $('body').delay(100).height('44px');
 });
 function goToPlayer() {
     $(':checkbox').attr('checked', false).button('refresh');
@@ -531,15 +525,15 @@ function updatePlayer() {
             $('#moreInfo').append(html);
         }
     }
-    if ($('#moreInfoToggle').attr('checked')) {
-//        if (background.curSong.narrative) {
-//            $('#narrative').text(background.curSong.narrative);
-//        }
-//        else {
-//            $('#narrative').html('<a id="narrativeLink" href="#">Why was this song played?</a>');
-//        }
-        $('body').height($('#moreInfo').height() + 50);
-    }
+//    if ($('#moreInfoToggle').attr('checked')) {
+////        if (background.curSong.narrative) {
+////            $('#narrative').text(background.curSong.narrative);
+////        }
+////        else {
+////            $('#narrative').html('<a id="narrativeLink" href="#">Why was this song played?</a>');
+////        }
+//        $('body').height($('#moreInfo').height() + 50);
+//    }
     $('.scrollerText').hoverIntent({
         over: function () {
             if ($(this).width() > $(this).parent().width()) {
@@ -567,10 +561,10 @@ function drawPlayer() {
     .attr("title",
     Math.floor(background.mp3Player.currentTime / 60) +
     ":" +
-    (Math.ceil(background.mp3Player.currentTime % 60).length == 1 ? '0' + Math.ceil(background.mp3Player.currentTime % 60) : Math.ceil(background.mp3Player.currentTime % 60)) + 
+    (Math.ceil(background.mp3Player.currentTime % 60).length == 1 ? '0' + Math.ceil(background.mp3Player.currentTime % 60) : Math.ceil(background.mp3Player.currentTime % 60)) +
     "/" +
     Math.floor(background.mp3Player.duration / 60) +
     ":" +
-    (Math.ceil(background.mp3Player.duration % 60).length == 1 ? '0' + Math.ceil(background.mp3Player.duration % 60) : Math.ceil(background.mp3Player.duration % 60)) + 
-     );
+    (Math.ceil(background.mp3Player.duration % 60).length == 1 ? '0' + Math.ceil(background.mp3Player.duration % 60) : Math.ceil(background.mp3Player.duration % 60))
+    );
 }

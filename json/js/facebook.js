@@ -14,6 +14,7 @@ chrome.tabs.onUpdated.addListener(
                                 url: "https://graph.facebook.com/" + localStorage.facebookUsername + "?" + localStorage.accessToken,
                                 dataType: "json",
                                 success: function (data) {
+                                    console.log(data.id);
                                     localStorage.facebookUsername = data.id;
                                 }
                             });

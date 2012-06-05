@@ -28,6 +28,11 @@ function () {
         if (localStorage.lastFm == "true") {
             lastFmScrobble();
         }
+        if (currentSong.songRating != '1') {
+            if (prevSongs.push(currentSong) == 5) {
+                prevSongs.shift();
+            }
+        }
         nextSong()
     })
     .bind('timeupdate', function () {
@@ -179,11 +184,6 @@ function nextSong() {
     }
     else {
         currentSong = currentPlaylist.shift();
-    }
-    if (currentSong.songRating != '1') {
-        if (prevSongs.push(currentSong) == 5) {
-            prevSongs.shift();
-        }
     }
     if (currentPlaylist.length == 0) {
         getPlaylist(localStorage.lastStation);

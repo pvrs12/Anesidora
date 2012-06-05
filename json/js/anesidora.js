@@ -31,6 +31,7 @@ var partnerId;
 var stationList=[];
 var currentPlaylist;
 var previousPlaylist;
+var searchResults;
 function getSyncTime(syncTime) {
     return parseInt(syncTime) + (parseInt((new Date().getTime() + '').substr(0, 10)) - clientStartTime);
 }
@@ -73,6 +74,13 @@ function getStationList() {
 }
 function handleGetStationList(response, status, xhr) {
     stationList = response.result.stations;
+    if (localStorage.userStation == undefined) {
+        for (station in response.result.stations) {
+            if (response.result.stations[station].isQuickMix == true) {
+                localStorage.userStation = response.result.stations[station].stationId;
+            }
+        }
+    }
 }
 function getPlaylist(stationToken) {
     sessionStorage.currentStation = stationToken;
@@ -127,78 +135,29 @@ function handleSleepSong(response, info) {
 
 }
 function setQuickMix(mixStations) {
-    var data = "<?xml version=\"1.0\"?><methodCall><methodName>station.setQuickMix</methodName><params>"
-    data += "<param><value><int>{0}</int></value></param>";
-    data += "<param><value><string>{1}</string></value></param>";
-    data += "<param><value><string>RANDOM</string></value></param>";
-    data += "<param><value><array><data>";
-    for (i = 0; i < mixStations.length; i++) {
-        data += "<value><string>" + mixStations[i] + "</string></value>";
-    }
-    data += "</data></array></value></param>";
-    data += "<param><value><string>CUSTOM</string></value></param>";
-    data += "<param><value><string></string></value></param>";
-    data += "</params></methodCall>";
-    data = data.format(time(), authToken);
-    data = encrypt(data);
-    sendRequest(handleQuickMix, "setQuickMix", data, null);
+    var request = "{'quickMixStationIds':['" + mixStations.toString().replace(/,/g, "','") + "'],'userAuthToken':'" + userAuthToken + "','syncTime':" + getSyncTime(syncTime) + "}";
+    sendRequest(false,true,"user.setQuickMix",request,handleSetQuickMix);
 }
-function handleQuickMix(response, info) {
+function handleSetQuickMix(response, status, xhr) {
 
 
 }
-function musicSearch(searchString) {
-    searchString = searchString.replace("&", "&amp").replace("'", "&apos").replace("\"", "&quot").replace("<", "&lt").replace(">", "&gt");
-    var data = "<?xml version=\"1.0\"?>"
-    data += "<methodCall><methodName>music.search</methodName>";
-    data += "<params><param><value><int>{0}</int></value></param>";
-    data += "<param><value><string>{1}</string></value></param>";
-    data += "<param><value><string>{2}</string></value></param>";
-    data += "</params></methodCall>";
-    data = data.format(time(), authToken, searchString);
-    data = encrypt(data);
-    sendRequest(handleSearch, "search", data, null);
+function search(searchString) {
+    //searchString = searchString.replace("&", "&amp").replace("'", "&apos").replace("\"", "&quot").replace("<", "&lt").replace(">", "&gt");
+    var request = "{'searchText':'" + searchString + "','userAuthToken':'" + userAuthToken + "','syncTime':" + getSyncTime(syncTime) + "}";
+    sendRequest(false, true, "music.search", request, handleSearch);
 }
-function handleSearch(response, info) {
-    var searchSongs = new Array();
-    var searchStations = new Array();
-    var searchArtists = new Array();
-    function searchResult(name, value) {
-        this.name = name;
-        this.value = value;
-    }
-    var xpath = response.evaluate("//member[name='songs']//member[name='musicId' or name='artistSummary' or name='songTitle']/value/text()", response, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
-    for (x = 0; x < xpath.snapshotLength; x += 3) {
-        searchSongs.push(new searchResult(xpath.snapshotItem(x+2).data + " - " + xpath.snapshotItem(x).data, xpath.snapshotItem(x + 1).data));
-    }
-    xpath = response.evaluate("//member[name='stations']//member[name='musicId' or name='stationName']/value/text()", response, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
-    for (x = 0; x < xpath.snapshotLength; x += 2) {
-        searchStations.push(new searchResult(xpath.snapshotItem(x).data, xpath.snapshotItem(x+1).data));
-    }
-    xpath = response.evaluate("//member[name='artists']//member[name='artistName' or name='musicId']/value/text()", response, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
-    for (x = 0; x < xpath.snapshotLength; x += 2) {
-        searchArtists.push(new searchResult(xpath.snapshotItem(x).data, xpath.snapshotItem(x+1).data));
-    }
-    searchResults.songs = searchSongs;
-    searchResults.stations = searchStations;
-    searchResults.artists = searchArtists;
+function handleSearch(response, status, xhr) {
+    console.log(response);
+    searchResults = response.result;
 }
 
-function createStation(musicId) {
-    var http = new XMLHttpRequest();
-    var data = "<?xml version=\"1.0\"?>";
-    data += "<methodCall><methodName>station.createStation</methodName>";
-    data += "<params><param><value><int>{0}</int></value></param>";
-    data += "<param><value><string>{1}</string></value></param>";
-    data += "<param><value><string>mi{2}</string></value></param>";
-    data += "<param><value><string>{3}</string></value></param>";
-    data += "</params></methodCall>";
-    data = data.format(time(), authToken, musicId,"");
-    data = encrypt(data);
-    sendRequest(handleCreateStation, "createStation", data, null);
+function createStation(musicToken) {
+    var request = "{'musicToken':'" + musicToken + "','userAuthToken':'" + userAuthToken + "','syncTime':" + getSyncTime(syncTime) + "}";
+    sendRequest(false, true, "station.createStation", request, handleCreateStation);
 }
-function handleCreateStation(response, info) {
-
+function handleCreateStation(response, status, xhr) {
+    play(response.result.stationId);
 }
 function removeStation(stationId) {
     var http = new XMLHttpRequest();

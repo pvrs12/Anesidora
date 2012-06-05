@@ -31,6 +31,8 @@ function loadtoast() {
         },
         interval: 500
     });
+    $('#playButton').bind('click', function () { background.mp3Player.play(); $(this).hide(); $('#pauseButton').show(); });
+    $('#pauseButton').bind('click', function () { background.mp3Player.pause(); $(this).hide(); $('#playButton').show(); });
     $('#skipButton').bind('click', background.nextSong);
     $('#tDownButton').bind('click', function () {
         background.addFeedback(-1, false);
@@ -67,6 +69,14 @@ function loadtoast() {
             }, 5000);
         }
     });
+    if (background.mp3Player.paused) {
+        $('#playButton').show();
+        $('#pauseButton').hide();
+    }
+    else {
+        $('#playButton').hide();
+        $('#pauseButton').show();
+    }
     updatetoast();
 }
 function updatetoast() {

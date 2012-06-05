@@ -45,27 +45,39 @@ a:hover
     font-family: Verdana,Arial;
     font-size: 12px; 
 }
-#skipButton
+#playButton
 {
-    left: 60px; 
+    left: 60px;
+    top: 30px;
+    position: absolute;
+}
+#pauseButton
+{
+    left: 60px;
+    top: 30px;
+    position: absolute;
+}
+#skipButton 
+{
+    left: 98px; 
     top: 30px; 
     position: absolute;
 }
-#tDownButton
+#tDownButton 
 {
-    left: 88px;
+    left: 126px;
     top: 30px;
     position: absolute; 
 }
-#tUpButton
+#tUpButton 
 {
-    left: 126px;
+    left: 164px;
     top: 30px; 
     position: absolute;
 }
-#sleepButton
+#sleepButton 
 {
-    left: 164px; 
+    left: 202px; 
     top: 30px; 
     position: absolute;
 }
