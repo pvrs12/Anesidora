@@ -3,7 +3,6 @@ var toastCallback;
 var currentSong;
 var prevSongs = new Array();
 var errorCount = 0;
-var failed = false;
 $(document).ready(
 function () {
     if (localStorage.volume) {
@@ -36,7 +35,6 @@ function () {
             }
         }
         errorCount = 0;
-        failed = false;
         nextSong();
     })
     .bind('timeupdate', function () {
@@ -52,21 +50,12 @@ function () {
         }
     })
     .bind('error', function () {
-        errorCount++;
-        //uses backup audio url on fetch fail
-        if (failed == false) {
-            mp3Player.setAttribute("src", currentSong.audioUrlMap.highQuality.audioUrl);
-            mp3Player.play();
-            failed = true;
-        }
-        if (failed == true) {
-            nextSong();
-        }
         if (errorCount > 3) {
             alert("There seems to be an issue with Anesidora. To prevent Pandora account lockout Anesidora has been stopped.");
             return;
         }
-
+        errorCount++;
+        nextSong();
     })
     .bind('stalled', function () {
 
@@ -218,7 +207,10 @@ function nextSong() {
         }
     }
     chrome.browserAction.setTitle({ "title": currentSong.artistName + " - " + currentSong.songName });
-    mp3Player.setAttribute("src", currentSong.additionalAudioUrl);
+    if (currentSong.additionalAudioUrl != null)
+		mp3Player.setAttribute("src", currentSong.additionalAudioUrl);
+	else
+		mp3Player.setAttribute("src", currentSong.audioUrlMap.highQuality.audioUrl);
     mp3Player.play();
 }
 
