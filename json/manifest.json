@@ -1,26 +1,29 @@
 {
-   "background_page": "background.htm",
-   "browser_action": {
-      "default_icon": "images/anesidora-19.png",
-      "popup": "popup.htm"
-   },
-   "content_scripts": [ {
-      "js": [ "js/activehotkeys.js" ],
-      "matches": [ "\u003Call_urls\u003E" ]
-   } ],
-   "description": "Tabs? Where we're listening, we don't need tabs.",
-   "icons": {
-      "128": "images/anesidora-128.png",
-      "16": "images/anesidora-16.png",
-      "48": "images/anesidora-48.png"
-   },
-   "name": "Anesidora",
-   "omnibox": {
-      "keyword": "radio"
-   },
-   "options_page": "options.htm",
-   "permissions": [ "http://tuner.pandora.com/*", "https://tuner.pandora.com/*" ,"http://www.pandora.com/*", "https://www.pandora.com/*", "http://ws.audioscrobbler.com/*","http://*.facebook.com/*", "https://*.facebook.com/*","notifications","tabs" ],
-   "version": "1.6.7",
-   "update_url": "http://anesidora.us/updates.xml"
-   "content_security_policy": "script-src 'self' https://ssl.google-analytics.com; object-src 'self'",
+	"manifest_version": 2,
+	"background": {
+		"page":"background.htm"
+	},
+	"browser_action": {
+		"default_icon": "images/anesidora-19.png",
+		"default_popup": "popup.htm"
+	},
+	"content_scripts": [ {
+		"js": [ "js/activehotkeys.js" ],
+		"matches": [ "\u003Call_urls\u003E" ]
+	} ],
+	"description": "Tabs? Where we're listening, we don't need tabs.",
+	"icons": {
+		"128": "images/anesidora-128.png",
+		"16": "images/anesidora-16.png",
+		"48": "images/anesidora-48.png"
+	},
+	"name": "Anesidora",
+	"omnibox": {
+		"keyword": "radio"
+	},
+	"options_page": "options.htm",
+	"permissions": [ "http://tuner.pandora.com/*", "https://tuner.pandora.com/*" ,"http://www.pandora.com/*", "https://www.pandora.com/*", "http://ws.audioscrobbler.com/*","http://*.facebook.com/*", "https://*.facebook.com/*","notifications","tabs" ],
+	"version": "1.6.7",
+	"update_url": "http://anesidora.us/updates.xml",
+	"content_security_policy": "script-src 'self' https://ssl.google-analytics.com; object-src 'self'"
 }
