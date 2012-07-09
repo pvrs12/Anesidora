@@ -311,7 +311,7 @@ function () {
                             if ($('#stationList :selected').val() == localStorage.lastStation) {
                                 background.play(localStorage.userStation);
                             }
-                            background.removeStation($('#stationList :selected').val());
+                            background.deleteStation($('#stationList :selected').val());
                             background.getStations();
                             $('#stationList').empty();
                             for (i = 0; i < background.userStations.length; i++) {
@@ -568,3 +568,11 @@ function drawPlayer() {
     (Math.ceil(background.mp3Player.duration % 60).length == 1 ? '0' + Math.ceil(background.mp3Player.duration % 60) : Math.ceil(background.mp3Player.duration % 60))
     );
 }
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-33176165-1']);
+_gaq.push(['_trackPageview']);
+(function () {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = 'https://ssl.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();

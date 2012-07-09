@@ -159,19 +159,11 @@ function createStation(musicToken) {
 function handleCreateStation(response, status, xhr) {
     play(response.result.stationId);
 }
-function removeStation(stationId) {
-    var http = new XMLHttpRequest();
-    var data = "<?xml version=\"1.0\"?>";
-    data += "<methodCall><methodName>station.removeStation</methodName>";
-    data += "<params><param><value><int>{0}</int></value></param>";
-    data += "<param><value><string>{1}</string></value></param>";
-    data += "<param><value><string>{2}</string></value></param>";
-    data += "</params></methodCall>";
-    data = data.format(time(), authToken, stationId);
-    data = encrypt(data);
-    sendRequest(handleRemoveStation, "removeStation", data, null);
+function deleteStation(stationToken) {
+    var request = "{'stationToken':'" + stationToken + "','userAuthToken':'" + userAuthToken + "','syncTime':" + getSyncTime(syncTime) + "}";
+    sendRequest(false, true, "station.deleteStation", request, handleDeleteStation);
 }
-function handleRemoveStation(response, info) {
+function handleDeleteStation(response, info) {
 
 }
 function explainTrack() {

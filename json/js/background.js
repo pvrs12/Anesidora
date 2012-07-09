@@ -57,9 +57,6 @@ function () {
         errorCount++;
         nextSong();
     })
-    .bind('stalled', function () {
-
-    });
     chrome.omnibox.onInputChanged.addListener(
         function (text, suggest) {
             var suggestions = [{ content: "Play", description: "Play current station" },
@@ -207,10 +204,12 @@ function nextSong() {
         }
     }
     chrome.browserAction.setTitle({ "title": currentSong.artistName + " - " + currentSong.songName });
-    if (currentSong.additionalAudioUrl != null)
-		mp3Player.setAttribute("src", currentSong.additionalAudioUrl);
-	else
-		mp3Player.setAttribute("src", currentSong.audioUrlMap.highQuality.audioUrl);
+    if (currentSong.additionalAudioUrl != null) {
+        mp3Player.setAttribute("src", currentSong.additionalAudioUrl);
+    }
+    else {
+        mp3Player.setAttribute("src", currentSong.audioUrlMap.highQuality.audioUrl);
+    }
     mp3Player.play();
 }
 
