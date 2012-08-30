@@ -8,9 +8,11 @@
 		"default_popup": "popup.htm"
 	},
 	"content_scripts": [ {
-		"js": [ "js/activehotkeys.js" ],
-		"matches": [ "\u003Call_urls\u003E" ]
-	} ],
+      "all_frames": true,
+      "js": [ "js/activehotkeys.js" ],
+      "matches": [ "http://*/*", "https://*/*", "ftp://*/*" ],
+      "run_at": "document_start"
+    } ],
 	"description": "Tabs? Where we're listening, we don't need tabs.",
 	"icons": {
 		"128": "images/anesidora-128.png",

@@ -1,6 +1,7 @@
 ﻿var background = chrome.extension.getBackgroundPage();
 background.toastCallback = updatetoast;
 var closeTimer;
+$(document).ready(loadtoast)
 function loadtoast() {
     //////////////////////////////
     //  Load jQuery bindings    //

@@ -24,6 +24,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "js", "js", "{AEE63BED-0110-
 		js\background.js = js\background.js
 		js\crypt.js = js\crypt.js
 		js\facebook.js = js\facebook.js
+		js\hotkeys.js = js\hotkeys.js
 		js\jquery.hoverIntent.js = js\jquery.hoverIntent.js
 		js\jquery.js = js\jquery.js
 		js\jquery.ui.js = js\jquery.ui.js
