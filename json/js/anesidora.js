@@ -89,7 +89,16 @@ function getPlaylist(stationToken) {
 }
 function handleGetPlaylist(response, status, xhr) {
     currentPlaylist = response.result.items;
-    currentPlaylist.pop(); //Pop goes the advertisment.
+    //currentPlaylist.pop(); //Pop goes the advertisment.
+    removeAds(currentPlaylist);
+}
+//removes ads from fetched playlist. solves issue when player gets stuck on "undefined - undefined" [added by BukeMan]
+function removeAds(playList) {
+    playList.forEach(function(value, index) {
+        if (value.hasOwnProperty('adToken')) {
+            playList.splice(index, 1);
+        }
+    });
 }
 function addFeedback(songNum, rating) {
     if (currentSong.songRating == true&& rating == true) {  // Bug fix for addFeedback being executed by bind()
