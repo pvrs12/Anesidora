@@ -561,12 +561,21 @@ function drawPlayer() {
     .attr("title",
     Math.floor(background.mp3Player.currentTime / 60) +
     ":" +
-    (Math.ceil(background.mp3Player.currentTime % 60).length == 1 ? '0' + Math.ceil(background.mp3Player.currentTime % 60) : Math.ceil(background.mp3Player.currentTime % 60)) +
+        zeroPad(
+            (Math.ceil(background.mp3Player.currentTime % 60).length == 1 ? '0' + Math.ceil(background.mp3Player.currentTime % 60) : Math.ceil(background.mp3Player.currentTime % 60)),
+            2) +
     "/" +
     Math.floor(background.mp3Player.duration / 60) +
     ":" +
-    (Math.ceil(background.mp3Player.duration % 60).length == 1 ? '0' + Math.ceil(background.mp3Player.duration % 60) : Math.ceil(background.mp3Player.duration % 60))
+        zeroPad(
+            (Math.ceil(background.mp3Player.duration % 60).length == 1 ? '0' + Math.ceil(background.mp3Player.duration % 60) : Math.ceil(background.mp3Player.duration % 60)),
+            2)
     );
+}
+//function for adding leading zeros. took from here: http://stackoverflow.com/a/2998874 [BukeMan]
+function zeroPad(num, places) {
+    var zero = places - num.toString().length + 1;
+    return Array(+(zero > 0 && zero)).join("0") + num;
 }
 var _gaq = _gaq || [];
 _gaq.push(['_setAccount', 'UA-43432184-3']);
