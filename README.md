@@ -7,7 +7,7 @@ Download the latest packed version here: [http://anesidora.tk/get](http://anesid
 
 Submit issues here: [http://anesidora.tk/issues](http://anesidora.tk/issues)
 
-We also have a Facebook page for your comments and ideas: [https://www.facebook.com/anesidoraapp] https://www.facebook.com/anesidoraapp
+We also have a Facebook page for your comments and ideas: [http://fb.com/anesidoraapp] (http://fb.com/anesidoraapp)
 
 
 PreHistory:
