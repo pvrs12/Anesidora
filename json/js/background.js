@@ -1,6 +1,6 @@
 var callback;
-var toastCallback;
 var currentSong;
+var comingSong;
 var prevSongs = new Array();
 var errorCount = 0;
 $(document).ready(
@@ -17,9 +17,6 @@ function () {
     })
     .bind('play', function () {
         callback.updatePlayer();
-        if (toastCallback) {
-            toastCallback();
-        };
         currentSong.startTime = Math.round(new Date().getTime() / 1000);
         if (localStorage.lastFm == "true") {
             lastFmNowPlaying();
@@ -38,16 +35,7 @@ function () {
         nextSong();
     })
     .bind('timeupdate', function () {
-        callback.drawPlayer()
-        if ((this.duration - this.currentTime) < 5 && localStorage.notifications == "true") {
-            if (toastCallback) {
-                toastCallback();
-            }
-            else {
-                var toast = window.webkitNotifications.createHTMLNotification('./toast.htm');
-                toast.show();
-            }
-        }
+        callback.drawPlayer();
     })
     .bind('error', function () {
         if (errorCount > 3) {
@@ -189,19 +177,35 @@ function nextSong() {
         }
     }
     else {
-        currentSong = currentPlaylist.shift();
+        currentSong = comingSong;
     }
     if (currentPlaylist.length == 0) {
         getPlaylist(localStorage.lastStation);
     }
+    comingSong = currentPlaylist.shift();
+
     if (localStorage.notifications == "true") {
-        if (toastCallback) {
-            toastCallback();
+        var options = {
+            type: "list",
+            title: "Now playing:\r\n" + currentSong.artistName + " - " + currentSong.songName,
+            message: "by " + currentSong.artistName,
+            eventTime: 5000,
+            items: [
+                { title: "Coming next: ", message: "" },
+                { title: "", message: comingSong.artistName + " - " + comingSong.songName }
+            ]
         }
-        else {
-            var toast = window.webkitNotifications.createHTMLNotification('./toast.htm');
-            toast.show();
-        }
+        chrome.notifications.clear("now_playing", function(wasCleared){});
+
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", currentSong.albumArtUrl);
+        xhr.responseType = "blob";
+        xhr.onload = function(){
+            var blob = this.response;
+            options.iconUrl = window.URL.createObjectURL(blob);
+            chrome.notifications.create("now_playing", options, function() {});
+        };
+        xhr.send(null);
     }
     chrome.browserAction.setTitle({ "title": currentSong.artistName + " - " + currentSong.songName });
     if (currentSong.additionalAudioUrl != null) {
