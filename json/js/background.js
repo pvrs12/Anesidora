@@ -191,7 +191,7 @@ function nextSong() {
             message: "by " + currentSong.artistName,
             eventTime: 5000,
             items: [
-                { title: "Coming next: ", message: "" },
+                { title: "", message: "Coming next: " },
                 { title: "", message: comingSong.artistName + " - " + comingSong.songName }
             ]
         }
