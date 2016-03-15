@@ -579,8 +579,11 @@ function drawPlayer() {
     );
 }
 function downloadSong(url,title){
-	var win = window.open(url,'_blank');
-	win.title=title;
+	var a = $('<a href="'+url+'" download="'+title+'.mp4">HELLO</a>');
+	a.appendTo('body');
+	a[0].click();
+	a.remove();
+	
 }
 //function for adding leading zeros. took from here: http://stackoverflow.com/a/2998874 [BukeMan]
 function zeroPad(num, places) {
