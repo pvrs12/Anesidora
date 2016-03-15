@@ -145,8 +145,8 @@ function () {
         }
     });
 });
-function setCallbacks(updatePlayer, drawPlayer) {
-    callback = { "updatePlayer": updatePlayer, "drawPlayer": drawPlayer };
+function setCallbacks(updatePlayer, drawPlayer, downloadSong) {
+    callback = { "updatePlayer": updatePlayer, "drawPlayer": drawPlayer ,"downloadSong":downloadSong };
 }
 if (localStorage.username != '' && localStorage.password != '') {
     partnerLogin();
@@ -217,11 +217,17 @@ function nextSong() {
     mp3Player.play();
 }
 function downloadSong() {
-	if (background.currentSong.additionalAudioUrl != null) {
-		window.open(background.currentSong.additionalAudioUrl,'_blank');
+	var url='';
+	if (currentSong.additionalAudioUrl != null) {
+		console.log('Downloading alternate url');
+		console.log(currentSong);
+		url=currentSong.additionalAudioUrl;
 	}	else {
-		window.open(background.currentSong.audioUrlMap.highQuality.audioUrl,'_blank');
+		console.log('Downloading normal url');
+		console.log(currentSong);
+		url=currentSong.audioUrlMap.highQuality.audioUrl;
 	}
+	callback.downloadSong(url,currentSong.songName);
 }
 
 var _gaq = _gaq || [];

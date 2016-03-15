@@ -1,7 +1,7 @@
 ﻿var winShift = 38;
 
 var background = chrome.extension.getBackgroundPage();
-background.setCallbacks(updatePlayer, drawPlayer);
+background.setCallbacks(updatePlayer, drawPlayer,downloadSong);
 $(document).ready(
 function () {
     //////////////////////////////
@@ -577,6 +577,10 @@ function drawPlayer() {
             (Math.ceil(background.mp3Player.duration % 60).length == 1 ? '0' + Math.ceil(background.mp3Player.duration % 60) : Math.ceil(background.mp3Player.duration % 60)),
             2)
     );
+}
+function downloadSong(url,title){
+	var win = window.open(url,'_blank');
+	win.title=title;
 }
 //function for adding leading zeros. took from here: http://stackoverflow.com/a/2998874 [BukeMan]
 function zeroPad(num, places) {
