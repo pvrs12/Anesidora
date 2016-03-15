@@ -50,6 +50,9 @@ function () {
     .button()
     .bind('click', function () {
         if ($(this).is(':checked')) {
+					//show options dialog
+					var win = window.open('options.htm','_blank');
+					win.focus();
             if (background.currentSong) {
                 //                if (background.currentSong.narrative) {
                 //                    $('#narrative').text(background.curSong.narrative);

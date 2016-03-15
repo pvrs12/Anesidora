@@ -21,6 +21,7 @@ $(document).ready(function () {
         localStorage.username = '';
         localStorage.password = '';
         localStorage.lastStation = '';
+				alert('Cleared user information');
     });
     $('#notifications').bind('change', function () {
         if ($(this).attr('checked')) {
