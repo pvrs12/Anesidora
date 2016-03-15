@@ -1,4 +1,6 @@
-﻿var background = chrome.extension.getBackgroundPage();
+﻿var winShift = 38;
+
+var background = chrome.extension.getBackgroundPage();
 background.setCallbacks(updatePlayer, drawPlayer);
 $(document).ready(
 function () {
@@ -46,6 +48,7 @@ function () {
         setTimeout(background.nextSong(), 1000); // Small delay to stop extension from freezing for some reason
     });
     $('#sleepButton').bind('click', function () { background.sleepSong(); background.nextSong(); });
+		$('#downloadButton').bind('click',function(){ background.downloadSong(); });
     $('#moreInfoToggle')
     .button()
     .bind('click', function () {
@@ -112,7 +115,7 @@ function () {
     $('#nextButton').bind('click', function () {
         $('#moreInfoToggle').attr('checked', false).button('refresh');
         $('body').animate({ height: 44 }, 200);
-        $('#anesidora').animate({ left: '-294px' }, 500);
+        $('#anesidora').animate({ left: '-'+(294+winShift)+'px' }, 500);
         if (localStorage.autostations == "true") {
             if ($('#stationList').attr('scrollHeight') <= 224) {
                 $('body').delay(100).animate({ height: $('#stationList').attr('scrollHeight') - 6 }, 300);
@@ -407,7 +410,7 @@ function () {
                 for (i = 0; i < background.stationList.length; i++) {
                     $('#stationList').append(new Option(background.stationList[i].stationName, background.stationList[i].stationToken));
                 }
-                $('#anesidora').animate({ left: '-294px' }, 500);
+                $('#anesidora').animate({ left: '-'+(294+winShift)+'px' }, 500);
                 $(this).remove();
                 return false;
             }
@@ -425,10 +428,10 @@ function () {
         $('#login').remove();
     }
     else {
-        $('#anesidora').css('left', '-594px');
+        $('#anesidora').css('left', '-'+(594+winShift*2)+'px');
     }
     if (background.userAuthToken && !localStorage.lastStation) {
-        $('#anesidora').css('left', '-294px');
+        $('#anesidora').css('left', '-'+(294+winShift)+'px');
     }
     else {
         $('#prevButton').bind('click', function () { goToPlayer(); });

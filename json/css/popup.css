@@ -26,8 +26,9 @@
 }
 body
 {
-    width: 286px;
+    width: 324px;
     height: 44px;
+		background:linear-gradient(#e5eaf0,white);
 }
 a
 {
@@ -44,6 +45,7 @@ a:hover
 {
     text-decoration: none;
 }
+/*
 #bgTop
 {
     position: absolute;
@@ -51,7 +53,7 @@ a:hover
     left: 0px;
     height: 21px;
     width: 100%;
-    background-image: url('../images/bgtop.png');
+		background-color:#e5eaf0
 }
 #bgMid
 {
@@ -60,8 +62,7 @@ a:hover
     width: 100%;
     top: 21px;
     left: 0px;
-    background-image: url('../images/bgmid.png');
-    background-repeat: repeat-y;
+		background-color:#e5eaf0
 }
 #bgBottom
 {
@@ -70,8 +71,9 @@ a:hover
     left: 0px;
     height: 30px;
     width: 100%;
-    background-image: url('../images/bgbot.png');
+		background-color:#e5eaf0
 }
+*/
 #anesidora
 {
     position: absolute;
@@ -156,7 +158,7 @@ a:hover
     position: absolute;
     top: 24px;
     left: 54px;
-    width: 194px;
+    width: 232px;
 }
 #playButton
 {
@@ -194,9 +196,15 @@ a:hover
     top: 34px;
     position: absolute;
 }
+#downloadButton
+{
+		position: absolute;
+		left:231px;
+		top:34px;
+}
 #moreInfoButton
 {
-    left: 231px;
+    left: 269px;
     top: 34px;
     width: 20px;
     height: 15px;
@@ -221,28 +229,28 @@ a:hover
 #volume
 {
     position: absolute;
-    left: 260px;
+    left: 298px;
     top: 11px;
     height: 37px;
 }
 #nextButton
 {
-    left: 273px;
+    left: 311px;
     position: absolute;
     top: 8px;
 }
 #prevButton
 {
-    left: 301px;
+    left: 339px;
     position: absolute;
     top: 8px;
 }
 #stationList
 {
-    left: 321px;
+    left: 359px;
     top: 4px;
     height: 52px;
-    width: 246px;
+    width: 284px;
     position: absolute;
     -webkit-border-radius: 5px;
     border: 1px solid #8397aa;
@@ -256,16 +264,16 @@ option:focus
 }
 #searchResults
 {
-    left: 321px;
+    left: 359px;
     top: 4px;
-    width: 246px;
+    width: 284px;
     position: absolute;
 }
 #quickMixButton
 {
     position: absolute;
     top: 4px;
-    left: 573px;
+    left: 649px;
     width: 14px;
     height: 14px;
 }
@@ -273,7 +281,7 @@ option:focus
 {
     position: absolute;
     top: 22px;
-    left: 573px;
+    left: 649px;
     width: 14px;
     height: 14px;
 }
@@ -281,57 +289,57 @@ option:focus
 {
     position: absolute;
     top: 40px;
-    left: 573px;
+    left: 649px;
     width: 14px;
     height: 14px;
 }
 #search
 {
     position: absolute;
-    left: 321px;
-    width: 242px;
+    left: 359px;
+    width: 280px;
 }
 #okayButton
 {
     position: absolute;
-    left: 573px;
+    left: 649px;
     width: 16px;
     height: 16px;
 }
 #unWarning
 {
     position: absolute;
-    left: 603px;
+    left: 717px;
     top: 11px;
 }
 #username
 {
     position: absolute;
-    left: 601px;
+    left: 677px;
     top: 7px;
-    width: 232px;
+    width: 270px;
     height: 17px;
     padding-top: 2px;
 }
 #pwWarning
 {
     position: absolute;
-    left: 603px;
+    left: 717px;
     top: 34px;
 }
 #password
 {
     position: absolute;
-    left: 601px;
+    left: 677px;
     top: 30px;
-    width: 232px;
+    width: 270px;
     height: 16px;
     padding-top: 2px;
 }
 #save
 {
     position: absolute;
-    left: 842px;
+    left: 956px;
     top: 6px;
     height: 48px;
     width: 48px;

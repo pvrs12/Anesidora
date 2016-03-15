@@ -216,6 +216,13 @@ function nextSong() {
     }
     mp3Player.play();
 }
+function downloadSong() {
+	if (background.currentSong.additionalAudioUrl != null) {
+		window.open(background.currentSong.additionalAudioUrl,'_blank');
+	}	else {
+		window.open(background.currentSong.audioUrlMap.highQuality.audioUrl,'_blank');
+	}
+}
 
 var _gaq = _gaq || [];
 _gaq.push(['_setAccount', 'UA-43432184-3']);
