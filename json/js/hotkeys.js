@@ -1,13 +1,3 @@
-chrome.extension.onRequest.addListener(
-        function (request, sender, sendResponse) {
-            if (request == "getKeys") {
-                sendResponse(GetJSONHotKeys());
-            }
-            else {
-                sendResponse({}); // snub them.
-            }
-        });
-
 function GetJSONHotKeys() {
     // Setup Play HotKey Option
     var playJSON;

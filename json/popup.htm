@@ -9,69 +9,103 @@
     <script type="text/javascript" src="js/jquery.ui.js"></script>
     <script type="text/javascript" src="js/popup.js"></script>
 </head>
-<body style="height:44px;overflow:hidden;">
-    <div id="anesidora">
-        <a id="coverLink" href="#">
-            <img title="Click to view album details" id="coverArt" src="./images/cover.png" />
-        </a>
-        <div class="scrollerContainer" id="nowPlayingContainer">
-            <div class="scrollerText" id="nowPlaying">
-                <a id="artistLink" href="#"></a><span id="dash">Play to resume last station</span>
-                <a id="titleLink" href="#"></a>
-            </div>
-        </div>
-        <div class="details">
-            <a href="#"></a> <a href="#"></a>
-            <div class="details-arrow-border">
-            </div>
-            <div class="details-arrow">
-            </div>
-        </div>
-        <div id="scrubber">
-        </div>
-        <img title="Play" id="playButton" src="images/play.png" />
-        <img title="Pause" id="pauseButton" src="images/pause.png" />
-        <img title="Next song" id="skipButton" src="images/skip.png" />
-        <img title="Dislike this song" id="tDownButton" src="images/thumbdown.png" />
-        <img title="Like this song" id="tUpButton" src="images/thumbup.png" />
-        <img title="I'm tired of this song" id="sleepButton" src="images/sleep.png" />
-				<img title="Download this song" id="downloadButton" src="images/download.png" />
-        <input title="More" type="checkbox" id="moreInfoToggle" /><label id="moreInfoButton"
-            for="moreInfoToggle">...</label>
-        <div title="Volume" id="volume">
-        </div>
-        <img title="View stations" id="nextButton" src="images/next.png" />
-        <div id="moreInfo">
-            <p id="narrative">
-            </p>
-        </div>
-        <img title="View player" id="prevButton" src="images/prev.png" />
-        <select id="stationList" multiple="multiple">
-        </select>
-        <select id="searchResults" multiple="multiple">
-        </select>
-        <input type="checkbox" id="quickMixToggle" /><label title="Quick Mix" id="quickMixButton"
-            for="quickMixToggle"></label>
-        <input type="checkbox" id="newStationToggle" /><label title="New Station" id="newStationButton"
-            for="newStationToggle"></label>
-        <input type="checkbox" id="deleteStationToggle" /><label title="Delete Station" id="deleteStationButton"
-            for="deleteStationToggle"></label>
-        <form id="searchForm" action="">
-        <input id="search" />
-        </form>
-        <button id="okayButton">
-        </button>
-        <div id="confirmDelete" title="Delete this station?">
-        </div>
-        <form id="login" action="">
-        <input id="username" placeholder="E-Mail" tabindex="1"/>
-        <div id="unWarning" class="ui-icon ui-icon-alert">
-        </div>
-        <input id="password" type="password" placeholder="Password" tabindex="2" />
-        <div id="pwWarning" class="ui-icon ui-icon-alert">
-        </div>
-        <input id="save" type="submit" value="Save" />
-        </form>
-    </div>
+<body  >
+	<div id="anesidora">
+		<table id=leftPanel>
+			<tr id=leftTopRow>
+				<td id=artTd rowspan=0>
+					<a id="coverLink" href="#">
+							<img title="Click to view album details" id="coverArt" src="./images/cover.png" />
+					</a>
+				</td>
+				<td height=10px id=scrollTd colspan=7 style="vertical-align:top;">
+					<div  class="scrollerContainer" id="nowPlayingContainer">
+							<div  class="scrollerText" id="nowPlaying">
+									<a id="artistLink" href="#"></a>
+									<span id="dash">Play to resume last station</span>
+									<a id="titleLink" href="#"></a>
+							</div>
+					</div>
+				</td>
+				<td id=volumeTd rowspan=0>
+					<div style="max-height:40px" title="Volume" id="volume">
+					</div>
+				</td> 
+				<td id=nextPageTd rowspan=0>
+					<img title="View stations" id="nextButton" src="images/next.png" />
+				</td>
+			</tr>
+			<tr id=leftMidRow >
+				<td id=scrubberTd colspan=7>
+					<div id="scrubber">
+					</div>
+				</td>
+			</tr>
+			<tr id=leftBotRow >
+				<td id=playTd>
+					<img title="Play" id="playButton" src="images/play.png" />
+					<img title="Pause" id="pauseButton" src="images/pause.png" style=display:none" />
+				</td>
+				<td id=nextTd>
+					<img title="Next song" id="skipButton" src="images/skip.png" />
+				</td>
+				<td id=thumbUpTd>
+					<img title="Like this song" id="tUpButton" src="images/thumbup.png" />
+				</td>
+				<td id=thumbDownTd>
+					<img title="Dislike this song" id="tDownButton" src="images/thumbdown.png" />
+				</td>
+				<td id=sleepTd>
+					<img title="I'm tired of this song" id="sleepButton" src="images/sleep.png" />
+				</td>
+				<td id=dlTd>
+					<img title="Download this song" id="downloadButton" src="images/download.png" />
+				</td>
+				<td id=moreTd>
+					<img title="Options" id=moreInfoButton" src="images/moreInfo.png"/>
+				</td>
+			</tr>
+		</table>
+		<table id=midPanel>
+			<tr id=midTopRow>
+				<td id=prevPageTd rowspan=0>
+					<img title="View player" id="prevButton" src="images/prev.png" />
+				</td>
+				<td id=stationListTd rowspan=0>
+					<select id="stationList" multiple="multiple">
+					</select>
+				</td>
+			</tr>
+			<tr id=midMidrow>
+			</tr>
+			<tr id=midBotRow>
+			</tr>
+		</table>
+		<table id=rightPanel>
+			<form id="login" action="">
+			<tr id=rightTopRow>
+				<td>
+					<input id="username" placeholder="E-Mail" tabindex="1"/>
+				</td>
+				<td>
+					<div id="unWarning" class="ui-icon ui-icon-alert">
+					</div>
+				</td>
+				<td rowspan=0>
+					<input id="save" type="submit" value="Save" />
+				</td>
+			</td>
+			<tr id=rightBotRow>
+				<td>
+					<input id="password" type="password" placeholder="Password" tabindex="2" />
+				</td>
+				<td>
+					<div id="pwWarning" class="ui-icon ui-icon-alert">
+					</div>
+				</td>
+			</tr>
+			</form>
+		</table>
+	</div>
 </body>
 </html>

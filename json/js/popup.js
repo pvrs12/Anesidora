@@ -1,4 +1,4 @@
-﻿var winShift = 38;
+﻿var currentPanel =$('#midPanel'); 
 
 var background = chrome.extension.getBackgroundPage();
 background.setCallbacks(updatePlayer, drawPlayer,downloadSong);
@@ -7,7 +7,12 @@ function () {
     //////////////////////////////
     //  Load jQuery bindings    //
     //////////////////////////////
-    $('body').bind('click', function (e) { if (e.target.id != 'artistLink' && e.target.id != 'titleLink') { $('.details').hide() } });
+    $('body').bind('click', 
+			function (e) { 
+				if (e.target.id != 'artistLink' && e.target.id != 'titleLink') { 
+					$('.details').hide() 
+				} 
+			});
     $('img:gt(0)')
         .mouseover(function () {
             if ($(this).attr('id') == 'prevButton' && !localStorage.lastStation) {
@@ -22,7 +27,6 @@ function () {
             var src = $(this).attr("src").replace("hover", "");
             $(this).attr("src", src);
         });
-    $('.details').hide();
     $('#scrubber').slider({
         range: "min",
         min: 0,
@@ -34,7 +38,7 @@ function () {
         }
     });
 
-    $('#playButton').bind('click', function () { background.play(localStorage.lastStation) });
+    $('#playButton').bind('click', function () { background.play(localStorage.lastStation); $(this).hide(); });
     $('#pauseButton').bind('click', function () { background.mp3Player.pause(); $(this).hide(); $('#playButton').show(); });
     $('#skipButton').bind('click', background.nextSong);
     $('#tUpButton').bind('click', function () {
@@ -49,55 +53,9 @@ function () {
     });
     $('#sleepButton').bind('click', function () { background.sleepSong(); background.nextSong(); });
 		$('#downloadButton').bind('click',function(){ background.downloadSong(); });
-    $('#moreInfoToggle')
-    .button()
-    .bind('click', function () {
-        if ($(this).is(':checked')) {
-					//show options dialog
-					var win = window.open('options.htm','_blank');
-					win.focus();
-            if (background.currentSong) {
-                //                if (background.currentSong.narrative) {
-                //                    $('#narrative').text(background.curSong.narrative);
-                //                    $('body').animate({ height: $('#moreInfo').height() + 45 }, 300);
-                //                }
-                //                else {
-                //                    $('#narrative').html('<a id="narrativeLink" href="#">Why was this song played?</a>');
-                //                    $('body').animate({ height: $('#moreInfo').height() + 45 }, 300);
-                //                }
-
-                if (background.prevSongs.length > 0) {
-                    $('body').animate({ height: $('#moreInfo').height() + 50 }, 300);
-                }
-            }
-            else {
-                $('#moreInfoToggle').attr('checked', false).button('refresh');
-            }
-        }
-        else {
-            $('body').animate({ height: 44 }, 300);
-        }
-    });
-    $('#narrativeLink').live('click', function () {
-        background.narrative(background.curSong.stationId, background.curSong.musicId);
-        $('#narrative').text(background.curSong.narrative);
-        $('body').animate({ height: 50 + $('#moreInfo').height() });
-
-    });
-    $('.prevSongArtist').live('click', function () {
-        chrome.tabs.create({ "url": background.prevSongs[$(this).parents('.prevSong').attr('songNum')].artistDetailUrl })
-    });
-    $('.prevSongTitle').live('click', function () {
-        chrome.tabs.create({ "url": background.prevSongs[$(this).parents('.prevSong').attr('songNum')].songDetailUrl })
-    });
-    $('.prevSongLike').live('click', function () {
-        background.addFeedback(background.prevSongs[(this).attr('songNum')].trackToken, true);
-        $(this).parent().replaceWith('<span style="font-weight:bold">Liked</span>');
-    });
-    $('.prevSongDislike').live('click', function () {
-        background.addFeedback(background.prevSongs[(this).attr('songNum')].trackToken, false);
-        $(this).parent().replaceWith('<span style="font-weight:bold">Disliked</span>');
-    });
+		$('#moreInfoButton').bind('click',function(){
+			window.open('options.html','_blank');
+		});
     $('#volume').slider({
         orientation: 'vertical',
         range: 'min',
@@ -113,29 +71,8 @@ function () {
         }
     });
     $('#nextButton').bind('click', function () {
-        $('#moreInfoToggle').attr('checked', false).button('refresh');
-        $('body').animate({ height: 44 }, 200);
-        $('#anesidora').animate({ left: '-'+(294+winShift)+'px' }, 500);
-        if (localStorage.autostations == "true") {
-            if ($('#stationList').attr('scrollHeight') <= 224) {
-                $('body').delay(100).animate({ height: $('#stationList').attr('scrollHeight') - 6 }, 300);
-            }
-            else {
-                $('body').animate({ height: 219 }, 300);
-            }
-            if ($('#stationList').height() != $('#stationList').attr('scrollHeight') && $('#stationList').attr('scrollHeight') <= 224) {
-                $('#stationList').animate({ height: $('#stationList').attr('scrollHeight') + 2 }, 300).delay(350).queue(function () {
-                    $('#stationList').val(localStorage.lastStation).focus();
-                    $(this).dequeue();
-                });
-            }
-            else {
-                $('#stationList').animate({ height: 227 }, 300).delay(350).queue(function () {
-                    $('#stationList').val(localStorage.lastStation).focus();
-                    $(this).dequeue();
-                });
-            }
-        }
+				//move to midpanel
+				goToStations();
 
     });
     $('#stationList').bind('dblclick keyup', function (e) {
@@ -144,248 +81,6 @@ function () {
             goToPlayer();
         }
     });
-    $('#searchResults')
-    .bind('dblclick', function (e) {
-        if (e.type == "dblclick" || e.keyCode == "13") {
-            background.createStation($(this).val());
-            background.getStations();
-            $('#stationList').empty();
-            for (i = 0; i < background.userStations.length; i++) {
-                $('#stationList').append(new Option(background.userStations[i].name, background.userStations[i].id));
-            }
-            background.play($('#stationList option:contains(' + $('#searchResults option:selected').text() + ')').val());
-            goToPlayer();
-        }
-    })
-    .hide();
-    $('#quickMixToggle')
-    .button({
-        icons: {
-            primary: "ui-icon-shuffle"
-        },
-        text: false
-    })
-    .bind('click', function () {
-        if ($(this).is(':checked')) {
-            $(':checkbox').not($(this)).attr('checked', false).button('refresh');
-            $('#search').hide();
-            $('#searchResults').hide();
-            if ($('#stationList').attr('scrollHeight') <= 224) {
-                $('body').animate({ height: $('#stationList').attr('scrollHeight') - 6 }, 300);
-            }
-            else {
-                $('body').animate({ height: 219 }, 300);
-            }
-            if ($('#stationList').height() != $('#stationList').attr('scrollHeight') && $('#stationList').attr('scrollHeight') <= 224) {
-                $('#stationList').animate({ height: $('#stationList').attr('scrollHeight') + 2 }, 300);
-            }
-            else {
-                $('#stationList').animate({ height: 227 }, 300);
-            }
-            $('#okayButton')
-            .button({
-                icons: {
-                    primary: "ui-icon-check"
-                },
-                text: false
-            })
-            .css('top', function () {
-                if ($('#stationList').attr('scrollHeight') <= 224) {
-                    return $('#stationList').attr('scrollHeight') - 10;
-                } else {
-                    return 214;
-                }
-            })
-            .unbind()
-            .bind('click', function () {
-                if ($('#stationList :selected').length > 1) {
-                    var mixStations = new Array();
-                    $('#stationList :selected').each(function (i, selected) { mixStations[i] = $(selected).val(); });
-                    background.setQuickMix(mixStations);
-                    background.play(localStorage.userStation);
-                    goToPlayer();
-                }
-            })
-            .show();
-        }
-        else {
-            $('#stationList').animate({ height: 52 }, 200);
-            $('body').delay(20).animate({ height: 44 }, 200);
-        }
-    });
-    $('#newStationToggle').button({
-        icons: {
-            primary: "ui-icon-plus"
-        },
-        text: false
-    })
-    .bind('click', function () {
-        if ($(this).is(':checked')) {
-            $(':checkbox').not($(this)).attr('checked', false).button('refresh');
-            $('#searchResults').css('height', $('#stationList').attr('scrollHeight') + 2).empty().show();
-            if ($('#stationList').height() != $('#stationList').attr('scrollHeight')) {
-                $('#stationList').animate({ height: $('#stationList').attr('scrollHeight') + 2 }, 300);
-            }
-            $('body').animate({ height: $('#stationList').attr('scrollHeight') + 15 }, 300);
-            $('#search').css('top', $('#stationList').attr('scrollHeight') + 3).val('').show().delay(500).queue(function () { $(this).focus() });
-            $('#okayButton')
-            .button({
-                icons: {
-                    primary: "ui-icon-search"
-                },
-                text: false
-            })
-            .css('top', $('#stationList').attr('scrollHeight') + 11)
-            .unbind()
-            .bind('click', function () {
-                background.musicSearch($('#search').val());
-                $('#searchResults').empty();
-                if (background.searchResults.songs.length) {
-                    $('#searchResults').append('<optgroup label=\'Songs\'></optgroup>');
-                    for (song in background.searchResults.songs) {
-                        $('#searchResults optgroup[label=Songs]').append(new Option(background.searchResults.songs[song].artistName + " - " + background.searchResults.songs[song].songName, background.searchResults.songs[song].musicToken));
-                    }
-                }
-                if (background.searchResults.artists.length) {
-                    $('#searchResults').append('<optgroup label=\'Artists\'></optgroup>');
-                    for (artist in background.searchResults.artists) {
-                        $('#searchResults optgroup[label=Artists]').append(new Option(background.searchResults.artists[artist].artistName, background.searchResults.artists[artist].musicToken));
-                    }
-
-                }
-            })
-            .show();
-        }
-        else {
-            $('#searchResults').hide()
-            $('#stationList').animate({ height: 52 }, 200);
-            $('body').delay(20).animate({ height: 44 }, 200);
-        }
-    });
-    $('#deleteStationToggle')
-    .button({
-        icons: {
-            primary: "ui-icon-trash"
-        },
-        text: false
-    })
-    .bind('click', function () {
-        if ($(this).is(':checked')) {
-            $(':checkbox').not($(this)).attr('checked', false).button('refresh');
-            $('#search').hide();
-            $('#searchResults').hide();
-            $('#stationList')
-            .unbind()
-            .bind('dblclick', function () {
-                $('#okayButton').click();
-            });
-            if ($('#stationList').attr('scrollHeight') <= 224) {
-                $('body').animate({ height: $('#stationList').attr('scrollHeight') - 6 }, 300);
-            }
-            else {
-                $('body').animate({ height: 219 }, 300);
-            }
-            if ($('#stationList').height() != $('#stationList').attr('scrollHeight') && $('#stationList').attr('scrollHeight') <= 224) {
-                $('#stationList').animate({ height: $('#stationList').attr('scrollHeight') + 2 }, 300);
-            }
-            else {
-                $('#stationList').animate({ height: 227 }, 300);
-            }
-            $('#okayButton')
-            .button({
-                icons: {
-                    primary: "ui-icon-check"
-                },
-                text: false
-            })
-            .css('top', function () {
-                if ($('#stationList').attr('scrollHeight') <= 224) {
-                    return $('#stationList').attr('scrollHeight') - 10;
-                } else {
-                    return 214;
-                }
-            })
-            .unbind()
-            .bind('click', function () {
-                $('#confirmDelete').dialog({
-                    resizable: false,
-                    width: 200,
-                    minHeight: 16,
-                    modal: true,
-                    buttons: {
-                        "Yes": function () {
-                            if ($('#stationList :selected').val() == localStorage.lastStation) {
-                                background.play(localStorage.userStation);
-                            }
-                            background.deleteStation($('#stationList :selected').val());
-                            background.getStations();
-                            $('#stationList').empty();
-                            for (i = 0; i < background.userStations.length; i++) {
-                                $('#stationList').append(new Option(background.userStations[i].name, background.userStations[i].id));
-                            }
-                            if ($('#stationList').attr('scrollHeight') <= 224) {
-                                $('body').animate({ height: $('#stationList').attr('scrollHeight') - 6 }, 300);
-                            }
-                            else {
-                                $('body').animate({ height: 219 }, 300);
-                            }
-                            if ($('#stationList').height() != $('#stationList').attr('scrollHeight') && $('#stationList').attr('scrollHeight') <= 224) {
-                                $('#stationList').animate({ height: $('#stationList').attr('scrollHeight') + 2 }, 300);
-                            }
-                            else {
-                                $('#stationList').animate({ height: 227 }, 300);
-                            }
-                            $(this).dialog("close");
-                        },
-                        Cancel: function () {
-                            $(this).dialog("close");
-                        }
-                    }
-                });
-                $('#confirmDelete').text($('#stationList :selected').text());
-            })
-            .show();
-        }
-        else {
-            $('#stationList')
-            .unbind()
-            .bind('dblclick', function () {
-                background.play($(this).val());
-                goToPlayer();
-            })
-            .delay(180)
-            .animate({ height: 52 }, 200);
-            $('body').delay(180).animate({ height: 44 }, 200);
-        }
-    });
-    $('#searchForm')
-        .bind('submit', function () {
-            $('#searchResults').empty();
-            background.musicSearch($('#search').val());
-            if (background.searchResults.songs.length) {
-                $('#searchResults').append('<optgroup label=\'Songs\'></optgroup>');
-                for (x = 0; x < background.searchResults.songs.length; x++) {
-                    $('#searchResults optgroup[label=Songs]').append(new Option(background.searchResults.songs[x].name, background.searchResults.songs[x].value));
-                }
-
-            }
-            if (background.searchResults.stations.length) {
-                $('#searchResults').append('<optgroup label=\'Stations\'></optgroup>');
-                for (x = 0; x < background.searchResults.stations.length; x++) {
-                    $('#searchResults optgroup[label=Stations]').append(new Option(background.searchResults.stations[x].name, background.searchResults.stations[x].value));
-                }
-
-            }
-            if (background.searchResults.artists.length) {
-                $('#searchResults').append('<optgroup label=\'Artists\'></optgroup>');
-                for (x = 0; x < background.searchResults.artists.length; x++) {
-                    $('#searchResults optgroup[label=Artists]').append(new Option(background.searchResults.artists[x].name, background.searchResults.artists[x].value));
-                }
-            }
-            return false;
-        });
-    $('#search').hide();
-    $('#okayButton').hide();
     $('#unWarning').hide();
     //    $('#username').keypress(function (event) {
     //        if (event.keyCode == 9) {
@@ -410,6 +105,9 @@ function () {
                 for (i = 0; i < background.stationList.length; i++) {
                     $('#stationList').append(new Option(background.stationList[i].stationName, background.stationList[i].stationToken));
                 }
+								//move to mid panel	
+								goToStations();
+
                 $('#anesidora').animate({ left: '-'+(294+winShift)+'px' }, 500);
                 $(this).remove();
                 return false;
@@ -419,6 +117,7 @@ function () {
     ///////////////////
     //  Misc loads   //
     ///////////////////
+		goToStations();
     if (typeof background.stationList != "undefined") {
         for (i = 0; i < background.stationList.length; i++) {
             $('#stationList').append(new Option(background.stationList[i].stationName, background.stationList[i].stationToken));
@@ -428,58 +127,48 @@ function () {
         $('#login').remove();
     }
     else {
-        $('#anesidora').css('left', '-'+(594+winShift*2)+'px');
+			goToLogin();
+       // $('#anesidora').css('left', '-'+(594+winShift*2)+'px');
     }
     if (background.userAuthToken && !localStorage.lastStation) {
-        $('#anesidora').css('left', '-'+(294+winShift)+'px');
+			goToStations();
+        //$('#anesidora').css('left', '-'+(294+winShift)+'px');
     }
-    else {
-        $('#prevButton').bind('click', function () { goToPlayer(); });
-    }
+		$('#prevButton').bind('click', function () { goToPlayer(); });
     if (background.mp3Player.src != "") {
-        if (background.mp3Player.currentTime > 0) {
-            updatePlayer();
-            drawPlayer();
-        }
+			if (background.mp3Player.currentTime > 0) {
+				updatePlayer();
+				drawPlayer();
+			}
     }
     else {
-        updatePlayer();
-        $('#moreInfoToggle').button('enable');
+			updatePlayer();
     }
 });
-function goToPlayer() {
-    $(':checkbox').attr('checked', false).button('refresh');
-    $('#search').empty().hide();
-    $('#searchResults').empty().hide();
-    if ($('body').height() > 44) {
-        $('#quickMix').fadeOut(1000);
-        $('#stationList').delay(180).animate({ height: 52 }, 200);
-        $('body').delay(180).animate({ height: 44 }, 200);
-        $('#anesidora').delay(500).animate({ left: '8px' }, 500);
-    }
-    else {
-        $('#anesidora').animate({ left: '8px' }, 500);
-    }
-    $('#stationList').val('');
+function goToPanel(id){
+	var panel = $('#'+id);
+	console.log(currentPanel.attr('id'));
+	console.log(panel.attr('id'));
+	if(currentPanel.attr('id') === panel.attr('id')){
+		console.log('same same');
+		return;
+	}
+	currentPanel = $('#'+id);
+	console.log(currentPanel);
+	console.log('Going to '+id+' width='+currentPanel.width()+' top='+currentPanel.offset().top);
+
+	$('#anesidora').animate({top:currentPanel.offset().top},500);
+	$('body').animate({width:currentPanel.width(),height:currentPanel.height()},500);
 }
-function toggleDetails(source, position) {
-    if ($('.details').is(':hidden')) {
-        if (source == "artist") {
-            $('.details>a:first').text('Artist Details').unbind().bind('click', function () { chrome.tabs.create({ "url": background.currentSong.artistDetailUrl }); $('.details').hide(); });
-//            $('.details>a:last').text('Share Artist').unbind().bind('click', function () { background.bookmarkArtist(background.curSong.artistId); $('.details').hide(); });
-        }
-        else {
-            $('.details>a:first').text('Song Details').unbind().bind('click', function () { chrome.tabs.create({ "url": background.currentSong.songDetailUrl }); $('.details').hide(); });
-            if (localStorage.accessToken && localStorage.facebookUsername) {
-                $('.details>a:last').text('Share Song').unbind().bind('click', function () { background.shareSong(); $('.details').hide(); });
-            }
-        }
-        $('.details').css('left', position - 22);
-        $('.details').show();
-    }
-    else {
-        $('.details').hide();
-    }
+
+function goToLogin(){
+	goToPanel('rightPanel');
+}
+function goToStations(){
+	goToPanel('midPanel');
+}
+function goToPlayer() {
+	goToPanel('leftPanel');
 }
 function updatePlayer() {
     if (background.currentSong) {

@@ -12,9 +12,6 @@ function () {
         mp3Player.volume = .1;
     }
     $('#mp3Player')
-    .bind('pause', function () {
-        chrome.browserAction.setTitle({ 'title': 'Anesidora' })
-    })
     .bind('play', function () {
         callback.updatePlayer();
         currentSong.startTime = Math.round(new Date().getTime() / 1000);
@@ -45,111 +42,12 @@ function () {
         errorCount++;
         nextSong();
     })
-    chrome.omnibox.onInputChanged.addListener(
-        function (text, suggest) {
-            var suggestions = [{ content: "Play", description: "Play current station" },
-                                { content: "Pause", description: "Pause current station" },
-                                { content: "Skip", description: "Skip current song" },
-                                { content: "Like", description: "Like current song" },
-                                { content: "Dislike", description: "Dislike current song" },
-                                { content: "Tired", description: "Sleep current song" },
-                                { content: "Station", description: "[Station name]" },
-                                { content: "Volume", description: "[Volume]"}];
-            if (text.toLowerCase().match('station')) {
-                suggestions = [];
-                var string = text.toLowerCase().replace("station ", "");
-                for (x = 0; x < userStations.length; x++) {
-                    if (userStations[x].name.toLowerCase().indexOf(string) != -1) {
-                        suggestions.push({
-                            content: "Station " + userStations[x].name,
-                            description: "<dim>Station </dim><match>" + userStations[x].name + "</match>"
-                        });
-                    }
-                }
-            }
-            suggest(suggestions);
-        }
-    );
-    chrome.omnibox.onInputEntered.addListener(
-        function (text) {
-            console.log(text);
-            if (text.toLowerCase().match('play')) {
-                if (mp3Player.src != "") {
-                    mp3Player.play();
-                }
-                else {
-                    play(localStorage.lastStation);
-                }
-            }
-            if (text.toLowerCase().match('pause')) {
-                mp3Player.pause();
-            }
-            if (text.toLowerCase().match('skip')) {
-                nextSong();
-            }
-            if (text.toLowerCase().match('like')) {
-                addFeedback("1", "-1");
-            }
-            if (text.toLowerCase().match('dislike')) {
-                addFeedback("0", "-1");
-            }
-            if (text.toLowerCase().match('tired')) {
-                sleepSong();
-            }
-            if (text.toLowerCase().match('station')) {
-                var string = text.toLowerCase().replace("station ", "");
-                for (x = 0; x < userStations.length; x++) {
-                    if (userStations[x].name.toLowerCase().indexOf(string) == 0) {
-                        play(userStations[x].id);
-                    }
-                }
-            }
-            if (text.toLowerCase().match('volume')) {
-                mp3Player.volume = text.toLowerCase().replace("volume ", "") / 100;
-
-            }
-        }
-    );
-    chrome.extension.onRequest.addListener(function (request, sender, callback) {
-        // console.debug(request);
-        switch (request) {
-            case "play":
-                if (mp3Player.paused) {
-                    if (mp3Player.src != "") {
-                        mp3Player.play();
-                    }
-                    else {
-                        play(localStorage.lastStation);
-                    }
-                }
-                else {
-                    mp3Player.pause();
-                }
-                break;
-            case "skip":
-                setTimeout(nextSong(), 1000); // Small delay to stop extension from freezing for some reason
-                break;
-            case "like":
-                addFeedback("1", "-1");
-                break;
-            case "dislike":
-                addFeedback("0", "-1");
-                setTimeout(nextSong(), 1000); // Small delay to stop extension from freezing for some reason
-                break;
-            case "tired":
-                sleepSong();
-                setTimeout(nextSong(), 1000); // Small delay to stop extension from freezing for some reason
-                break;
-            default:
-                return;
-        }
-    });
 });
-function setCallbacks(updatePlayer, drawPlayer, downloadSong) {
-    callback = { "updatePlayer": updatePlayer, "drawPlayer": drawPlayer ,"downloadSong":downloadSong };
-}
 if (localStorage.username != '' && localStorage.password != '') {
     partnerLogin();
+}
+function setCallbacks(updatePlayer,drawPlayer,downloadSong){
+	callback={"updatePlayer":updatePlayer,"drawPlayer":drawPlayer,"downloadSong":downloadSong};
 }
 function play(stationToken) {
     if (stationToken != localStorage.lastStation) {
@@ -195,7 +93,6 @@ function nextSong() {
                 { title: "", message: comingSong.artistName + " - " + comingSong.songName }
             ]
         }
-        chrome.notifications.clear("now_playing", function(wasCleared){});
 
         var xhr = new XMLHttpRequest();
         xhr.open("GET", currentSong.albumArtUrl);
@@ -203,11 +100,9 @@ function nextSong() {
         xhr.onload = function(){
             var blob = this.response;
             options.iconUrl = window.URL.createObjectURL(blob);
-            chrome.notifications.create("now_playing", options, function() {});
         };
         xhr.send(null);
     }
-    chrome.browserAction.setTitle({ "title": currentSong.artistName + " - " + currentSong.songName });
     if (currentSong.additionalAudioUrl != null) {
         mp3Player.setAttribute("src", currentSong.additionalAudioUrl);
     }
