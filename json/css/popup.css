@@ -1,57 +1,46 @@
-﻿::-webkit-scrollbar
-{
+﻿::-webkit-scrollbar {
     width: 10px;
 }
-::-webkit-scrollbar-button:start:decrement, ::-webkit-scrollbar-button:end:increment
-{
+::-webkit-scrollbar-button:start:decrement, ::-webkit-scrollbar-button:end:increment {
     visibility: hidden;
 }
-::-webkit-scrollbar-track-piece
-{
+::-webkit-scrollbar-track-piece {
     background-color: transparent;
 }
-::-webkit-scrollbar-thumb:vertical
-{
+::-webkit-scrollbar-thumb:vertical {
     background-color: #8397aa;
     -webkit-border-radius: 5px;
     border: 2px solid white;
     -webkit-background-clip: padding-box;
 }
-*
-{
+* {
     outline: none;
     font-family: Verdana,Arial;
     font-size: 12px;
     font-weight: normal;
 }
-body
-{
-	min-height:44px;
-	max-height: 60px;
-
+body {
 	overflow:hidden;
-	width:300px;
+	overflow-y:hidden;
+/*	width:600px;*/
 
 	background:linear-gradient(#e5eaf0,white);
 }
-a
-{
+a {
     font-family: Verdana,Arial;
     font-size: 12px;
     text-decoration: none;
     color: Black;
 }
-a:hover
-{
+a:hover {
     text-decoration: underline;
 }
-.deadLink
-{
+.deadLink {
     text-decoration: none;
 }
-#coverArt{
+#coverArt {
 	max-width:100%;
-	max-height:60px;
+	max-height:44px;
 	border:1px solid #8397aa;
 }
 #stationList{

@@ -1,9 +1,14 @@
-﻿var currentPanel =$('#midPanel'); 
+﻿var currentPanel = null
 
 var background = chrome.extension.getBackgroundPage();
 background.setCallbacks(updatePlayer, drawPlayer,downloadSong);
 $(document).ready(
 function () {
+		currentPanel=$('#leftPanel');
+		$('#rightPanel').hide();
+		$('#midPanel').hide();
+		$('#leftPanel').hide();
+		goToPlayer();
     //////////////////////////////
     //  Load jQuery bindings    //
     //////////////////////////////
@@ -13,6 +18,26 @@ function () {
 					$('.details').hide() 
 				} 
 			});
+		console.log('currentPanel.width = '+currentPanel.width());
+		$('body').css({
+			'min-width':currentPanel.width(),
+			'max-width':currentPanel.width(),
+			'width':currentPanel.width(),
+			
+			'min-height':currentPanel.height(),
+			'max-height':currentPanel.height(),
+			'height':currentPanel.height()
+		});
+		console.log('body.width = '+$('body').width());
+		
+		if(background.mp3Player.paused){
+			$('pauseButton').hide();
+			$('playButton').show();
+		} else {
+			$('pauseButton').show();
+			$('playButton').hide();
+		}
+
     $('img:gt(0)')
         .mouseover(function () {
             if ($(this).attr('id') == 'prevButton' && !localStorage.lastStation) {
@@ -53,9 +78,7 @@ function () {
     });
     $('#sleepButton').bind('click', function () { background.sleepSong(); background.nextSong(); });
 		$('#downloadButton').bind('click',function(){ background.downloadSong(); });
-		$('#moreInfoButton').bind('click',function(){
-			window.open('options.html','_blank');
-		});
+		$('#moreInfoButton').bind('click',function(){ window.open('options.htm','_blank');	});
     $('#volume').slider({
         orientation: 'vertical',
         range: 'min',
@@ -146,29 +169,34 @@ function () {
     }
 });
 function goToPanel(id){
-	var panel = $('#'+id);
-	console.log(currentPanel.attr('id'));
-	console.log(panel.attr('id'));
-	if(currentPanel.attr('id') === panel.attr('id')){
-		console.log('same same');
-		return;
+	var panel = $(id);
+	if(currentPanel !== null){
+		if(currentPanel.attr('id') === panel.attr('id')){
+			return;
+		}
+		//hide the other panel
+		currentPanel.hide();
 	}
-	currentPanel = $('#'+id);
-	console.log(currentPanel);
-	console.log('Going to '+id+' width='+currentPanel.width()+' top='+currentPanel.offset().top);
-
-	$('#anesidora').animate({top:currentPanel.offset().top},500);
-	$('body').animate({width:currentPanel.width(),height:currentPanel.height()},500);
+	currentPanel = panel;
+	currentPanel.show();
+	$('body').css({
+		'width':currentPanel.width(),
+		'height':currentPanel.height()
+	});
+	/*$('body').animate({
+		width:currentPanel.width(),
+		height:currentPanel.height()
+	},500);*/
 }
 
 function goToLogin(){
-	goToPanel('rightPanel');
+	goToPanel('#rightPanel');
 }
 function goToStations(){
-	goToPanel('midPanel');
+	goToPanel('#midPanel');
 }
 function goToPlayer() {
-	goToPanel('leftPanel');
+	goToPanel('#leftPanel');
 }
 function updatePlayer() {
     if (background.currentSong) {
