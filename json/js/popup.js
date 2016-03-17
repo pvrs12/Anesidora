@@ -189,44 +189,6 @@ function updatePlayer() {
         $('#playButton').hide();
         $('#pauseButton').show();
     }
-    $('.prevSong').remove();
-    if (background.prevSongs.length > 0) {
-        for (x = background.prevSongs.length - 1; x >= 0; x--) {
-            var html = '<div class="prevSong" songNum="'+x+'">';
-            html += '<img style="height:24px; width:24px; margin:2px 6px 0px 0px; border: 1px solid #8397aa; float:left; position:relative;" src="' + background.prevSongs[x].albumArtUrl + '" />';
-            html += '<div class="scrollerContainer" style="position:relative; width:254px;">';
-            html += '<div class="scrollerText">';
-            html += '<a class="prevSongArtist" href="#">' + background.prevSongs[x].artistName + '</a>';
-            html += ' - ';
-            html += '<a class="prevSongTitle" href="#">' + background.prevSongs[x].songName + '</a>';
-            html += '</div>';
-            html += '</div>';
-            if (background.prevSongs[x].songRating) {
-                html += '<span style="font-weight:bold">Liked</span>';
-            }
-            else if (background.prevSongs[x].disliked) {
-                html += '<span style="font-weight:bold">Disliked</span>';
-            }
-            else {
-                html += '<div class="prevSongRating" style="position:relative;">';
-                html += '<a class="prevSongLike" songNum="' + x + '" href="#">Like</a>';
-                html += ' - ';
-                html += '<a class="prevSongDislike" songNum="' + x + '" href="#">Dislike</a>';
-                html += '</div>';
-            }
-            html += '</div>';
-            $('#moreInfo').append(html);
-        }
-    }
-//    if ($('#moreInfoToggle').attr('checked')) {
-////        if (background.curSong.narrative) {
-////            $('#narrative').text(background.curSong.narrative);
-////        }
-////        else {
-////            $('#narrative').html('<a id="narrativeLink" href="#">Why was this song played?</a>');
-////        }
-//        $('body').height($('#moreInfo').height() + 50);
-//    }
     $('.scrollerText').hoverIntent({
         over: function () {
             if ($(this).width() > $(this).parent().width()) {
