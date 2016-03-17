@@ -18,18 +18,7 @@ $(document).ready(function () {
 		}
 	}
 
-	if(localStorage.bodyWidth===undefined
-			|| localStorage.bodyWidth===0){
-		localStorage.bodyWidth=310;
-	}
-	if(localStorage.bodyHeight===undefined
-			|| localStorage.bodyHeight===0){
-		localStorage.bodyHeight=50;
-	}
-
-	$('#bodyWidth').val(localStorage.bodyWidth);
-	$('#bodyHeight').val(localStorage.bodyHeight);
-
+	initBodySize();
 	$('#bodyWidth').change(function(){
 		localStorage.bodyWidth=$(this).val();
 	});
@@ -122,6 +111,21 @@ $(document).ready(function () {
 	});
 
 });
+
+function initBodySize(){
+	if(localStorage.bodyWidth===undefined
+			|| localStorage.bodyWidth===0){
+		localStorage.bodyWidth=310;
+	}
+	if(localStorage.bodyHeight===undefined
+			|| localStorage.bodyHeight===0){
+		localStorage.bodyHeight=50;
+	}
+
+	$('#bodyWidth').val(localStorage.bodyWidth);
+	$('#bodyHeight').val(localStorage.bodyHeight);
+
+}
 
 function LoadHotKeyTextValue(inputBox, keyCodes) {
 	if (!keyCodes) return;
