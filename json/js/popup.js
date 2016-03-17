@@ -13,6 +13,7 @@ function () {
 					$('.details').hide() 
 				} 
 			});
+		initBodySize();
 		$('body').width(localStorage.bodyWidth);
 		$('body').height(localStorage.bodyHeight);
 
@@ -127,7 +128,13 @@ function () {
             $('#stationList').append(new Option(background.stationList[i].stationName, background.stationList[i].stationToken));
         }
     }
-    if (localStorage.username.length==0 || localStorage.password.length==0 || background.userAuthToken.length==0) {
+    if (
+			localStorage.username == undefined
+			|| localStorage.password == undefined
+			|| background.userAuthToken == undefined
+			|| localStorage.username.length==0 
+			|| localStorage.password.length==0 
+			|| background.userAuthToken.length==0) {
 			goToLogin();
     } else {
 			if (!localStorage.lastStation) {
@@ -148,6 +155,18 @@ function () {
 			updatePlayer();
     }
 });
+function initBodySize(){
+	if(localStorage.bodyWidth===undefined
+			|| localStorage.bodyWidth===0){
+		localStorage.bodyWidth=310;
+	}
+	if(localStorage.bodyHeight===undefined
+			|| localStorage.bodyHeight===0){
+		localStorage.bodyHeight=50;
+	}
+	$('#bodyWidth').val(localStorage.bodyWidth);
+	$('#bodyHeight').val(localStorage.bodyHeight);
+}
 function goToPanel(id){
 	var panel = $(id);
 	if(currentPanel !== null){

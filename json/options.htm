@@ -12,10 +12,15 @@
 			<div id="container" style="position: relative; top: 75px;">
 				<fieldset style="border: 1px solid black; font-style: italic;">
 					<legend>Player Settings</legend>
-					<label for="bodyWidth" style="float:left; width:85px;font-weight:bold;padding-top:4px;">Player Width</label>
-					<input id=bodyWidth style="display:block" type=number min=1></input>
-					<label for="bodyHeight" style="float:left; width:85px;font-weight:bold;padding-top:4px;">Player Height</label>
-					<input id=bodyHeight type=number min=1></input>
+					<table>
+					<tr>
+					<td><label for="bodyWidth" style="font-weight:bold;">Player Width</label></td>
+					<td><input id=bodyWidth style="display:block" type=number min=1></input></td>
+					</tr><tr>
+					<td><label for="bodyHeight" style="font-weight:bold">Player Height</label></td>
+					<td><input id=bodyHeight type=number min=1></input></td>
+					</tr>
+					</table>
 
 					<label style="display: block; font-weight: bold;" for='notifications'>
 						<input id='notifications' type='checkbox' />Show notifications</label>
