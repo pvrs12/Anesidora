@@ -23,7 +23,7 @@
 	"omnibox": {
 		"keyword": "radio"
 	},
-	"homepage_url": "http://anesidora.tk/",
+	"homepage_url": "http://github.com/pvrs12/anesidora",
 	"options_page": "options.htm",
 	"permissions": [
         "http://*.pandora.com/*",
@@ -39,7 +39,7 @@
 	"content_security_policy": "script-src 'self' https://ssl.google-analytics.com; object-src 'self'",
 	"applications":{
 		"gecko":{
-			"id":"anesidora@anesidora.tk"
+			"id":"pvrs12@gmail.com"
 		}
 	}
 }
