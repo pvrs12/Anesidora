@@ -4,11 +4,6 @@ var background = chrome.extension.getBackgroundPage();
 background.setCallbacks(updatePlayer, drawPlayer,downloadSong);
 $(document).ready(
 function () {
-		currentPanel=$('#leftPanel');
-		$('#rightPanel').hide();
-		$('#midPanel').hide();
-		$('#leftPanel').hide();
-		goToPlayer();
     //////////////////////////////
     //  Load jQuery bindings    //
     //////////////////////////////
@@ -18,17 +13,9 @@ function () {
 					$('.details').hide() 
 				} 
 			});
-		$('body').css({
-			'min-width':currentPanel.width(),
-			'max-width':currentPanel.width(),
-			'width':currentPanel.width(),
-			
-			'min-height':currentPanel.height(),
-			'max-height':currentPanel.height(),
-			'height':currentPanel.height()
-		});
 		$('#stationList').css({
-			'max-width':currentPanel.width()-30
+			'width':$('body').width()-30,
+			'height':$('body').height()
 		});
 		
 		if(background.mp3Player.paused){
@@ -38,6 +25,7 @@ function () {
 			$('pauseButton').show();
 			$('playButton').hide();
 		}
+		$('.panel').hide();
 
     $('img:gt(0)')
         .mouseover(function () {
@@ -97,7 +85,6 @@ function () {
     $('#nextButton').bind('click', function () {
 				//move to midpanel
 				goToStations();
-
     });
     $('#stationList').bind('dblclick keyup', function (e) {
         if (e.type == "dblclick" || e.keyCode == "13") {
@@ -106,12 +93,6 @@ function () {
         }
     });
     $('#unWarning').hide();
-    //    $('#username').keypress(function (event) {
-    //        if (event.keyCode == 9) {
-    //            $('#password').focus();
-    //            return false;
-    //        }
-    //    });
     $('#pwWarning').hide();
     $('#login')
         .bind('submit', function () {
@@ -131,9 +112,6 @@ function () {
                 }
 								//move to mid panel	
 								goToStations();
-
-                $('#anesidora').animate({ left: '-'+(294+winShift)+'px' }, 500);
-                $(this).remove();
                 return false;
             }
         });
@@ -141,23 +119,21 @@ function () {
     ///////////////////
     //  Misc loads   //
     ///////////////////
-		goToStations();
     if (typeof background.stationList != "undefined") {
         for (i = 0; i < background.stationList.length; i++) {
             $('#stationList').append(new Option(background.stationList[i].stationName, background.stationList[i].stationToken));
         }
     }
-    if (localStorage.username && localStorage.password) {
-        $('#login').remove();
-    }
-    else {
+    if (localStorage.username.length==0 || localStorage.password.length==0 || background.userAuthToken.length==0) {
 			goToLogin();
-       // $('#anesidora').css('left', '-'+(594+winShift*2)+'px');
-    }
-    if (background.userAuthToken && !localStorage.lastStation) {
-			goToStations();
-        //$('#anesidora').css('left', '-'+(294+winShift)+'px');
-    }
+    } else {
+			if (!localStorage.lastStation) {
+				goToStations();
+			}
+			if(localStorage.lastStation){
+				goToPlayer();
+			}
+		}
 		$('#prevButton').bind('click', function () { goToPlayer(); });
     if (background.mp3Player.src != "") {
 			if (background.mp3Player.currentTime > 0) {
@@ -171,6 +147,7 @@ function () {
 });
 function goToPanel(id){
 	var panel = $(id);
+	console.log(id);
 	if(currentPanel !== null){
 		if(currentPanel.attr('id') === panel.attr('id')){
 			return;
@@ -178,16 +155,8 @@ function goToPanel(id){
 		//hide the other panel
 		currentPanel.hide();
 	}
-	currentPanel = panel;
+	currentPanel=panel;
 	currentPanel.show();
-	$('body').css({
-		'width':currentPanel.width(),
-		'height':currentPanel.height()
-	});
-	/*$('body').animate({
-		width:currentPanel.width(),
-		height:currentPanel.height()
-	},500);*/
 }
 
 function goToLogin(){

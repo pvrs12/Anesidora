@@ -21,8 +21,8 @@
 }
 body {
 	overflow:hidden;
-	overflow-y:hidden;
-/*	width:600px;*/
+	width:310px;
+	height:50px;
 
 	background:linear-gradient(#e5eaf0,white);
 }
