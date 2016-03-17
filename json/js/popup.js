@@ -13,6 +13,9 @@ function () {
 					$('.details').hide() 
 				} 
 			});
+		$('body').width(localStorage.bodyWidth);
+		$('body').height(localStorage.bodyHeight);
+
 		$('#stationList').css({
 			'width':$('body').width()-30,
 			'height':$('body').height()
@@ -147,7 +150,6 @@ function () {
 });
 function goToPanel(id){
 	var panel = $(id);
-	console.log(id);
 	if(currentPanel !== null){
 		if(currentPanel.attr('id') === panel.attr('id')){
 			return;
