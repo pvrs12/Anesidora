@@ -18,7 +18,6 @@ function () {
 					$('.details').hide() 
 				} 
 			});
-		console.log('currentPanel.width = '+currentPanel.width());
 		$('body').css({
 			'min-width':currentPanel.width(),
 			'max-width':currentPanel.width(),
@@ -28,7 +27,9 @@ function () {
 			'max-height':currentPanel.height(),
 			'height':currentPanel.height()
 		});
-		console.log('body.width = '+$('body').width());
+		$('#stationList').css({
+			'max-width':currentPanel.width()-30
+		});
 		
 		if(background.mp3Player.paused){
 			$('pauseButton').hide();
