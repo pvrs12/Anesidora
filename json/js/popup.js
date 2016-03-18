@@ -210,20 +210,16 @@ function updatePlayer() {
         $('#playButton').hide();
         $('#pauseButton').show();
     }
-    $('.scrollerText').hoverIntent({
-        over: function () {
-            if ($(this).width() > $(this).parent().width()) {
-                var newLeft = $(this).parent().width() - ($(this).width());
-                var speed = Math.round(($(this).width() - $(this).parent().width() + $(this).position().left) * 10);
-                $(this).stop().delay(500).animate({ left: newLeft }, speed);
-            }
-        },
-        out: function () {
-            var speed = Math.round($(this).position().left * (-10));
-            $(this).stop().delay(500).animate({ left: '0' }, speed);
-        },
-        interval: 500
-    });
+		$('.scrollerText').hover(function(){
+			if ($(this).width() > $(this).parent().width()) {
+				var newLeft = $(this).parent().width() - ($(this).width());
+				var speed = Math.round(($(this).width() - $(this).parent().width() + $(this).position().left) * 10);
+				$(this).stop().delay(500).animate({ left: newLeft }, speed);
+			}
+		},function(){
+			//move it to left immediately
+			$(this).stop().css({left:0});
+		});
     $('#scrubber')
     .slider({
         value: 0
