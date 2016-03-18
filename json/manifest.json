@@ -35,7 +35,6 @@
         "tabs",
         "http://*.p-cdn.com/*"],
 	"version": "1.7.7",
-	"content_security_policy": "script-src 'self' https://ssl.google-analytics.com; object-src 'self'",
 	"applications":{
 		"gecko":{
 			"id":"pvrs12@gmail.com"
