@@ -42,7 +42,7 @@ function lastFmNowPlaying() {
                         return;
                     },
                   3000);
-    http.open("POST", URL, false);
+    http.open("POST", URL, true);
     http.onreadystatechange = function () {
         if (http.readyState == 4 && http.status == 200) {
 //            console.log(http.responseXML);
