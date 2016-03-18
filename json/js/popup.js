@@ -32,7 +32,7 @@ function () {
 		$('.panel').hide();
 
     $('img:gt(0)')
-        .mouseover(function () {
+        .hover(function () {
             if ($(this).attr('id') == 'prevButton' && !localStorage.lastStation) {
                 return false;
             }
@@ -40,8 +40,8 @@ function () {
                 var src = $(this).attr("src").replace(".png", "hover.png");
                 $(this).attr("src", src);
             }
-        })
-        .mouseout(function () {
+        },
+        function () {
             var src = $(this).attr("src").replace("hover", "");
             $(this).attr("src", src);
         });
@@ -67,7 +67,7 @@ function () {
     });
     $('#tDownButton').bind('click', function () {
         background.addFeedback(-1, false);
-        setTimeout(background.nextSong(), 1000); // Small delay to stop extension from freezing for some reason
+        setTimeout(function(){background.nextSong();}, 1000); // Small delay to stop extension from freezing for some reason
     });
     $('#sleepButton').bind('click', function () { background.sleepSong(); background.nextSong(); });
 		$('#downloadButton').bind('click',function(){ background.downloadSong(); });
@@ -256,11 +256,3 @@ function zeroPad(num, places) {
     var zero = places - num.toString().length + 1;
     return Array(+(zero > 0 && zero)).join("0") + num;
 }
-var _gaq = _gaq || [];
-_gaq.push(['_setAccount', 'UA-43432184-3']);
-_gaq.push(['_trackPageview']);
-(function () {
-    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-    ga.src = 'https://ssl.google-analytics.com/ga.js';
-    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-})();

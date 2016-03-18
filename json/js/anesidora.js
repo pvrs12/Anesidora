@@ -1,11 +1,4 @@
-﻿String.prototype.format = function () {
-    var formatted = this;
-    for (arg in arguments) {
-        formatted = formatted.replace("{" + arg + "}", arguments[arg]);
-    }
-    return formatted;
-};
-// http://stackoverflow.com/questions/1240408/reading-bytes-from-a-javascript-string
+﻿// http://stackoverflow.com/questions/1240408/reading-bytes-from-a-javascript-string
 function stringToBytes(str) {
     var ch, st, re = [];
     for (var i = 0; i < str.length; i++) {

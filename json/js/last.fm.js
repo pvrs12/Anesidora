@@ -12,7 +12,7 @@ function lastFmSession(username, password) {
                         return;
                     },
                   3000);
-    http.open("GET", URL, false);
+    http.open("GET", URL);
     http.onreadystatechange = function () {
         if (http.readyState == 4 && http.status == 200) {
             console.log(http.responseXML);
@@ -69,13 +69,11 @@ function lastFmScrobble() {
                         return;
                     },
                   3000);
-    http.open("POST", URL, false);
+    http.open("POST", URL);
     http.onreadystatechange = function () {
         if (http.readyState == 4 && http.status == 200) {
 //            console.log(http.responseXML);
         }
     }
     http.send();
-
-
 }
