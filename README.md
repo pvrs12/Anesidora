@@ -1,7 +1,15 @@
 Anesidora Firefox
 =========
 
-Anesidora - unofficial Pandora extension for firefox. Original written for Chrome
+Anesidora - unofficial Pandora extension for firefox. Original Anesidora written for Chrome
+
+####Download/Install https://addons.mozilla.org/firefox/addon/anesidora-firefox/
+
+<br>
+<br>
+<br>
+<br>
+
 
 ~~Download the latest packed version here: [http://anesidora.tk/get](http://anesidora.tk/get) (*Right click --> "Save link as...") 
 Submit issues here: [http://anesidora.tk/issues](http://anesidora.tk/issues)~~Links to anesidora.tk broken
