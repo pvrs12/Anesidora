@@ -111,9 +111,7 @@ function () {
                 return false;
             }
             else {
-                for (i = 0; i < background.stationList.length; i++) {
-                    $('#stationList').append(new Option(background.stationList[i].stationName, background.stationList[i].stationToken));
-                }
+							addStations();
 								//move to mid panel	
 								goToStations();
                 return false;
@@ -124,9 +122,7 @@ function () {
     //  Misc loads   //
     ///////////////////
     if (typeof background.stationList != "undefined") {
-        for (i = 0; i < background.stationList.length; i++) {
-            $('#stationList').append(new Option(background.stationList[i].stationName, background.stationList[i].stationToken));
-        }
+			addStations();
     }
     if (
 			localStorage.username == undefined
@@ -188,6 +184,20 @@ function goToStations(){
 }
 function goToPlayer() {
 	goToPanel('#leftPanel');
+}
+function clearStations() {
+	for(var i=0;i<$('#stationList').length;++i){
+		$('#stationList').remove(i);
+	}
+}
+function addStations() {
+	for (var i = 0; i < background.stationList.length; i++) {
+			$('#stationList').append(new Option(background.stationList[i].stationName, background.stationList[i].stationToken));
+	}
+}
+function refreshStations() {
+	clearStations();
+	addStations();
 }
 function updatePlayer() {
     if (background.currentSong) {
