@@ -26,6 +26,9 @@ $(document).ready(function () {
 		localStorage.bodyHeight=$(this).val();
 	});
 
+	$('#refresh').bind('click',function(){
+		background.getStationList();
+	});
 	$('#reset').bind('click', function () {
 		localStorage.username = '';
 		localStorage.password = '';
