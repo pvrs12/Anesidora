@@ -19,7 +19,7 @@
 		"16": "images/anesidora-16.png",
 		"48": "images/anesidora-48.png"
 	},
-	"name": "Anesidora Firefox",
+	"name": "Anesidora",
 	"omnibox": {
 		"keyword": "radio"
 	},
@@ -34,7 +34,7 @@
         "notifications",
         "tabs",
         "http://*.p-cdn.com/*"],
-	"version": "1.7.8",
+	"version": "1.7.9",
 	"applications":{
 		"gecko":{
 			"id":"pvrs12@gmail.com"
