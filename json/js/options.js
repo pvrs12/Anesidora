@@ -1,6 +1,9 @@
 var min_width=310;
 var min_height=50;
 
+var default_width=350;
+var default_height=100;
+
 $(document).ready(function () {
 	var background = chrome.extension.getBackgroundPage();
 	$('#lastFmStatus').hide();
@@ -133,11 +136,11 @@ $(document).ready(function () {
 function initBodySize(){
 	if(localStorage.bodyWidth===undefined
 			|| localStorage.bodyWidth===0){
-		localStorage.bodyWidth=310;
+		localStorage.bodyWidth=default_width;
 	}
 	if(localStorage.bodyHeight===undefined
 			|| localStorage.bodyHeight===0){
-		localStorage.bodyHeight=50;
+		localStorage.bodyHeight=default_height;
 	}
 
 	$('#bodyWidth').val(localStorage.bodyWidth);
