@@ -17,16 +17,21 @@ function () {
 		$('body').width(localStorage.bodyWidth);
 		$('body').height(localStorage.bodyHeight);
 
-		$('#stationList').css({
-			'width':$('body').width()-30,
-			'height':$('body').height()
+		$('.panel,#stationList,#historyDiv').css({
+			'height':$('body').height(),
+			'width':$('body').width()
 		});
-		$('#historyDiv').css({
-			'width':$('body').width()-20,
-			'height':$('body').height()
+		$('#stationList').css({
+			'width':$('body').width()-30
+		});
+		$('#historyDiv,#historyList').css({
+			'width':$('body').width()-20
 		});
 		$('#volume').css({
-			'height':$('body').height()
+			'height':$('body').height()-5
+		});
+		$('#coverArt').css({
+			'min-width':Math.min($('body').height()*.75,$('body').width()*.1)
 		});
 
 		if(background.mp3Player.paused){
@@ -193,19 +198,25 @@ function updateHistory() {
 
 	var history = document.getElementById('historyList');
 	for(var i = background.prevSongs.length-1;i>=0;--i){
+		var song = background.prevSongs[i];
 		var row = history.insertRow();
 
 		var imgCell = row.insertCell();
-		imgCell.innerHTML='<img src="'+background.prevSongs[i].albumArtUrl+'" class="historyCoverArt historyInfoLink" data-history='+i+'>'
-		var nameCell = row.insertCell();
+		imgCell.innerHTML='<img src="'+song.albumArtUrl+'" class="historyCoverArt historyInfoLink" data-history='+i+' />';
 
-		nameCell.innerHTML='<span data-history='+i+' class=historyInfoLink style="text-decoration:underline;">'+background.prevSongs[i].songName+'</span>';
+		var nameCell = row.insertCell();
+		nameCell.noWrap=true;
+		nameCell.style="max-width:"+($('body').width()*.5)+"px";
+		nameCell.innerHTML='<span data-history='+i+' class="historyInfoLink historyTitle">'+song.songName+'</span>';
+
 		var likeCell = row.insertCell();
-		likeCell.innerHTML = '<img src="images/thumbup.png" data-history='+i+' class=hoverImg>';
+		likeCell.innerHTML = '<img src="images/thumbup.png" data-history='+i+' class=hoverImg />';
+
 		var dislikeCell = row.insertCell();
-		dislikeCell.innerHTML = '<img src="images/thumbdown.png" data-history='+i+' class=hoverImg>';
+		dislikeCell.innerHTML = '<img src="images/thumbdown.png" data-history='+i+' class=hoverImg />';
+
 		var dlCell = row.insertCell();
-		dlCell.innerHTML = '<img src="images/download.png" data-history='+i+' class=hoverImg>';
+		dlCell.innerHTML = '<img src="images/download.png" data-history='+i+' class=hoverImg />';
 	}
 	$('.historyInfoLink').bind('click',function(e){
 		var historyNum=e.target.dataset['history'];
@@ -214,10 +225,7 @@ function updateHistory() {
 	});
 }
 function clearHistory() {
-	var history=document.getElementById('historyList');
-	for(var i=0;i<history.rows.length;++i){
-		history.deleteRow(i);
-	}
+	document.getElementById('historyList').innerHTML="";
 }
 function clearStations() {
 	for(var i=0;i<$('#stationList').length;++i){
@@ -291,6 +299,7 @@ function drawPlayer() {
     );
 }
 function downloadSong(url,title){
+	//making an anchor tag and clicking it allows the download dialog to work and save the file with the song's name
 	var a = $('<a href="'+url+'" download="'+title+'.mp4">HELLO</a>');
 	a.appendTo('body');
 	a[0].click();

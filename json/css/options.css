@@ -1,9 +1,11 @@
-*
-{
+* {
     outline: none;
     font-family: Verdana,Arial;
     font-size: 12px; 
     font-weight:normal;
+}
+body {
+	background:linear-gradient(#0058c0,white) no-repeat;
 }
 #lastFmStatus
 {
