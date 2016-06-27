@@ -31,24 +31,31 @@ a {
     color: Black;
 }
 a:hover {
-    text-decoration: underline;
+  text-decoration: underline;
 }
 .hoverImg:hover {
 	filter:hue-rotate(180deg) saturate(500%);
 }
 .deadLink {
-    text-decoration: none;
+	text-decoration: none;
+}
+.historyTitle {
+	text-decoration: underline;
+	text-overflow: ellipsis;
 }
 .historyInfoLink {
 	cursor:pointer;
 }
 .historyCoverArt {
 	max-width:100%;
-	max-height:34px;
+	max-height:15px;
+	min-width:15px;
+	min-height:15px;
 }
 #coverArt {
 	max-width:100%;
-	max-height:44px;
+	max-height:120px;
+
 	border:1px solid #8397aa;
 }
 #stationList{
