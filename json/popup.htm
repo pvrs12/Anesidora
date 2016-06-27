@@ -16,8 +16,24 @@
 </head>
 <body>
 	<div id="anesidora">
+		<table id=historyPanel class=panel>
+			<tr>
+				<td rowspan=0>
+					<table id=historyList>
+					</table>
+				</td>
+				<td rowspan=0>
+					<img title="View player" id="noHistory" src="images/next.png" />
+				</td>
+			</tr>
+		</table>
 		<table id=leftPanel class=panel>
 			<tr id=leftTopRow>
+				<td id=historyTd rowspan=0>
+					<a id="history" href="#">
+						<img title="Click to view listen history" id="historyImg" src="./images/prev.png"/>
+					</a>
+				</td>
 				<td id=artTd rowspan=0>
 					<a id="coverLink" href="#">
 						<img title="Click to view album details" id="coverArt" src="./images/cover.png" />
@@ -77,7 +93,7 @@
 					<img title="View player" id="prevButton" src="images/prev.png" />
 				</td>
 				<td id=stationListTd rowspan=0>
-					<select id="stationList" multiple="multiple">
+					<select id="stationList">
 					</select>
 				</td>
 			</tr>
