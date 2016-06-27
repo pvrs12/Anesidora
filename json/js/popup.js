@@ -21,7 +21,7 @@ function () {
 			'width':$('body').width()-30,
 			'height':$('body').height()
 		});
-		
+
 		if(background.mp3Player.paused){
 			$('pauseButton').hide();
 			$('playButton').show();
@@ -140,7 +140,12 @@ function () {
 				goToPlayer();
 			}
 		}
+
 		$('#prevButton').bind('click', function () { goToPlayer(); });
+		$('#history').bind('click', function(e){ goToHistory(); });
+		$('#noHistory').bind('click', function(e){ goToPlayer();});
+		
+
     if (background.mp3Player.src != "") {
 			if (background.mp3Player.currentTime > 0) {
 				updatePlayer();
@@ -172,7 +177,7 @@ function goToPanel(id){
 		//hide the other panel
 		currentPanel.hide();
 	}
-	currentPanel=panel;
+	currentPanel = panel;
 	currentPanel.show();
 }
 
@@ -184,6 +189,41 @@ function goToStations(){
 }
 function goToPlayer() {
 	goToPanel('#leftPanel');
+}
+function goToHistory() {
+	goToPanel('#historyPanel');
+	updateHistory();
+}
+function updateHistory() {
+	clearHistory();
+
+	var history = document.getElementById('historyList');
+	for(var i = background.prevSongs.length-1;i>=0;--i){
+		var row = history.insertRow();
+
+		var imgCell = row.insertCell();
+		imgCell.innerHTML='<img src="'+background.prevSongs[i].albumArtUrl+'" class="historyCoverArt historyInfoLink" data-history='+i+'>'
+		var nameCell = row.insertCell();
+
+		nameCell.innerHTML='<span data-history='+i+' class=historyInfoLink style="text-decoration:underline;">'+background.prevSongs[i].songName+'</span>';
+		var likeCell = row.insertCell();
+		likeCell.innerHTML = '<img src="images/thumbup.png" data-history='+i+'>';
+		var dislikeCell = row.insertCell();
+		dislikeCell.innerHTML = '<img src="images/thumbdown.png" data-history='+i+'>';
+		var dlCell = row.insertCell();
+		dlCell.innerHTML = '<img src="images/download.png" data-history='+i+'>';
+	}
+	$('.historyInfoLink').bind('click',function(e){
+		var historyNum=e.target.dataset['history'];
+		var song = background.prevSongs[historyNum];
+		chrome.tabs.create({ "url": song.songDetailUrl });
+	});
+}
+function clearHistory() {
+	var history=document.getElementById('historyList');
+	for(var i=0;i<history.rows.length;++i){
+		history.deleteRow(i);
+	}
 }
 function clearStations() {
 	for(var i=0;i<$('#stationList').length;++i){
@@ -202,8 +242,10 @@ function refreshStations() {
 function updatePlayer() {
     if (background.currentSong) {
         $('#coverArt').unbind().bind('click', function () { chrome.tabs.create({ "url": background.currentSong.albumDetailUrl }) }).attr('src', background.currentSong.albumArtUrl);
-        $('#artistLink').unbind().bind('click', function (e) { toggleDetails("artist", e.pageX); /*chrome.tabs.create({ "url": background.curSong.artistUrl }) */ }).text(background.currentSong.artistName);
-        $('#titleLink').unbind().bind('click', function (e) { toggleDetails("song", e.pageX); /* chrome.tabs.create({ "url": background.curSong.titleUrl }) */ }).text(background.currentSong.songName);
+       $('#artistLink').unbind().text(background.currentSong.artistName);
+       $('#titleLink').unbind().text(background.currentSong.songName);
+        $('#artistLink').unbind().bind('click', function (e) { chrome.tabs.create({ "url": background.currentSong.artistDetailUrl }) }).text(background.currentSong.artistName);
+        $('#titleLink').unbind().bind('click', function (e) {  chrome.tabs.create({ "url": background.currentSong.songDetailUrl }) }).text(background.currentSong.songName);
         $('#dash').text(" - ");
         if (background.currentSong.songRating==false) {
             $('#tUpButton').unbind('click').bind('click', function () { background.addFeedback(-1, true); $(this).attr('src', 'images/thumbUpCheck.png'); }).attr('src', 'images/thumbup.png');
