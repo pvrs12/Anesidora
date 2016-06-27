@@ -19,11 +19,13 @@
 		<table id=historyPanel class=panel>
 			<tr>
 				<td rowspan=0>
-					<table id=historyList>
-					</table>
+					<div id=historyDiv style="overflow-x:hidden">
+						<table id=historyList>
+						</table>
+					</div>
 				</td>
-				<td rowspan=0>
-					<img title="View player" id="noHistory" src="images/next.png" />
+				<td rowspan=0 text-align=right>
+					<img title="View player" id="noHistory" src="images/next.png" class=hoverImg />
 				</td>
 			</tr>
 		</table>
@@ -31,7 +33,7 @@
 			<tr id=leftTopRow>
 				<td id=historyTd rowspan=0>
 					<a id="history" href="#">
-						<img title="Click to view listen history" id="historyImg" src="./images/prev.png"/>
+						<img title="Click to view listen history" id="historyImg" src="./images/prev.png" class=hoverImg />
 					</a>
 				</td>
 				<td id=artTd rowspan=0>
@@ -49,11 +51,11 @@
 					</div>
 				</td>
 				<td id=volumeTd rowspan=0>
-					<div style="max-height:40px" title="Volume" id="volume">
+					<div title="Volume" id="volume">
 					</div>
 				</td> 
 				<td id=nextPageTd rowspan=0>
-					<img title="View stations" id="nextButton" src="images/next.png" />
+					<img title="View stations" id="nextButton" src="images/next.png" class=hoverImg />
 				</td>
 			</tr>
 			<tr id=leftMidRow >
@@ -64,36 +66,36 @@
 			</tr>
 			<tr id=leftBotRow >
 				<td id=playTd>
-					<img title="Play" id="playButton" src="images/play.png" />
-					<img title="Pause" id="pauseButton" src="images/pause.png" style=display:none" />
+					<img title="Play" id="playButton" src="images/play.png" class=hoverImg />
+					<img title="Pause" id="pauseButton" src="images/pause.png" style=display:none" class=hoverImg />
 				</td>
 				<td id=nextTd>
-					<img title="Next song" id="skipButton" src="images/skip.png" />
+					<img title="Next song" id="skipButton" src="images/skip.png" class=hoverImg />
 				</td>
 				<td id=thumbUpTd>
-					<img title="Like this song" id="tUpButton" src="images/thumbup.png" />
+					<img title="Like this song" id="tUpButton" src="images/thumbup.png" class=hoverImg />
 				</td>
 				<td id=thumbDownTd>
-					<img title="Dislike this song" id="tDownButton" src="images/thumbdown.png" />
+					<img title="Dislike this song" id="tDownButton" src="images/thumbdown.png" class=hoverImg />
 				</td>
 				<td id=sleepTd>
-					<img title="I'm tired of this song" id="sleepButton" src="images/sleep.png" />
+					<img title="I'm tired of this song" id="sleepButton" src="images/sleep.png" class=hoverImg />
 				</td>
 				<td id=dlTd>
-					<img title="Download this song" id="downloadButton" src="images/download.png" />
+					<img title="Download this song" id="downloadButton" src="images/download.png" class=hoverImg />
 				</td>
 				<td id=moreTd>
-					<img title="Options" id="moreInfoButton" src="images/moreInfo.png"/>
+					<img title="Options" id="moreInfoButton" src="images/moreInfo.png" class=hoverImg />
 				</td>
 			</tr>
 		</table>
 		<table id=midPanel class=panel>
 			<tr id=midTopRow>
 				<td id=prevPageTd rowspan=0>
-					<img title="View player" id="prevButton" src="images/prev.png" />
+					<img title="View player" id="prevButton" src="images/prev.png" class=hoverImg />
 				</td>
 				<td id=stationListTd rowspan=0>
-					<select id="stationList">
+					<select id="stationList" multiple="multiple">
 					</select>
 				</td>
 			</tr>
