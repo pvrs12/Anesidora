@@ -1,3 +1,6 @@
+var min_width=310;
+var min_height=50;
+
 $(document).ready(function () {
 	var background = chrome.extension.getBackgroundPage();
 	$('#lastFmStatus').hide();
@@ -20,10 +23,22 @@ $(document).ready(function () {
 
 	initBodySize();
 	$('#bodyWidth').change(function(){
-		localStorage.bodyWidth=$(this).val();
+		if($(this).val()<min_width){
+			localStorage.bodyWidth=min_width;
+			alert('The width must be greater than or equal to '+min_width+'!');
+			$(this).val(min_width);
+		} else {
+			localStorage.bodyWidth=$(this).val();
+		}
 	});
 	$('#bodyHeight').change(function(){
-		localStorage.bodyHeight=$(this).val();
+		if($(this).val()<min_height){
+			localStorage.bodyHeight=min_height;
+			alert('The height must be greater than or equal to '+min_height+'!');
+			$(this).val(min_height);
+		} else {
+			localStorage.bodyHeight=$(this).val();
+		}
 	});
 
 	$('#refresh').bind('click',function(){
