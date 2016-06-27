@@ -210,18 +210,37 @@ function updateHistory() {
 		nameCell.innerHTML='<span data-history='+i+' class="historyInfoLink historyTitle">'+song.songName+'</span>';
 
 		var likeCell = row.insertCell();
-		likeCell.innerHTML = '<img src="images/thumbup.png" data-history='+i+' class=hoverImg />';
+		likeCell.innerHTML = '<img src="images/thumbup.png" data-history='+i+' class="hoverImg historyLike" />';
 
-		var dislikeCell = row.insertCell();
-		dislikeCell.innerHTML = '<img src="images/thumbdown.png" data-history='+i+' class=hoverImg />';
+		//dislikes aren't done yet
+		//var dislikeCell = row.insertCell();
+		//dislikeCell.innerHTML = '<img src="images/thumbdown.png" data-history='+i+' class="hoverImg historyDislike" />';
 
 		var dlCell = row.insertCell();
-		dlCell.innerHTML = '<img src="images/download.png" data-history='+i+' class=hoverImg />';
+		dlCell.innerHTML = '<img src="images/download.png" data-history='+i+' class="hoverImg historyDownload" />';
 	}
 	$('.historyInfoLink').bind('click',function(e){
 		var historyNum=e.target.dataset['history'];
 		var song = background.prevSongs[historyNum];
 		chrome.tabs.create({ "url": song.songDetailUrl });
+	});
+	$('.historyLike').bind('click',function(e){
+		var historyNum=e.target.dataset['history'];
+		background.addFeedback(historyNum,true);	
+
+		$(this).unbind('click').attr('src', 'images/thumbUpCheck.png');
+	});
+	//$('.historyDislike').bind('click',function(e){
+		//var historyNum=e.target.dataset['history'];
+		//background.addFeedback(historyNum,false);	
+
+		//$(this).unbind('click').attr('src', 'images/thumbUpCheck.png');
+	//});
+	$('.historyDownload').bind('click',function(e){
+		var historyNum=e.target.dataset['history'];
+		var song= background.prevSongs[historyNum];
+		
+		downloadSong(song.audioUrlMap.highQuality.audioUrl,song.songName);
 	});
 }
 function clearHistory() {
@@ -304,7 +323,6 @@ function downloadSong(url,title){
 	a.appendTo('body');
 	a[0].click();
 	a.remove();
-	
 }
 //function for adding leading zeros. took from here: http://stackoverflow.com/a/2998874 [BukeMan]
 function zeroPad(num, places) {
