@@ -21,6 +21,13 @@ function () {
 			'width':$('body').width()-30,
 			'height':$('body').height()
 		});
+		$('#historyDiv').css({
+			'width':$('body').width()-20,
+			'height':$('body').height()
+		});
+		$('#volume').css({
+			'height':$('body').height()
+		});
 
 		if(background.mp3Player.paused){
 			$('pauseButton').hide();
@@ -31,20 +38,6 @@ function () {
 		}
 		$('.panel').hide();
 
-    $('img:gt(0)')
-        .hover(function () {
-            if ($(this).attr('id') == 'prevButton' && !localStorage.lastStation) {
-                return false;
-            }
-            else {
-                var src = $(this).attr("src").replace(".png", "hover.png");
-                $(this).attr("src", src);
-            }
-        },
-        function () {
-            var src = $(this).attr("src").replace("hover", "");
-            $(this).attr("src", src);
-        });
     $('#scrubber').slider({
         range: "min",
         min: 0,
@@ -168,6 +161,7 @@ function initBodySize(){
 	$('#bodyWidth').val(localStorage.bodyWidth);
 	$('#bodyHeight').val(localStorage.bodyHeight);
 }
+
 function goToPanel(id){
 	var panel = $(id);
 	if(currentPanel !== null){
@@ -207,11 +201,11 @@ function updateHistory() {
 
 		nameCell.innerHTML='<span data-history='+i+' class=historyInfoLink style="text-decoration:underline;">'+background.prevSongs[i].songName+'</span>';
 		var likeCell = row.insertCell();
-		likeCell.innerHTML = '<img src="images/thumbup.png" data-history='+i+'>';
+		likeCell.innerHTML = '<img src="images/thumbup.png" data-history='+i+' class=hoverImg>';
 		var dislikeCell = row.insertCell();
-		dislikeCell.innerHTML = '<img src="images/thumbdown.png" data-history='+i+'>';
+		dislikeCell.innerHTML = '<img src="images/thumbdown.png" data-history='+i+' class=hoverImg>';
 		var dlCell = row.insertCell();
-		dlCell.innerHTML = '<img src="images/download.png" data-history='+i+'>';
+		dlCell.innerHTML = '<img src="images/download.png" data-history='+i+' class=hoverImg>';
 	}
 	$('.historyInfoLink').bind('click',function(e){
 		var historyNum=e.target.dataset['history'];
