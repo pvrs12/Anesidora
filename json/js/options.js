@@ -1,8 +1,10 @@
 var min_width=310;
 var min_height=50;
+var min_history=1;
 
 var default_width=350;
 var default_height=100;
+var default_history=5;
 
 $(document).ready(function () {
 	var background = chrome.extension.getBackgroundPage();
@@ -41,6 +43,15 @@ $(document).ready(function () {
 			$(this).val(min_height);
 		} else {
 			localStorage.bodyHeight=$(this).val();
+		}
+	});
+	$('#historyNum').change(function(){
+		if($(this).val()<min_history){
+			localStorage.historyNum=min_history;
+			alert('You must have at least '+min_history+' item'+min_history>1?'s':''+' in history');
+			$(this).val(min_history);
+		} else {
+			localStorage.historyNum=$(this).val();
 		}
 	});
 
@@ -142,9 +153,14 @@ function initBodySize(){
 			|| localStorage.bodyHeight===0){
 		localStorage.bodyHeight=default_height;
 	}
+	if(localStorage.historyNum===undefined
+			|| localStorage.historyNum===0){
+		localStorage.historyNum=default_history;
+	}
 
 	$('#bodyWidth').val(localStorage.bodyWidth);
 	$('#bodyHeight').val(localStorage.bodyHeight);
+	$('#historyNum').val(localStorage.historyNum);
 
 }
 
