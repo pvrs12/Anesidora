@@ -24,9 +24,11 @@ function () {
             lastFmScrobble();
         }
         if (currentSong.songRating != '1') {
-            if (prevSongs.push(currentSong) == 5) {
-                prevSongs.shift();
-            }
+					prevSongs.push(currentSong);
+					console.log('History Num = '+localStorage.historyNum);
+					while(prevSongs.length > localStorage.historyNum){
+						prevSongs.shift();
+					}
         }
         errorCount = 0;
         nextSong();
