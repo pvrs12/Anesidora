@@ -202,23 +202,47 @@ function updateHistory() {
 		var row = history.insertRow();
 
 		var imgCell = row.insertCell();
-		imgCell.innerHTML='<img src="'+song.albumArtUrl+'" class="historyCoverArt historyInfoLink" data-history='+i+' />';
+		var image = document.createElement("img");
+		image.setAttribute("src",song.albumArtUrl);
+		image.setAttribute("class","historyCoverArt historyInfoLink");
+		image.setAttribute("data-history",i);
+		imgCell.appendChild(image);
 
 		var nameCell = row.insertCell();
 		nameCell.noWrap=true;
 		nameCell.style="max-width:"+($('body').width()*.5)+"px";
-		nameCell.innerHTML='<span data-history='+i+' class="historyInfoLink historyTitle">'+song.songName+'</span>';
+
+		var name = document.createElement("span");
+		name.setAttribute("data-history",i);
+		name.setAttribute("class","historyInfoLink historyTitle");
+		nameCell.appendChild(name);
+
+		var nameText = document.createTextNode(song.songName);
+		name.appendChild(nameText);
 
 		var likeCell = row.insertCell();
-		likeCell.innerHTML = '<img src="images/thumbup.png" data-history='+i+' class="hoverImg historyLike" />';
+		var likeImage = document.createElement("img");
+		likeImage.setAttribute("src","images/thumbup.png");
+		likeImage.setAttribute("data-history",i);
+		likeImage.setAttribute("class","hoverImg historyLike");
+		likeCell.appendChild(likeImage);
 
-		//dislikes aren't done yet
+		////dislikes aren't done yet
 		//var dislikeCell = row.insertCell();
-		//dislikeCell.innerHTML = '<img src="images/thumbdown.png" data-history='+i+' class="hoverImg historyDislike" />';
+		//var dislikeImage = document.createElement("img");
+		//dislikeImage.setAttribute("src","images/thumbdown.png");
+		//dislikeImage.setAttribute("data-history",i);
+		//dislikeImage.setAttribute("class","hoverImg historyDislike");
+		//dislikeCell.appendChild(dislikeImage);
 
 		var dlCell = row.insertCell();
-		dlCell.innerHTML = '<img src="images/download.png" data-history='+i+' class="hoverImg historyDownload" />';
+		var dlImage = document.createElement("img");
+		dlImage.setAttribute("src","images/download.png");
+		dlImage.setAttribute("data-history",i);
+		dlImage.setAttribute("class","hoverImg historyDownload");
+		dlCell.appendChild(dlImage);
 	}
+
 	$('.historyInfoLink').bind('click',function(e){
 		var historyNum=e.target.dataset['history'];
 		var song = background.prevSongs[historyNum];
@@ -244,7 +268,10 @@ function updateHistory() {
 	});
 }
 function clearHistory() {
-	document.getElementById('historyList').innerHTML="";
+	var historyList = document.getElementById('historyList');
+	while(historyList.hasChildNodes()){
+		historyList.removeChild(historyList.firstChild);
+	}
 }
 function clearStations() {
 	for(var i=0;i<$('#stationList').length;++i){
