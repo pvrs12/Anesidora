@@ -326,23 +326,17 @@ function updatePlayer() {
     })
 }
 function drawPlayer() {
-    $('#scrubber')
-    .slider({
+    let curMinutes = Math.floor(background.mp3Player.currentTime / 60),
+        curSecondsI = Math.ceil(background.mp3Player.currentTime % 60),
+        curSeconds = zeroPad(curSecondsI.length == 1 ? '0' + curSecondsI : curSecondsI, 2),
+        totalMinutes = Math.floor(background.mp3Player.duration / 60),
+        totalSecondsI = Math.ceil(background.mp3Player.duration % 60),
+        totalSeconds = zeropad(totalSecondsI.length == 1 ? '0' + totalSecondsI : totalSecondsI, 2);
+
+
+    $('#scrubber').slider({
         value: (background.mp3Player.currentTime / background.mp3Player.duration) * 100
-    })
-    .attr("title",
-    Math.floor(background.mp3Player.currentTime / 60) +
-    ":" +
-        zeroPad(
-            (Math.ceil(background.mp3Player.currentTime % 60).length == 1 ? '0' + Math.ceil(background.mp3Player.currentTime % 60) : Math.ceil(background.mp3Player.currentTime % 60)),
-            2) +
-    "/" +
-    Math.floor(background.mp3Player.duration / 60) +
-    ":" +
-        zeroPad(
-            (Math.ceil(background.mp3Player.duration % 60).length == 1 ? '0' + Math.ceil(background.mp3Player.duration % 60) : Math.ceil(background.mp3Player.duration % 60)),
-            2)
-    );
+    }).attr("title", curMinutes + ":" + curSeconds + "/" + totalMinutes + ":" + totalSeconds);
 }
 function downloadSong(url,title){
 	//making an anchor tag and clicking it allows the download dialog to work and save the file with the song's name
