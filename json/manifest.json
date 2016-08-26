@@ -33,7 +33,7 @@
         "notifications",
         "tabs",
         "http://*.p-cdn.com/*"],
-	"version": "1.8.4",
+	"version": "1.8.5",
 	"applications":{
 		"gecko":{
 			"id":"pvrs12@gmail.com"
