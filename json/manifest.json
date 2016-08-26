@@ -4,7 +4,7 @@
 		"page":"background.htm"
 	},
 	"browser_action": {
-		"default_icon": "images/anesidora-19.png",
+		"default_icon": "images/anesidora-128.png",
 		"default_popup": "popup.htm"
 	},
 	"content_scripts": [ {
@@ -34,7 +34,7 @@
         "notifications",
         "tabs",
         "http://*.p-cdn.com/*"],
-	"version": "1.8.2",
+	"version": "1.8.3",
 	"applications":{
 		"gecko":{
 			"id":"pvrs12@gmail.com"
