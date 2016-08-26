@@ -155,13 +155,13 @@ function () {
     }
 });
 function initBodySize(){
-	if(localStorage.bodyWidth===undefined
-			|| localStorage.bodyWidth===0){
-		localStorage.bodyWidth=options.default_width;
+	if(localStorage.bodyWidth === undefined
+			|| localStorage.bodyWidth === 0){
+		localStorage.bodyWidth = default_width;
 	}
-	if(localStorage.bodyHeight===undefined
-			|| localStorage.bodyHeight===0){
-		localStorage.bodyHeight=options.default_height;
+	if(localStorage.bodyHeight === undefined
+			|| localStorage.bodyHeight === 0){
+		localStorage.bodyHeight = default_height;
 	}
 	$('#bodyWidth').val(localStorage.bodyWidth);
 	$('#bodyHeight').val(localStorage.bodyHeight);
