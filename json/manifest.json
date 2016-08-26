@@ -9,7 +9,6 @@
 	},
 	"content_scripts": [ {
       "all_frames": true,
-      "js": [ "js/activehotkeys.js" ],
       "matches": [ "http://*/*", "https://*/*", "ftp://*/*" ],
       "run_at": "document_start"
     } ],
@@ -34,7 +33,7 @@
         "notifications",
         "tabs",
         "http://*.p-cdn.com/*"],
-	"version": "1.8.3",
+	"version": "1.8.4",
 	"applications":{
 		"gecko":{
 			"id":"pvrs12@gmail.com"
