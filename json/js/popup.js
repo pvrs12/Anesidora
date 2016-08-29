@@ -331,8 +331,7 @@ function drawPlayer() {
         curSeconds = zeroPad(curSecondsI.length == 1 ? '0' + curSecondsI : curSecondsI, 2),
         totalMinutes = Math.floor(background.mp3Player.duration / 60),
         totalSecondsI = Math.ceil(background.mp3Player.duration % 60),
-        totalSeconds = zeropad(totalSecondsI.length == 1 ? '0' + totalSecondsI : totalSecondsI, 2);
-
+        totalSeconds = zeroPad(totalSecondsI.length == 1 ? '0' + totalSecondsI : totalSecondsI, 2);
 
     $('#scrubber').slider({
         value: (background.mp3Player.currentTime / background.mp3Player.duration) * 100
