@@ -1,0 +1,1 @@
+rewrite gridding using CSS grid and divs instead of colspan and rowspan for cross browser functionality

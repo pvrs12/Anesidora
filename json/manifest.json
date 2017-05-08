@@ -10,7 +10,7 @@
 	"content_scripts": [ {
       "all_frames": true,
       "matches": [ "http://*/*", "https://*/*", "ftp://*/*" ],
-      "run_at": "document_start"
+			"js": ["js/background.js"]
     } ],
 	"description": "Tabs? Where we're listening, we don't need tabs.",
 	"icons": {
@@ -33,10 +33,5 @@
         "notifications",
         "tabs",
         "http://*.p-cdn.com/*"],
-	"version": "1.8.8",
-	"applications":{
-		"gecko":{
-			"id":"pvrs12@gmail.com"
-		}
-	}
+	"version": "1.8.8"
 }
