@@ -7,11 +7,10 @@ function lastFmSession(username, password) {
     URL += "&username=" + username + "&authToken=" + authToken;
     var http = new XMLHttpRequest();
     var timeout = setTimeout(
-                    function () {
-                        http.abort();
-                        return;
-                    },
-                  3000);
+        function () {
+            http.abort();
+            return;
+        }, 3000);
     http.open("GET", URL);
     http.onreadystatechange = function () {
         if (http.readyState == 4 && http.status == 200) {
@@ -37,12 +36,11 @@ function lastFmNowPlaying() {
     URL += "&artist=" + escape(currentSong.artistName) + "&track=" + escape(currentSong.songName) + "&album=" + escape(currentSong.albumName);
     var http = new XMLHttpRequest();
     var timeout = setTimeout(
-                    function () {
-                        http.abort();
-                        return;
-                    },
-                  3000);
-    http.open("POST", URL, true);
+        function () {
+            http.abort();
+            return;
+        }, 3000);
+    http.open("POST", URL);
     http.onreadystatechange = function () {
         if (http.readyState == 4 && http.status == 200) {
 //            console.log(http.responseXML);
@@ -64,11 +62,10 @@ function lastFmScrobble() {
     URL += "&album=" + escape(currentSong.albumName) + "&artist=" + escape(currentSong.artistName) + "&track=" + escape(currentSong.songName) + "&timestamp=" + escape(currentSong.startTime);
     var http = new XMLHttpRequest();
     var timeout = setTimeout(
-                    function () {
-                        http.abort();
-                        return;
-                    },
-                  3000);
+        function () {
+            http.abort();
+            return;
+        }, 3000);
     http.open("POST", URL);
     http.onreadystatechange = function () {
         if (http.readyState == 4 && http.status == 200) {
