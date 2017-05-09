@@ -17,12 +17,9 @@ function () {
 		$('body').width(localStorage.bodyWidth);
 		$('body').height(localStorage.bodyHeight);
 
-		$('.panel,#stationList,#historyDiv').css({
+		$('.panel,#historyDiv').css({
 			'height':$('body').height(),
 			'width':$('body').width()
-		});
-		$('#stationList').css({
-			'width':$('body').width()-30
 		});
 		$('#historyDiv,#historyList').css({
 			'width':$('body').width()-20
@@ -65,11 +62,19 @@ function () {
     });
     $('#tDownButton').bind('click', function () {
         background.addFeedback(-1, false);
-        setTimeout(function(){background.nextSong();}, 1000); // Small delay to stop extension from freezing for some reason
+        setTimeout(function(){
+					background.nextSong();
+				}, 1000); // Small delay to stop extension from freezing for some reason
     });
-    $('#sleepButton').bind('click', function () { background.sleepSong(); background.nextSong(); });
-		$('#downloadButton').bind('click',function(){ background.downloadSong(); });
-		$('#moreInfoButton').bind('click',function(){ window.open('options.htm','_blank');	});
+    $('#sleepButton').bind('click', function () { 
+			background.sleepSong(); background.nextSong(); 
+			});
+		$('#downloadButton').bind('click',function(){ 
+			background.downloadSong(); 
+		});
+		$('#moreInfoButton').bind('click',function(){ 
+			window.open('options.htm','_blank');	
+		});
     $('#volume').slider({
         orientation: 'vertical',
         range: 'min',
@@ -104,8 +109,14 @@ function () {
             if (background.userAuthToken == "") {
                 $('#unWarning').show();
                 $('#pwWarning').show();
-                $('#username').css({ 'padding-left': '16px', 'width': '216px' });
-                $('#password').css({ 'padding-left': '16px', 'width': '216px' });
+                $('#username').css(
+									{ 'padding-left': '16px', 
+									'width': '216px' 
+								});
+                $('#password').css(
+									{ 'padding-left': '16px',
+									'width': '216px' 
+								});
                 return false;
             }
             else {
@@ -139,9 +150,15 @@ function () {
 			}
 		}
 
-		$('#prevButton').bind('click', function () { goToPlayer(); });
-		$('#history').bind('click', function(e){ goToHistory(); });
-		$('#noHistory').bind('click', function(e){ goToPlayer();});
+		$('#prevButton').bind('click', function () { 
+			goToPlayer(); 
+		});
+		$('#history').bind('click', function(e){ 
+			goToHistory(); 
+		});
+		$('#noHistory').bind('click', function(e){ 
+			goToPlayer();
+		});
 		
 
     if (background.mp3Player.src != "") {
@@ -197,7 +214,7 @@ function updateHistory() {
 	clearHistory();
 
 	var history = document.getElementById('historyList');
-	for(var i = background.prevSongs.length-1;i>=0;--i){
+	for(var i = background.prevSongs.length - 1;i >= 0; --i){
 		var song = background.prevSongs[i];
 		var row = history.insertRow();
 
@@ -227,14 +244,6 @@ function updateHistory() {
 		likeImage.setAttribute("class","hoverImg historyLike");
 		likeCell.appendChild(likeImage);
 
-		////dislikes aren't done yet
-		//var dislikeCell = row.insertCell();
-		//var dislikeImage = document.createElement("img");
-		//dislikeImage.setAttribute("src","images/thumbdown.png");
-		//dislikeImage.setAttribute("data-history",i);
-		//dislikeImage.setAttribute("class","hoverImg historyDislike");
-		//dislikeCell.appendChild(dislikeImage);
-
 		var dlCell = row.insertCell();
 		var dlImage = document.createElement("img");
 		dlImage.setAttribute("src","images/download.png");
@@ -254,12 +263,6 @@ function updateHistory() {
 
 		$(this).unbind('click').attr('src', 'images/thumbUpCheck.png');
 	});
-	//$('.historyDislike').bind('click',function(e){
-		//var historyNum=e.target.dataset['history'];
-		//background.addFeedback(historyNum,false);	
-
-		//$(this).unbind('click').attr('src', 'images/thumbUpCheck.png');
-	//});
 	$('.historyDownload').bind('click',function(e){
 		var historyNum=e.target.dataset['history'];
 		var song= background.prevSongs[historyNum];
@@ -296,7 +299,10 @@ function updatePlayer() {
         $('#titleLink').unbind().bind('click', function (e) {  chrome.tabs.create({ "url": background.currentSong.songDetailUrl }) }).text(background.currentSong.songName);
         $('#dash').text(" - ");
         if (background.currentSong.songRating==false) {
-            $('#tUpButton').unbind('click').bind('click', function () { background.addFeedback(-1, true); $(this).attr('src', 'images/thumbUpCheck.png'); }).attr('src', 'images/thumbup.png');
+            $('#tUpButton').unbind('click').bind('click', function () {
+							background.addFeedback(-1, true); 
+							$(this).attr('src', 'images/thumbUpCheck.png'); 
+						}).attr('src', 'images/thumbup.png');
         }
         else {
             $('#tUpButton').unbind('click').attr('src', 'images/thumbUpCheck.png');

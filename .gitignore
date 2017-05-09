@@ -1,3 +1,5 @@
 *.xpi
 *.swp
 *.crx
+*.pem
+*.zip
