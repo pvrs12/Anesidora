@@ -12,7 +12,7 @@
 	<div id="mainWrapper" style="width: 100%;">
 		<div id="options" style="margin: auto; top: 0; height: 700px; width: 400px;">
 			<div id="container" style="position: relative; top: 75px;">
-				<fieldset style="border: 1px solid black; font-style: italic;">
+				<fieldset class="options-group">
 					<legend>Player Settings</legend>
 					<table>
 					<tr>
@@ -29,14 +29,13 @@
 					</tr>
 					</table>
 
-					<label style="display: block; font-weight: bold;" for='notifications'>
-						<input id='notifications' type='checkbox' />Show notifications</label>
-					<label style="display: block; font-weight: bold;" for='autostations'>
+					<!--<label style="display: block; font-weight: bold;" for='notifications'>
+						<input id='notifications' type='checkbox' />Show notifications</label>-->
+					<!--<label style="display: block; font-weight: bold;" for='autostations'>
 						<input id='autostations' type='checkbox' />Automatically expand popup to fit all
-						stations.</label>
-						<button id='refresh' style='margin-top:20px; text-align:center;width:100%; border:1px solid black;background-color:gray;color:white;font-weight:bold;'>Refresh Stations</button>
-					<button id="reset" style="margin-top: 20px; text-align: center; width: 100%; border: 1px solid black;background-color: gray; color: white; font-weight: bold;">
-						Logout</button>
+						stations.</label> -->
+					<button id="refresh" class="options-button">Refresh Stations</button>
+					<button id="reset" class="options-button">Logout</button>
 				</fieldset>
 				<br />
 				<!--<fieldset style="border: 1px solid black; font-style: italic;">-->
@@ -85,24 +84,25 @@
 					<!--</form>-->
 				<!--</fieldset>-->
 				<!--<br/>-->
-				<fieldset style="border: 1px solid black; font-style: italic;">
+				<fieldset class="options-group">
+					<legend>About this Version</legend>
+						<p>This 'port' of Anesidora adds several features and supports both Firefox and Chrome.</p>
+						<p>It also removes several of the outdated/non-functioning elemetns.</p>
+						<p></p>
+						<p>More details about this project can be found on <a href="http://github.com/pvrs12/anesidora/">Github</a></p>
+				</fieldset>
+				<fieldset class="options-group">
 					<legend>About</legend>
 					<p>Anesidora is now an open-source project.</p>
 					<p>Join the development and report issues here:<strike> <a href="http://anesidora.tk">anesidora.tk</a></strike></p>
-										<p>Site is now defunct.</p>
-										<p>Originally forked from the <a href="http://github.com/anesidora/anesidora">Anesidora git</a></p>
+						<p>Site is now defunct.</p>
+						<p>Originally forked from the <a href="http://github.com/anesidora/anesidora">Anesidora git</a></p>
 					<p>Project contributors:</p>
 					<ul>
 						<li>Robert Alten</li>
 						<li>Demotis Silvermoon</li>
 						<li>BukeMan</li>
 					</ul>
-				</fieldset>
-				<fieldset style="border: 1px solid black; font-style: italic;">
-					<legend>About Firefox Version</legend>
-										<p>This 'port' of Anesidora provides support for firefox</p>
-										<p>More details about this project can be found here:<a href="http://github.com/pvrs12/anesidora/">Anesidora</a></p>
-
 				</fieldset>
 			</div>
 		</div>
