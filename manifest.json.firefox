@@ -22,11 +22,6 @@
 	"permissions": [
 				"http://*.pandora.com/*",
 				"https://*.pandora.com/*",
-				"http://ws.audioscrobbler.com/*",
-				"http://*.facebook.com/*",
-				"https://*.facebook.com/*",
-				"notifications",
-				"tabs",
 				"http://*.p-cdn.com/*"],
 	"version": "1.9.0",
 	"applications":{
