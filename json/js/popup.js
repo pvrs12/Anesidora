@@ -80,7 +80,7 @@ function () {
         range: 'min',
         min: 0,
         max: 70,
-        value: (localStorage.volume) ? localStorage.volume * 100 : ".2",
+        value: (localStorage.volume) ? localStorage.volume * 100 : 20 ,
         slide: function (event, ui) {
             background.mp3Player.volume = ui.value / 100;
         },
@@ -171,6 +171,7 @@ function () {
 			updatePlayer();
     }
 });
+
 function initBodySize(){
 	if(localStorage.bodyWidth === undefined
 			|| localStorage.bodyWidth === 0){
@@ -200,16 +201,20 @@ function goToPanel(id){
 function goToLogin(){
 	goToPanel('#rightPanel');
 }
+
 function goToStations(){
 	goToPanel('#midPanel');
 }
+
 function goToPlayer() {
 	goToPanel('#leftPanel');
 }
+
 function goToHistory() {
 	goToPanel('#historyPanel');
 	updateHistory();
 }
+
 function updateHistory() {
 	clearHistory();
 
@@ -270,26 +275,31 @@ function updateHistory() {
 		downloadSong(song.audioUrlMap.highQuality.audioUrl,song.songName);
 	});
 }
+
 function clearHistory() {
 	var historyList = document.getElementById('historyList');
 	while(historyList.hasChildNodes()){
 		historyList.removeChild(historyList.firstChild);
 	}
 }
+
 function clearStations() {
 	for(var i=0;i<$('#stationList').length;++i){
 		$('#stationList').remove(i);
 	}
 }
+
 function addStations() {
 	for (var i = 0; i < background.stationList.length; i++) {
 			$('#stationList').append(new Option(background.stationList[i].stationName, background.stationList[i].stationToken));
 	}
 }
+
 function refreshStations() {
 	clearStations();
 	addStations();
 }
+
 function updatePlayer() {
     if (background.currentSong) {
         $('#coverArt').unbind().bind('click', function () { chrome.tabs.create({ "url": background.currentSong.albumDetailUrl }) }).attr('src', background.currentSong.albumArtUrl);
@@ -331,6 +341,7 @@ function updatePlayer() {
         value: 0
     })
 }
+
 function drawPlayer() {
     let curMinutes = Math.floor(background.mp3Player.currentTime / 60),
         curSecondsI = Math.ceil(background.mp3Player.currentTime % 60),
@@ -343,6 +354,7 @@ function drawPlayer() {
         value: (background.mp3Player.currentTime / background.mp3Player.duration) * 100
     }).attr("title", curMinutes + ":" + curSeconds + "/" + totalMinutes + ":" + totalSeconds);
 }
+
 function downloadSong(url,title){
 	//making an anchor tag and clicking it allows the download dialog to work and save the file with the song's name
 	var a = $('<a href="'+url+'" download="'+title+'.mp4">HELLO</a>');
@@ -350,6 +362,7 @@ function downloadSong(url,title){
 	a[0].click();
 	a.remove();
 }
+
 //function for adding leading zeros. took from here: http://stackoverflow.com/a/2998874 [BukeMan]
 function zeroPad(num, places) {
     var zero = places - num.toString().length + 1;
