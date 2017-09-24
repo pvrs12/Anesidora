@@ -7,11 +7,6 @@
 		"default_icon": "images/anesidora-128.png",
 		"default_popup": "popup.htm"
 	},
-	"content_scripts": [ {
-      "all_frames": true,
-      "matches": [ "http://*/*", "https://*/*", "ftp://*/*" ],
-      "run_at": "document_start"
-    } ],
 	"description": "Tabs? Where we're listening, we don't need tabs.",
 	"icons": {
 		"128": "images/anesidora-128.png",
@@ -25,15 +20,15 @@
 	"homepage_url": "http://github.com/pvrs12/anesidora",
 	"options_page": "options.htm",
 	"permissions": [
-        "http://*.pandora.com/*",
-        "https://*.pandora.com/*",
-        "http://ws.audioscrobbler.com/*",
-        "http://*.facebook.com/*",
-        "https://*.facebook.com/*",
-        "notifications",
-        "tabs",
-        "http://*.p-cdn.com/*"],
-	"version": "1.8.9",
+				"http://*.pandora.com/*",
+				"https://*.pandora.com/*",
+				"http://ws.audioscrobbler.com/*",
+				"http://*.facebook.com/*",
+				"https://*.facebook.com/*",
+				"notifications",
+				"tabs",
+				"http://*.p-cdn.com/*"],
+	"version": "1.9.0",
 	"applications":{
 		"gecko":{
 			"id":"pvrs12@gmail.com"
