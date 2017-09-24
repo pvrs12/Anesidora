@@ -16,6 +16,7 @@ function stringToBytes(str) {
     // return an array of bytes
     return re;
 }
+
 var clientStartTime = 0;
 var syncTime = 0;
 var userAuthToken = "";
@@ -25,15 +26,18 @@ var stationList=[];
 var currentPlaylist;
 var previousPlaylist;
 var searchResults;
+
 function getSyncTime(syncTime) {
     return parseInt(syncTime) + (parseInt((new Date().getTime() + '').substr(0, 10)) - clientStartTime);
 }
+
 function partnerLogin() {
     if (localStorage.username != "" && localStorage.password != "") {
         var request = "{'username':'android','password':'AC7IBG09A3DTSYM4R41UJWL07VLN8JI7','version':'5','deviceModel':'android-generic','includeUrls':true}";
         sendRequest(true, false, "auth.partnerLogin", request, handlePartnerLogin);
     }
 }
+
 function handlePartnerLogin(response, status, xhr) {
     var b = stringToBytes(decrypt(response.result.syncTime));
     // skip 4 bytes of garbage
@@ -45,11 +49,13 @@ function handlePartnerLogin(response, status, xhr) {
     clientStartTime = parseInt((new Date().getTime() + '').substr(0, 10));
     userLogin(response);
 }
+
 function userLogin(response) {
     partnerId = response.result.partnerId;
     var request = "{'loginType':'user','username':'" + localStorage.username + "','password':'" + localStorage.password + "','partnerAuthToken':'" + response.result.partnerAuthToken + "','syncTime':" + getSyncTime(syncTime) + "}";
     sendRequest(true, true, "auth.userLogin&auth_token=" + encodeURIComponent(response.result.partnerAuthToken) + "&partner_id=" + response.result.partnerId, request, handleUserLogin);
 }
+
 //Set this up to store good user login information. Need to probe the JSON method and see how it responds with bad
 //login info so we can know that un/pw is bad before assuming it is.
 //seems error 1002 is bad login info.
@@ -65,6 +71,7 @@ function getStationList() {
     var request = "{'userAuthToken':'" + userAuthToken + "','syncTime':" + getSyncTime(syncTime) + "}";
     sendRequest(false, true,"user.getStationList", request, handleGetStationList);
 }
+
 function handleGetStationList(response, status, xhr) {
     stationList = response.result.stations;
     if (localStorage.userStation == undefined) {
@@ -75,16 +82,19 @@ function handleGetStationList(response, status, xhr) {
         }
     }
 }
+
 function getPlaylist(stationToken) {
     sessionStorage.currentStation = stationToken;
     var request = "{'stationToken':'" + stationToken + "','additionalAudioUrl':'HTTP_192_MP3','userAuthToken':'" + userAuthToken + "','syncTime':" + getSyncTime(syncTime) + "}";
     sendRequest(true,true,"station.getPlaylist",request,handleGetPlaylist);
 }
+
 function handleGetPlaylist(response, status, xhr) {
     currentPlaylist = response.result.items;
     //currentPlaylist.pop(); //Pop goes the advertisment.
     removeAds(currentPlaylist);
 }
+
 //removes ads from fetched playlist. solves issue when player gets stuck on "undefined - undefined" [added by BukeMan]
 function removeAds(playList) {
     playList.forEach(function(value, index) {
@@ -93,6 +103,7 @@ function removeAds(playList) {
         }
     });
 }
+
 function addFeedback(songNum, rating) {
     if (currentSong.songRating == true&& rating == true) {  // Bug fix for addFeedback being executed by bind()
         return;
@@ -113,42 +124,36 @@ function addFeedback(songNum, rating) {
     }
     sendRequest(false, true, "station.addFeedback", request, handleAddFeedback);
 }
+
 function handleAddFeedback(response, status, xhr) {
 
 }
-function shareSong() {
-    $.ajax({
-        url: "https://graph.facebook.com/" + localStorage.facebookUsername + "/feed?access_token=" +
-            localStorage.accessToken +
-            "&message=I'm listening to " + currentSong.songName + " by " + currentSong.artistName +
-            "&picture=" + currentSong.albumArtUrl +
-            "&link=" + encodeURI(currentSong.songExplorerUrl) +
-            "&name=" + currentSong.songName +
-            "&caption=by " + currentSong.artistName + " on " + currentSong.albumName,
-        type: "POST",
-        statusCode: { 400: function () { $('#fbCanDie').attr('src', "https://www.facebook.com/dialog/oauth?client_id=124332377700986&response_type=token&scope=publish_stream&redirect_uri=https://www.facebook.com/connect/login_success.html"); shareSong(); } }
-    });
-}
+
 function sleepSong() {
     var request = "{'trackToken':'" + currentSong.trackToken + "','userAuthToken':'" + userAuthToken + "','syncTime':" + getSyncTime(syncTime) + "}";
     sendRequest(false, true, "user.sleepSong", request, handleSleepSong);
 }
+
 function handleSleepSong(response, info) {
 
 }
+
 function setQuickMix(mixStations) {
     var request = "{'quickMixStationIds':['" + mixStations.toString().replace(/,/g, "','") + "'],'userAuthToken':'" + userAuthToken + "','syncTime':" + getSyncTime(syncTime) + "}";
     sendRequest(false,true,"user.setQuickMix",request,handleSetQuickMix);
 }
+
 function handleSetQuickMix(response, status, xhr) {
 
 
 }
+
 function search(searchString) {
     //searchString = searchString.replace("&", "&amp").replace("'", "&apos").replace("\"", "&quot").replace("<", "&lt").replace(">", "&gt");
     var request = "{'searchText':'" + searchString + "','userAuthToken':'" + userAuthToken + "','syncTime':" + getSyncTime(syncTime) + "}";
     sendRequest(false, true, "music.search", request, handleSearch);
 }
+
 function handleSearch(response, status, xhr) {
     console.log(response);
     searchResults = response.result;
@@ -158,20 +163,25 @@ function createStation(musicToken) {
     var request = "{'musicToken':'" + musicToken + "','userAuthToken':'" + userAuthToken + "','syncTime':" + getSyncTime(syncTime) + "}";
     sendRequest(false, true, "station.createStation", request, handleCreateStation);
 }
+
 function handleCreateStation(response, status, xhr) {
     play(response.result.stationId);
 }
+
 function deleteStation(stationToken) {
     var request = "{'stationToken':'" + stationToken + "','userAuthToken':'" + userAuthToken + "','syncTime':" + getSyncTime(syncTime) + "}";
     sendRequest(false, true, "station.deleteStation", request, handleDeleteStation);
 }
+
 function handleDeleteStation(response, info) {
 
 }
+
 function explainTrack() {
     var request = "{'trackToken':'" + currentSong.trackToken + "','userAuthToken':'" + userAuthToken + "','syncTime':" + getSyncTime(syncTime) + "}";
     sendRequest(false, true, "track.explainTrack", request, handleExplainTrack);
 }
+
 function handleExplainTrack(response, status, xhr) {
     console.log(response);
 }
@@ -225,6 +235,7 @@ function sendRequest(secure, encrypted, method, request, handler) {
 
     });
 }
+
 //Defunct for the time being.
 //function handleError(faultString) {
 //    //console.log(faultString.split("|")[3]);

@@ -19,18 +19,12 @@ function () {
             String($('#mp3Player'))
             callback.updatePlayer();
             currentSong.startTime = Math.round(new Date().getTime() / 1000);
-            if (localStorage.lastFm == "true") {
-                lastFmNowPlaying();
-            }
         } catch(e){
             //if it doesn't, don't draw here
             return;
         }
     })
     .bind('ended', function () {
-        if (localStorage.lastFm == "true") {
-            lastFmScrobble();
-        }
         if (currentSong.songRating != '1') {
             prevSongs.push(currentSong);
             //console.log('History Num = '+localStorage.historyNum);
