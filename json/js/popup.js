@@ -1,4 +1,4 @@
-﻿var currentPanel = null
+var currentPanel = null
 
 var background = chrome.extension.getBackgroundPage();
 background.setCallbacks(updatePlayer, drawPlayer,downloadSong);
@@ -93,11 +93,11 @@ function () {
 				//move to midpanel
 				goToStations();
     });
-    $('#stationList').bind('dblclick keyup', function (e) {
-        if (e.type == "dblclick" || e.keyCode == "13") {
-            background.play($(this).val());
-            goToPlayer();
-        }
+    $('#stationList').bind('change', function (e) {
+        background.play($(this).val());
+        goToPlayer();
+        //if (e.type == "dblclick" || e.keyCode == "13") {
+        //}
     });
     $('#unWarning').hide();
     $('#pwWarning').hide();
