@@ -23,5 +23,6 @@
 				"http://*.pandora.com/*",
 				"https://*.pandora.com/*",
 				"http://*.p-cdn.com/*"],
-	"version": "1.9.0"
+	"content_security_policy": "script-src 'self' https://code.jquery.com; object-src 'self'",
+	"version": "1.10.0"
 }

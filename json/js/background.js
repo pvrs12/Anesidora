@@ -6,12 +6,25 @@ var errorCount = 0;
 
 $(document).ready(
 function () {
+    var platform_promise = browser.runtime.getPlatformInfo();
+    platform_promise.then((info) => {
+        var isAndroid = info.os == "android";
+        if(!isAndroid) {
+            browser.browserAction.setPopup({popup: "/popup.htm"});
+        }
+    });
     if (localStorage.volume) {
         mp3Player.volume = localStorage.volume;
     }
     else {
         mp3Player.volume = .1;
     }
+    browser.browserAction.onClicked.addListener(() => {
+        console.log("clicked!");
+        browser.tabs.create({
+            url: "/popup.htm"
+        });
+    });
     $('#mp3Player')
     .bind('play', function () {
         try{
@@ -86,6 +99,9 @@ function play(stationToken) {
 }
 
 function nextSong() {
+    if (currentPlaylist == undefined) {
+        getPlaylist(localSTorage.lastStation);
+    }
     if (currentSong == undefined) {
         while (currentSong == undefined) {
             currentSong = currentPlaylist.shift();
