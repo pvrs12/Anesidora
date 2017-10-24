@@ -20,7 +20,6 @@ function () {
         mp3Player.volume = .1;
     }
     browser.browserAction.onClicked.addListener(() => {
-        console.log("clicked!");
         browser.tabs.create({
             url: "/popup.htm"
         });
