@@ -1,4 +1,4 @@
-﻿::-webkit-scrollbar {
+::-webkit-scrollbar {
     width: 10px;
 }
 ::-webkit-scrollbar-button:start:decrement, ::-webkit-scrollbar-button:end:increment {
