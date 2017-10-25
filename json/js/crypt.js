@@ -1,4 +1,4 @@
-﻿var mod = Math.pow(2, 32);
+var mod = Math.pow(2, 32);
 function decrypt(string) {
     var dec = decodeFromHex(string);
     var ret = [];
