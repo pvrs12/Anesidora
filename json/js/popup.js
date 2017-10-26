@@ -17,6 +17,9 @@ function () {
 		$('body').width(localStorage.bodyWidth);
 		$('body').height(localStorage.bodyHeight);
 
+		var scrollerWidth = $('body').width() * .6;
+		$('.scrollerContainer').width(scrollerWidth);
+
 		$('.panel,#historyDiv').css({
 			'height':$('body').height(),
 			'width':$('body').width()
@@ -291,7 +294,7 @@ function clearStations() {
 
 function addStations() {
 	for (var i = 0; i < background.stationList.length; i++) {
-			$('#stationList').append(new Option(background.stationList[i].stationName, background.stationList[i].stationToken));
+		$('#stationList').append(new Option(background.stationList[i].stationName, background.stationList[i].stationToken));
 	}
 }
 
@@ -302,13 +305,13 @@ function refreshStations() {
 
 function updatePlayer() {
     if (background.currentSong) {
-        $('#coverArt').unbind().bind('click', function () { chrome.tabs.create({ "url": background.currentSong.albumDetailUrl }) }).attr('src', background.currentSong.albumArtUrl);
-       $('#artistLink').unbind().text(background.currentSong.artistName);
-       $('#titleLink').unbind().text(background.currentSong.songName);
-        $('#artistLink').unbind().bind('click', function (e) { chrome.tabs.create({ "url": background.currentSong.artistDetailUrl }) }).text(background.currentSong.artistName);
-        $('#titleLink').unbind().bind('click', function (e) {  chrome.tabs.create({ "url": background.currentSong.songDetailUrl }) }).text(background.currentSong.songName);
-        $('#dash').text(" - ");
-        if (background.currentSong.songRating==false) {
+		$('#coverArt').unbind().bind('click', function () { chrome.tabs.create({ "url": background.currentSong.albumDetailUrl }) }).attr('src', background.currentSong.albumArtUrl);
+		$('#artistLink').unbind().text(background.currentSong.artistName);
+		$('#titleLink').unbind().text(background.currentSong.songName);
+		$('#artistLink').unbind().bind('click', function (e) { chrome.tabs.create({ "url": background.currentSong.artistDetailUrl }) }).text(background.currentSong.artistName);
+		$('#titleLink').unbind().bind('click', function (e) {  chrome.tabs.create({ "url": background.currentSong.songDetailUrl }) }).text(background.currentSong.songName);
+		$('#dash').text(" - ");
+		if (background.currentSong.songRating==false) {
             $('#tUpButton').unbind('click').bind('click', function () {
 							background.addFeedback(-1, true); 
 							$(this).attr('src', 'images/thumbUpCheck.png'); 
