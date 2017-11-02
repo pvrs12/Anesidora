@@ -1,5 +1,6 @@
 #!/bin/sh
 #download latest jquery
+mkdir -p common/js/jquery
 curl http://code.jquery.com/jquery-3.2.1.min.js > common/js/jquery/jquery-3.2.1.min.js 2>/dev/null
 curl http://code.jquery.com/ui/1.12.1/jquery-ui.min.js > common/js/jquery/jquery-ui.min.js 2>/dev/null
 
@@ -15,7 +16,7 @@ rm -rf firefox_build
 #make chrome
 mkdir chrome_build
 cp -rf common/* chrome_build
-cp -rf firefox/* chrome_build
+cp -rf chrome/* chrome_build
 cd chrome_build
 jar -cMf ../anesidora_chrome.zip *
 cd ..
