@@ -22,7 +22,7 @@
 				"https://*.pandora.com/*",
 				"http://*.p-cdn.com/*"
 	],
-	"version": "1.10.1",
+	"version": "1.10.2",
 	"content_security_policy": "script-src 'self' https://code.jquery.com; object-src 'self'",
 	"applications":{
 		"gecko":{
