@@ -22,7 +22,7 @@
 				"https://*.pandora.com/*",
 				"http://*.p-cdn.com/*"
 	],
-	"version": "1.10.3",
+	"version": "1.10.4",
 	"applications":{
 		"gecko":{
 			"id":"pvrs12@gmail.com"
