@@ -1,3 +1,4 @@
+common/js/jquery/*
 *.xpi
 *.swp
 *.crx
