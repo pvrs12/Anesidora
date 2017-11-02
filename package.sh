@@ -1,5 +1,9 @@
 #!/bin/sh
-#cp ../manifest.json.firefox manifest.json
+#download latest jquery
+curl http://code.jquery.com/jquery-3.2.1.min.js > common/js/jquery/jquery-3.2.1.min.js 2>/dev/null
+curl http://code.jquery.com/ui/1.12.1/jquery-ui.min.js > common/js/jquery/jquery-ui.min.js 2>/dev/null
+
+#make firefox
 mkdir firefox_build
 cp -rf common/* firefox_build
 cp -rf firefox/* firefox_build
@@ -8,6 +12,7 @@ jar -cMf ../anesidora_firefox.xpi *
 cd ..
 rm -rf firefox_build
 
+#make chrome
 mkdir chrome_build
 cp -rf common/* chrome_build
 cp -rf firefox/* chrome_build
