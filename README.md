@@ -3,7 +3,7 @@ Anesidora
 
 Anesidora - unofficial Pandora extension for firefox and chrome.
 
-<h3><a href="https://addons.mozilla.org/firefox/addon/anesidora-firefox/">Download/Install Firefox</a></h3>
+<h3><a href="https://addons.mozilla.org/en-US/firefox/addon/anesidora/">Download/Install Firefox</a></h3>
 
 <h3><a href="https://chrome.google.com/webstore/detail/anesidora/nelbojdmodgjdjokmdhlgdkkmimepnjo">Download/Install Chrome</a></h3>
 
