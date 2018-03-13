@@ -1,11 +1,13 @@
+/*globals InputKey, OutputKey*/
 var mod = Math.pow(2, 32);
+
 function decrypt(string) {
     var dec = decodeFromHex(string);
     var ret = [];
-    for (i = 0; i < (dec.length); i += 8) {
+    for (var i = 0; i < (dec.length); i += 8) {
         var l = ((dec.charCodeAt(i) << 24) | (dec.charCodeAt(i + 1) << 16) | (dec.charCodeAt(i + 2) << 8) | (dec.charCodeAt(i + 3))) >>> 0;
         var r = ((dec.charCodeAt(i + 4) << 24) | (dec.charCodeAt(i + 5) << 16) | (dec.charCodeAt(i + 6) << 8) | (dec.charCodeAt(i + 7))) >>> 0;
-        for (j = InputKey["n"] + 1; j > 1; j--) {
+        for (var j = InputKey["n"] + 1; j > 1; j--) {
             l = (l ^ InputKey["p"][j]) >>> 0;
             var a = (l & 0xFF000000) >>> 24;
             var b = (l & 0x00FF0000) >>> 16;
@@ -40,14 +42,15 @@ function decrypt(string) {
     }
     return ret;
 }
+
 function encrypt(string) {
     var blocks = (string.length / 8);
     var ret = [];
-    for (h = 0; h < blocks; h++) {
+    for (var h = 0; h < blocks; h++) {
         var i = h << 3; //h << 3;
         var l = ((string.charCodeAt(i) << 24) | (string.charCodeAt(i + 1) << 16) | (string.charCodeAt(i + 2) << 8) | (string.charCodeAt(i + 3))) >>> 0;
         var r = ((string.charCodeAt(i + 4) << 24) | (string.charCodeAt(i + 5) << 16) | (string.charCodeAt(i + 6) << 8) | (string.charCodeAt(i + 7))) >>> 0;
-        for (j = 0; j < OutputKey["n"]; j++) {
+        for (var j = 0; j < OutputKey["n"]; j++) {
             l = (l ^ OutputKey["p"][j]) >>> 0;
             var a = (l & 0xFF000000) >>> 24;
             var b = (l & 0x00FF0000) >>> 16;
@@ -94,7 +97,7 @@ function encodeToHex(str) {
 }
 function decodeFromHex(str) {
     var r = '';
-    for (i = str.length; i >= 1; i -= 2) {
+    for (var i = str.length; i >= 1; i -= 2) {
         r = String.fromCharCode("0x" + str.substring(i - 2, i)) + r;
     }
     return r;

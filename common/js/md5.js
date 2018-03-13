@@ -1,3 +1,5 @@
+/*jslint bitwise:true*/
+
 /**
 *
 *  MD5 (Message-Digest Algorithm)
@@ -6,7 +8,7 @@
 **/
 
 var MD5 = function (string) {
-
+    'use strict';
     function RotateLeft(lValue, iShiftBits) {
         return (lValue << iShiftBits) | (lValue >>> (32 - iShiftBits));
     }
