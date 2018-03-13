@@ -1,4 +1,6 @@
 /*globals InputKey, OutputKey*/
+/*exported decrypt, encrypt*/
+
 var mod = Math.pow(2, 32);
 
 function decrypt(string) {
@@ -84,7 +86,7 @@ function encrypt(string) {
     return encodeToHex(ret);
 }
 function encodeToHex(str) {
-    var r = '';
+    var r = "";
     var e = str.length;
     var c = 0;
     var h;
@@ -96,7 +98,7 @@ function encodeToHex(str) {
     return r;
 }
 function decodeFromHex(str) {
-    var r = '';
+    var r = "";
     for (var i = str.length; i >= 1; i -= 2) {
         r = String.fromCharCode("0x" + str.substring(i - 2, i)) + r;
     }
