@@ -62,15 +62,18 @@ function sendRequest(secure, encrypted, method, request, handler) {
     } else {
         parameters = "";
     }
+    var new_request;
     if (encrypted) {
-        request = encrypt(request);
+        new_request = encrypt(request);
+    } else {
+        new_request = request;
     }
     $.ajax({
         async: false,
         type: "POST",
         url: url + method + parameters,
         contentType: "text/plain",
-        data: request,
+        data: new_request,
         dataType: "json",
         success: function (response, status, xhr) {
             if (response.stat === "fail") {
@@ -81,19 +84,18 @@ function sendRequest(secure, encrypted, method, request, handler) {
                     partnerLogin();
                     break;
                 default:
+                    console.log(parameters);
+                    console.log(request);
                     console.log(response);
-
                 }
                 if (method == "station.getPlaylist" && failed == false) {
                     getPlaylist(sessionStorage.currentStation);
                     failed = true;
                 }
-
             } else {
                 handler(response, status, xhr);
             }
         }
-
     });
 }
 
