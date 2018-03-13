@@ -1,4 +1,5 @@
 /*globals $, encrypt, decrypt, currentSong, play, prevSongs*/
+/*exported addFeedback, explainTrack, search, createStation, sleepSong, setQuickMix, deleteStation */
 
 //https://stackoverflow.com/questions/610406/javascript-equivalent-to-printf-string-format#4673436
 if (!String.prototype.format) {
@@ -14,7 +15,7 @@ if (!String.prototype.format) {
 
 // http://stackoverflow.com/questions/1240408/reading-bytes-from-a-javascript-string
 function stringToBytes(str) {
-    'use strict';
+    "use strict";
     var ch, st, re = [];
     for(var i = 0; i < str.length; i ++) {
         ch = str.charCodeAt(i);  // get char
@@ -27,7 +28,7 @@ function stringToBytes(str) {
         // add stack contents to result
         // done because chars have "wrong" endianness
         re = re.concat(st.reverse());
-    };
+    }
     // return an array of bytes
     return re;
 }
@@ -41,14 +42,14 @@ var stationList=[];
 var currentPlaylist;
 
 function getSyncTime(syncTime) {
-    'use strict';
+    "use strict";
     var time = (new Date()).getTime();
     var now = parseInt(String(time).substr(0, 10));
     return parseInt(syncTime) + (now - clientStartTime);
 }
 
 function sendRequest(secure, encrypted, method, request, handler) {
-    'use strict';
+    "use strict";
     var failed = false;
     var url, parameters;
     if (secure) {
@@ -100,7 +101,7 @@ function sendRequest(secure, encrypted, method, request, handler) {
 }
 
 function handleGetStationList(response) {
-    'use strict';
+    "use strict";
     stationList = response.result.stations;
     if (localStorage.userStation === undefined) {
         response.result.stations.forEach(function (station) {
@@ -112,7 +113,7 @@ function handleGetStationList(response) {
 }
 
 function getStationList() {
-    'use strict';
+    "use strict";
     var request = "{\n\
     'userAuthToken': '{0}',\n\
     'syncTime': {1}\n\
@@ -125,7 +126,7 @@ function getStationList() {
 //login info so we can know that un/pw is bad before assuming it is.
 //seems error 1002 is bad login info.
 function handleUserLogin(response) {
-    'use strict';
+    "use strict";
     userAuthToken = response.result.userAuthToken;
     userId = response.result.userId;
     if (stationList.length == 0) {
@@ -134,7 +135,7 @@ function handleUserLogin(response) {
 }
 
 function userLogin(response) {
-    'use strict';
+    "use strict";
     partnerId = response.result.partnerId;
     if (localStorage.username === undefined || localStorage.password === undefined) {
         return;
@@ -152,7 +153,7 @@ function userLogin(response) {
 }
 
 function handlePartnerLogin(response) {
-    'use strict';
+    "use strict";
     var b = stringToBytes(decrypt(response.result.syncTime));
     // skip 4 bytes of garbage
     var s = "", i;
@@ -160,12 +161,12 @@ function handlePartnerLogin(response) {
         s += String.fromCharCode(b[i]);
     }
     syncTime = parseInt(s);
-    clientStartTime = parseInt((new Date().getTime() + '').substr(0, 10));
+    clientStartTime = parseInt((new Date().getTime() + "").substr(0, 10));
     userLogin(response);
 }
 
 function partnerLogin() {
-    'use strict';
+    "use strict";
     if (localStorage.username !== "" && localStorage.password !== "") {
         var request = "{\n\
     'username':'android',\n\
@@ -180,23 +181,23 @@ function partnerLogin() {
 
 //removes ads from fetched playlist. solves issue when player gets stuck on "undefined - undefined" [added by BukeMan]
 function removeAds(playList) {
-    'use strict';
+    "use strict";
     playList.forEach(function (value, index) {
-        if (value.hasOwnProperty('adToken')) {
+        if (value.hasOwnProperty("adToken")) {
             playList.splice(index, 1);
         }
     });
 }
 
 function handleGetPlaylist(response) {
-    'use strict';
+    "use strict";
     currentPlaylist = response.result.items;
     //currentPlaylist.pop(); //Pop goes the advertisment.
     removeAds(currentPlaylist);
 }
 
 function getPlaylist(stationToken) {
-    'use strict';
+    "use strict";
     sessionStorage.currentStation = stationToken;
     var request = "{\n\
     'stationToken': '{0}',\n\
@@ -209,7 +210,7 @@ function getPlaylist(stationToken) {
 }
 
 function addFeedback(songNum, rating) {
-    'use strict';
+    "use strict";
     if (currentSong.songRating && rating) {  // Bug fix for addFeedback being executed by bind()
         return;
     }
@@ -239,22 +240,22 @@ function addFeedback(songNum, rating) {
             prevSongs[songNum].disliked = rating;
         }
     }
-    sendRequest(false, true, "station.addFeedback", request, function () { return undefined });
+    sendRequest(false, true, "station.addFeedback", request, function () { return undefined; });
 }
 
 function sleepSong() {
-    'use strict';
+    "use strict";
     var request = "{\n\
     'trackToken': '{0}',\n\
     'userAuthToken': '{1}',\n\
     'syncTime': {2}\n\
 }".format(currentSong.trackToken, userAuthToken, getSyncTime(syncTime));
     //var request = "{'trackToken':'" + currentSong.trackToken + "','userAuthToken':'" + userAuthToken + "','syncTime':" + getSyncTime(syncTime) + "}";
-    sendRequest(false, true, "user.sleepSong", request, function () { return undefined });
+    sendRequest(false, true, "user.sleepSong", request, function () { return undefined; });
 }
 
 function setQuickMix(mixStations) {
-    'use strict';
+    "use strict";
     var mixStations_str = mixStations.toString().replace(/,/g, "','");
 
     var request = "{\n\
@@ -263,16 +264,16 @@ function setQuickMix(mixStations) {
     'syncTime': {2}\n\
 }".format(mixStations_str, userAuthToken, getSyncTime(syncTime));
     //var request = "{'quickMixStationIds':['" + mixStations.toString().replace(/,/g, "','") + "'],'userAuthToken':'" + userAuthToken + "','syncTime':" + getSyncTime(syncTime) + "}";
-    sendRequest(false,true,"user.setQuickMix",request, function () { return undefined });
+    sendRequest(false,true,"user.setQuickMix",request, function () { return undefined; });
 }
 
 function handleSearch(response) {
-    'use strict';
+    "use strict";
     console.log(response);
 }
 
 function search(searchString) {
-    'use strict';
+    "use strict";
     //searchString = searchString.replace("&", "&amp").replace("'", "&apos").replace("\"", "&quot").replace("<", "&lt").replace(">", "&gt");
     var request = "{\n\
     'searchText': '{0}',\n\
@@ -285,12 +286,12 @@ function search(searchString) {
 }
 
 function handleCreateStation(response) {
-    'use strict';
+    "use strict";
     play(response.result.stationId);
 }
 
 function createStation(musicToken) {
-    'use strict';
+    "use strict";
     var request = "{\n\
     'musicToken': '{0}',\n\
     'userAuthToken': '{1}',\n\
@@ -301,7 +302,7 @@ function createStation(musicToken) {
 }
 
 function deleteStation(stationToken) {
-    'use strict';    
+    "use strict";    
     var request = "{\n\
     'stationToken': '{0}',\n\
     'userAuthToken': '{1}',\n\
@@ -312,7 +313,7 @@ function deleteStation(stationToken) {
 }
 
 function explainTrack() {
-    'use strict';
+    "use strict";
     var request = "{\n\
     'trackToken': '{0}',\n\
     'userAuthToken': '{1}',\n\
