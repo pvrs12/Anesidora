@@ -32,12 +32,16 @@ function play(stationToken) {
     }
 }
 
-function nextSong() {
+function nextSong(depth=1) {
+    if (depth > 4){
+        console.log("What? We recursed down 4 times?");
+        return;
+    }
     if (currentPlaylist === undefined) {
         getPlaylist(localStorage.lastStation);
     }
     if (currentSong === undefined) {
-        while (currentSong === undefined) {
+        while (currentSong === undefined && currentPlaylist.length > 0) {
             currentSong = currentPlaylist.shift();
         }
     } else {
@@ -48,34 +52,52 @@ function nextSong() {
     }
     comingSong = currentPlaylist.shift();
 
-    if (localStorage.notifications === "true") {
-        var options = {
-            type: "list",
-            title: "Now playing:\r\n" + currentSong.artistName + " - " + currentSong.songName,
-            message: "by " + currentSong.artistName,
-            eventTime: 5000,
-            items: [
-                { title: "", message: "Coming next: " },
-                { title: "", message: comingSong.artistName + " - " + comingSong.songName }
-            ]
-        }
+    var song_url;
 
-        var xhr = new XMLHttpRequest();
-        xhr.open("GET", currentSong.albumArtUrl);
-        xhr.responseType = "blob";
-        xhr.onload = function(){
-            var blob = this.response;
-            options.iconUrl = window.URL.createObjectURL(blob);
-        };
-        xhr.send(null);
-    }
     if (currentSong.additionalAudioUrl != null) {
-        mp3Player.setAttribute("src", currentSong.additionalAudioUrl);
+        song_url = currentSong.additionalAudioUrl;
+    } else {
+        song_url = currentSong.audioUrlMap.highQuality.audioUrl;
     }
-    else {
-        mp3Player.setAttribute("src", currentSong.audioUrlMap.highQuality.audioUrl);
-    }
-    mp3Player.play();
+
+    var xhr = new XMLHttpRequest();
+    xhr.open("HEAD", song_url);
+    xhr.onerror = function () {
+        nextSong(depth + 1);
+    };
+    xhr.onload = function() {
+        if (xhr.status >= 300){
+            //purge the current list, then run this function again
+            nextSong(depth + 1);
+        }
+        if (localStorage.notifications === "true") {
+            var options = {
+                type: "list",
+                title: "Now playing:\r\n" + currentSong.artistName + " - " + currentSong.songName,
+                message: "by " + currentSong.artistName,
+                eventTime: 5000,
+                items: [
+                    { title: "", message: "Coming next: " },
+                    { title: "", message: comingSong.artistName + " - " + comingSong.songName }
+                ]
+            }
+    
+            var xhr2 = new XMLHttpRequest();
+            xhr2.open("GET", currentSong.albumArtUrl);
+            xhr2.responseType = "blob";
+            xhr2.onload = function(){
+                var blob = this.response;
+                options.iconUrl = window.URL.createObjectURL(blob);
+            };
+            xhr2.send(null);
+        }
+    
+        mp3Player.setAttribute("src", song_url);
+        mp3Player.play();
+    };
+    xhr.send();
+
+    
 }
 
 function downloadSong() {
@@ -98,8 +120,6 @@ if (localStorage.username !== '' && localStorage.password !== '') {
 
 $(document).ready(function () {
     'use strict';
-
-
     var platform_promise = browser.runtime.getPlatformInfo();
     platform_promise.then(function (info) {
         var isAndroid = info.os === "android";
