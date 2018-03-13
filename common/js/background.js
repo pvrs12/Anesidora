@@ -1,5 +1,5 @@
 /*jslint browser:true*/
-/*global $, browser, partnerLogin, getPlaylist, mp3Player, currentPlaylist*/
+/*global $, browser, partnerLogin, getPlaylist, mp3Player, currentPlaylist, platform_specific*/
 
 var callback;
 var currentSong;
@@ -96,8 +96,6 @@ function nextSong(depth=1) {
         mp3Player.play();
     };
     xhr.send();
-
-    
 }
 
 function downloadSong() {
@@ -120,23 +118,13 @@ if (localStorage.username !== '' && localStorage.password !== '') {
 
 $(document).ready(function () {
     'use strict';
-    var platform_promise = browser.runtime.getPlatformInfo();
-    platform_promise.then(function (info) {
-        var isAndroid = info.os === "android";
-        if (!isAndroid) {
-            browser.browserAction.setPopup({popup: "/popup.htm"});
-        }
-    });
     if (localStorage.volume) {
         mp3Player.volume = localStorage.volume;
     } else {
         mp3Player.volume = 0.1;
     }
-    browser.browserAction.onClicked.addListener(() => {
-        browser.tabs.create({
-            url: "/popup.htm"
-        });
-    });
+
+    platform_specific(browser);
 
     $('#mp3Player').bind('play', function () {
         try {
