@@ -1,4 +1,4 @@
-/*jslint bitwise:true*/
+/* exported MD5 */
 
 /**
 *
@@ -8,7 +8,7 @@
 **/
 
 var MD5 = function (string) {
-    'use strict';
+    "use strict";
     function RotateLeft(lValue, iShiftBits) {
         return (lValue << iShiftBits) | (lValue >>> (32 - iShiftBits));
     }
@@ -42,22 +42,22 @@ var MD5 = function (string) {
     function FF(a, b, c, d, x, s, ac) {
         a = AddUnsigned(a, AddUnsigned(AddUnsigned(F(b, c, d), x), ac));
         return AddUnsigned(RotateLeft(a, s), b);
-    };
+    }
 
     function GG(a, b, c, d, x, s, ac) {
         a = AddUnsigned(a, AddUnsigned(AddUnsigned(G(b, c, d), x), ac));
         return AddUnsigned(RotateLeft(a, s), b);
-    };
+    }
 
     function HH(a, b, c, d, x, s, ac) {
         a = AddUnsigned(a, AddUnsigned(AddUnsigned(H(b, c, d), x), ac));
         return AddUnsigned(RotateLeft(a, s), b);
-    };
+    }
 
     function II(a, b, c, d, x, s, ac) {
         a = AddUnsigned(a, AddUnsigned(AddUnsigned(I(b, c, d), x), ac));
         return AddUnsigned(RotateLeft(a, s), b);
-    };
+    }
 
     function ConvertToWordArray(string) {
         var lWordCount;
@@ -80,7 +80,7 @@ var MD5 = function (string) {
         lWordArray[lNumberOfWords - 2] = lMessageLength << 3;
         lWordArray[lNumberOfWords - 1] = lMessageLength >>> 29;
         return lWordArray;
-    };
+    }
 
     function WordToHex(lValue) {
         var WordToHexValue = "", WordToHexValue_temp = "", lByte, lCount;
@@ -90,7 +90,7 @@ var MD5 = function (string) {
             WordToHexValue = WordToHexValue + WordToHexValue_temp.substr(WordToHexValue_temp.length - 2, 2);
         }
         return WordToHexValue;
-    };
+    }
 
     function Utf8Encode(string) {
         string = string.replace(/\r\n/g, "\n");
@@ -116,7 +116,7 @@ var MD5 = function (string) {
         }
 
         return utftext;
-    };
+    }
 
     var x = Array();
     var k, AA, BB, CC, DD, a, b, c, d;
@@ -206,4 +206,4 @@ var MD5 = function (string) {
     var temp = WordToHex(a) + WordToHex(b) + WordToHex(c) + WordToHex(d);
 
     return temp.toLowerCase();
-}
+};
