@@ -116,6 +116,20 @@ if (localStorage.username !== "" && localStorage.password !== "") {
     partnerLogin();
 }
 
+function setup_commands() {
+    browser.commands.onCommand.addListener(function(command) {
+        if (command === "pause_play") {
+            if (!mp3Player.paused) {
+                mp3Player.pause();
+            } else {
+                play(localStorage.lastStation);
+            }
+        } else if(command === "skip_song") {
+            nextSong();
+        }
+    });
+}
+
 $(document).ready(function () {
     "use strict";
     if (localStorage.volume) {
@@ -125,6 +139,8 @@ $(document).ready(function () {
     }
 
     platform_specific(browser);
+
+    setup_commands();
 
     $("#mp3Player").bind("play", function () {
         try {
