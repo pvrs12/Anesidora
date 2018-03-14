@@ -277,13 +277,10 @@ $(document).ready(function () {
     });
 
     $("#playButton").bind("click", function () {
-        background.play(localStorage.lastStation);
-        $("#playButton").hide();
+        play_audio();
     });
     $("#pauseButton").bind("click", function () {
-        background.mp3Player.pause();
-        $("#pauseButton").hide();
-        $("#playButton").show();
+        pause_audio();
     });
     $("#skipButton").bind("click", background.nextSong);
     $("#tUpButton").bind("click", function () {
@@ -396,5 +393,16 @@ $(document).ready(function () {
         updatePlayer();
     }
 });
+
+function pause_audio () {
+    background.mp3Player.pause();
+    $("#pauseButton").hide();
+    $("#playButton").show();
+}
+
+function play_audio () {
+    background.play(localStorage.lastStation);
+    $("#playButton").hide();
+}
 
 background.setCallbacks(updatePlayer, drawPlayer, downloadSong);
