@@ -1,34 +1,50 @@
 {
-	"manifest_version": 2,
-	"background": {
-		"page":"background.htm"
-	},
-	"browser_action": {
-		"browser_style": true,
-		"default_icon": "images/anesidora-128.png"
-	},
-	"description": "Tabs? Where we're listening, we don't need tabs.",
-	"icons": {
-		"128": "images/anesidora-128.png",
-		"16": "images/anesidora-16.png",
-		"48": "images/anesidora-48.png"
-	},
-	"name": "Anesidora",
-	"omnibox": {
-		"keyword": "radio"
-	},
-	"homepage_url": "http://github.com/pvrs12/anesidora",
-	"permissions": [
-				"http://*.pandora.com/*",
-				"https://*.pandora.com/*",
-				"http://*.p-cdn.com/*",
-				"http://*.p-cdn.us/*"
-	],
-	"version": "1.10.4",
-	"applications":{
-		"gecko":{
-			"id":"pvrs12@gmail.com"
-		}
-	}
+    "manifest_version": 2,
+    "background": {
+        "page":"background.htm"
+    },
+    "browser_action": {
+        "browser_style": true,
+        "default_icon": "images/anesidora-128.png"
+    },
+    "description": "Tabs? Where we're listening, we don't need tabs.",
+    "icons": {
+        "128": "images/anesidora-128.png",
+        "16": "images/anesidora-16.png",
+        "48": "images/anesidora-48.png"
+    },
+    "name": "Anesidora",
+    "omnibox": {
+        "keyword": "radio"
+    },
+    "homepage_url": "http://github.com/pvrs12/anesidora",
+    "permissions": [
+        "http://*.pandora.com/*",
+        "https://*.pandora.com/*",
+        "http://*.p-cdn.com/*",
+        "http://*.p-cdn.us/*"
+    ],
+    "applications":{
+        "gecko":{
+            "id":"pvrs12@gmail.com"
+        }
+    },
+    "commands": {
+        "pause_play": {
+            "suggested_key": {
+                "default": "MediaPlayPause"
+            },
+            "description": "Play/Pause the current song",
+            "global": true
+        },
+        "skip_song": {
+            "suggested_key": {
+                "default": "Alt+N"
+            },
+            "description": "Skip to the next song",
+            "global": true
+        }
+    },
+    "version": "1.11.0"
 }
 
