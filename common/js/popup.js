@@ -331,6 +331,7 @@ $(document).ready(function () {
     });
     $("#unWarning").hide();
     $("#pwWarning").hide();
+    $("#rightWarnRow").hide();
     $("#login").bind("submit", function () {
         localStorage.username = $("#username").val();
         localStorage.password = $("#password").val();
@@ -338,6 +339,7 @@ $(document).ready(function () {
         if (background.userAuthToken === "") {
             $("#unWarning").show();
             $("#pwWarning").show();
+            $("#rightWarnRow").show();
             $("#username").css({
                 "padding-left": "16px",
                 "width": "216px"
