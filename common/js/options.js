@@ -67,9 +67,11 @@ $(document).ready(function () {
     });
 
     $("#refresh").bind("click", function () {
+        document.getElementById("refresh").innerHTML = "Refreshed";
         background.getStationList();
     });
     $("#reset").bind("click", function () {
+        document.getElementById("reset").innerHTML = "Logged Out";
         localStorage.username = "";
         localStorage.password = "";
         localStorage.lastStation = "";
