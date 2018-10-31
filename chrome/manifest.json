@@ -26,5 +26,9 @@
         "http://*.p-cdn.com/*",
         "http://*.p-cdn.us/*"
     ],
-    "version": "1.11.0"
+    "version": "1.12.0",
+    "options_ui": {
+        "page": "options.htm",
+        "chrome_style": true
+    }
 }
