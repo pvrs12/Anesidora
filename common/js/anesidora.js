@@ -52,7 +52,7 @@ function sendRequest(secure, encrypted, method, request, handler) {
     "use strict";
     var failed = false;
     var url, parameters;
-    if (secure) {
+    if (localStorage.forceSecure === "true" || secure) {
         url = "https://tuner.pandora.com/services/json/?method=";
     } else {
         url = "http://tuner.pandora.com/services/json/?method=";
