@@ -1,4 +1,4 @@
-/*globals chrome, alert*/
+/*globals alert, get_browser*/
 
 var min_width = 310;
 var min_height = 50;
@@ -66,7 +66,7 @@ document.addEventListener("DOMContentLoaded", function() {
     bodyHeight = document.getElementById("bodyHeight");
     historyNum = document.getElementById("historyNum");
 
-    var background = chrome.extension.getBackgroundPage();
+    var background = get_browser().extension.getBackgroundPage();
     initBodySize();
 
     forceSecure.addEventListener("change", secureWarning);

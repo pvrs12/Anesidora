@@ -1,4 +1,4 @@
-/*globals $, chrome, default_width, default_height*/
+/*globals $, get_browser, default_width, default_height*/
 
 //https://stackoverflow.com/questions/10073699/pad-a-number-with-leading-zeros-in-javascript#answer-10074204
 function zeroPad(num, places) {
@@ -11,7 +11,7 @@ function zeroPad(num, places) {
 
 var currentPanel = null;
 
-var background = chrome.extension.getBackgroundPage();
+var background = get_browser().extension.getBackgroundPage();
 
 function initBodySize() {
     "use strict";
@@ -119,7 +119,7 @@ function updateHistory() {
     $(".historyInfoLink").bind("click", function (e) {
         var historyNum = e.target.dataset.history;
         var song = background.prevSongs[historyNum];
-        chrome.tabs.create({
+        get_browser().tabs.create({
             "url": song.songDetailUrl
         });
     });
@@ -154,19 +154,19 @@ function updatePlayer() {
     "use strict";
     if (background.currentSong) {
         $("#coverArt").unbind().bind("click", function () {
-            chrome.tabs.create({
+            get_browser().tabs.create({
                 "url": background.currentSong.albumDetailUrl
             });
         }).attr("src", background.currentSong.albumArtUrl);
         $("#artistLink").unbind().text(background.currentSong.artistName);
         $("#titleLink").unbind().text(background.currentSong.songName);
         $("#artistLink").unbind().bind("click", function () {
-            chrome.tabs.create({
+            get_browser().tabs.create({
                 "url": background.currentSong.artistDetailUrl
             });
         }).text(background.currentSong.artistName);
         $("#titleLink").unbind().bind("click", function () {
-            chrome.tabs.create({
+            get_browser().tabs.create({
                 "url": background.currentSong.songDetailUrl
             });
         }).text(background.currentSong.songName);

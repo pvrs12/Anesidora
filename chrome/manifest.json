@@ -26,7 +26,23 @@
         "http://*.p-cdn.com/*",
         "http://*.p-cdn.us/*"
     ],
-    "version": "1.12.1",
+    "commands": {
+        "pause_play": {
+            "suggested_key": {
+                "default": "MediaPlayPause"
+            },
+            "description": "Play/Pause the current song",
+            "global": true
+        },
+        "skip_song": {
+            "suggested_key": {
+                "default": "Alt+N"
+            },
+            "description": "Skip to the next song",
+            "global": true
+        }
+    },
+    "version": "1.12.2",
     "options_ui": {
         "page": "options.htm",
         "chrome_style": true
