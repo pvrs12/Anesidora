@@ -1,4 +1,4 @@
-/*global $, browser, partnerLogin, getPlaylist, mp3Player, currentPlaylist, platform_specific*/
+/*global $, partnerLogin, getPlaylist, mp3Player, currentPlaylist, platform_specific, get_browser*/
 /*exported setCallbacks, play, downloadSong */
 
 var callback;
@@ -117,7 +117,8 @@ if (localStorage.username !== "" && localStorage.password !== "") {
 }
 
 function setup_commands() {
-    browser.commands.onCommand.addListener(function(command) {
+    console.log(get_browser());
+    get_browser().commands.onCommand.addListener(function(command) {
         if (command === "pause_play") {
             if (!mp3Player.paused) {
                 mp3Player.pause();
@@ -138,7 +139,7 @@ $(document).ready(function () {
         mp3Player.volume = 0.1;
     }
 
-    platform_specific(browser);
+    platform_specific(get_browser());
 
     setup_commands();
 

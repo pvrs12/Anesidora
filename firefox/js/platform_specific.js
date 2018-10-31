@@ -1,4 +1,5 @@
-/*exported platform_specific*/
+/*globals browser*/
+/*exported platform_specific, get_browser*/
 
 function platform_specific(browser) {
     var platform_promise = browser.runtime.getPlatformInfo();
@@ -13,4 +14,8 @@ function platform_specific(browser) {
             url: "/popup.htm"
         });
     });
+}
+
+function get_browser() {
+    return browser;
 }
