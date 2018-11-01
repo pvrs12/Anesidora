@@ -42,7 +42,7 @@
             "global": true
         }
     },
-    "version": "1.12.2",
+    "version": "1.12.3",
     "options_ui": {
         "page": "options.htm",
         "chrome_style": true

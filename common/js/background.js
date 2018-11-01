@@ -1,4 +1,4 @@
-/*global $, partnerLogin, getPlaylist, mp3Player, currentPlaylist, platform_specific, get_browser*/
+/*global $, partnerLogin, getPlaylist, mp3Player, currentPlaylist, platform_specific, get_browser, is_android*/
 /*exported setCallbacks, play, downloadSong */
 
 var callback;
@@ -37,28 +37,28 @@ function nextSong(depth=1) {
         // console.log("What? We recursed down 4 times?");
         return;
     }
-    if (currentPlaylist === undefined) {
+    if (currentPlaylist === undefined || currentPlaylist.length === 0) {
         getPlaylist(localStorage.lastStation);
     }
-    if (currentSong === undefined) {
-        while (currentSong === undefined && currentPlaylist.length > 0) {
-            currentSong = currentPlaylist.shift();
-        }
-    } else {
-        currentSong = comingSong;
+    if (comingSong === undefined) {
+        comingSong = currentPlaylist.shift();
     }
+    currentSong = comingSong;
+
+    //in case the most recent shift emptied the playlist
     if (currentPlaylist.length === 0) {
         getPlaylist(localStorage.lastStation);
     }
     comingSong = currentPlaylist.shift();
 
-    var song_url;
-
+    let song_url;
     if (currentSong.additionalAudioUrl != null) {
         song_url = currentSong.additionalAudioUrl;
     } else {
         song_url = currentSong.audioUrlMap.highQuality.audioUrl;
     }
+    mp3Player.setAttribute("src", song_url);
+    mp3Player.play();
 
     var xhr = new XMLHttpRequest();
     xhr.open("HEAD", song_url);
@@ -91,9 +91,6 @@ function nextSong(depth=1) {
             };
             xhr2.send(null);
         }
-    
-        mp3Player.setAttribute("src", song_url);
-        mp3Player.play();
     };
     xhr.send();
 }
@@ -117,18 +114,19 @@ if (localStorage.username !== "" && localStorage.password !== "") {
 }
 
 function setup_commands() {
-    console.log(get_browser());
-    get_browser().commands.onCommand.addListener(function(command) {
-        if (command === "pause_play") {
-            if (!mp3Player.paused) {
-                mp3Player.pause();
-            } else {
-                play(localStorage.lastStation);
+    if (!is_android()) {
+        get_browser().commands.onCommand.addListener(function(command) {
+            if (command === "pause_play") {
+                if (!mp3Player.paused) {
+                    mp3Player.pause();
+                } else {
+                    play(localStorage.lastStation);
+                }
+            } else if(command === "skip_song") {
+                nextSong();
             }
-        } else if(command === "skip_song") {
-            nextSong();
-        }
-    });
+        });
+    }
 }
 
 $(document).ready(function () {
@@ -142,6 +140,15 @@ $(document).ready(function () {
     platform_specific(get_browser());
 
     setup_commands();
+
+    $("#play_bg").bind("click", function() {
+        console.log("playing");
+        play(localStorage.lastStation);
+    });
+    $("#play2_bg").bind("click", function() {
+        console.log("playing2");
+        console.log(mp3Player.play());
+    });
 
     $("#mp3Player").bind("play", function () {
         try {

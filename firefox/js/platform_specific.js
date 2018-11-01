@@ -1,16 +1,28 @@
 /*globals browser*/
-/*exported platform_specific, get_browser*/
+/*exported platform_specific, get_browser, is_android*/
 
-function platform_specific(browser) {
-    var platform_promise = browser.runtime.getPlatformInfo();
+var isAndroid = false;
+
+get_is_android();
+
+function is_android() {
+    return isAndroid;
+}
+
+function get_is_android() {
+    let platform_promise = get_browser().runtime.getPlatformInfo();
     platform_promise.then(function (info) {
-        var isAndroid = info.os === "android";
-        if (!isAndroid) {
-            browser.browserAction.setPopup({popup: "/popup.htm"});
-        }
+        isAndroid = info.os === "android";
     });
-    browser.browserAction.onClicked.addListener(() => {
-        browser.tabs.create({
+}
+
+function platform_specific() {
+    if (!is_android) {
+        get_browser().browserAction.setPopup({popup: "/popup.htm"});
+    }
+
+    get_browser().browserAction.onClicked.addListener(() => {
+        get_browser().tabs.create({
             url: "/popup.htm"
         });
     });

@@ -69,6 +69,11 @@ document.addEventListener("DOMContentLoaded", function() {
     var background = get_browser().extension.getBackgroundPage();
     initBodySize();
 
+    if (!forceSecure) {
+        // only run the following when on options.htm
+        return;
+    }
+
     forceSecure.addEventListener("change", secureWarning);
     refresh_button.addEventListener("click", function () {
         background.getStationList();
