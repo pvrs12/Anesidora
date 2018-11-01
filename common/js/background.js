@@ -1,5 +1,5 @@
 /*global $, partnerLogin, getPlaylist, mp3Player, currentPlaylist, platform_specific, get_browser, is_android*/
-/*exported setCallbacks, play, downloadSong */
+/*exported setCallbacks, play, downloadSong, nextSongStation*/
 
 var callback;
 var currentSong;
@@ -15,13 +15,13 @@ function setCallbacks(updatePlayer,drawPlayer,downloadSong){
 }
 
 function play(stationToken) {
-    if (stationToken != localStorage.lastStation) {
+    if (stationToken !== localStorage.lastStation) {
         currentSong = undefined;
         getPlaylist(stationToken);
         localStorage.lastStation = stationToken;
         nextSong();
     } else {
-        if (currentSong == undefined) {
+        if (currentSong === undefined) {
             getPlaylist(localStorage.lastStation);
         }
         if (document.getElementById("mp3Player").currentTime > 0) {
@@ -30,6 +30,13 @@ function play(stationToken) {
             nextSong();
         }
     }
+}
+
+function nextSongStation(station) {
+    localStorage.lastStation = station;
+    getPlaylist(localStorage.lastStation);
+    comingSong = undefined;
+    nextSong();
 }
 
 function nextSong(depth=1) {
@@ -140,15 +147,6 @@ $(document).ready(function () {
     platform_specific(get_browser());
 
     setup_commands();
-
-    $("#play_bg").bind("click", function() {
-        console.log("playing");
-        play(localStorage.lastStation);
-    });
-    $("#play2_bg").bind("click", function() {
-        console.log("playing2");
-        console.log(mp3Player.play());
-    });
 
     $("#mp3Player").bind("play", function () {
         try {

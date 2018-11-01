@@ -36,7 +36,7 @@
         },
         "skip_song": {
             "suggested_key": {
-                "default": "Alt+N"
+                "default": "MediaNextTrack"
             },
             "description": "Skip to the next song",
             "global": true

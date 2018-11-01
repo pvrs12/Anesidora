@@ -326,7 +326,7 @@ $(document).ready(function () {
         goToStations();
     });
     $("#stationList").bind("change", function () {
-        background.play($("#stationList").val());
+        background.nextSongStation($("#stationList").val());
         goToPlayer();
     });
     $("#unWarning").hide();
