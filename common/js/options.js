@@ -51,6 +51,43 @@ function initBodySize() {
     secureWarning();
 }
 
+function initHotkeys() {
+    get_browser().commands.getAll().then(commands => {
+        commands.forEach(command => {
+            playPauseHotkey = document.getElementById("playPauseHotkey");
+            skipSongHotkey = document.getElementById("skipSongHotkey");
+            
+            if (playPauseHotkey && command.name === "pause_play") {
+                playPauseHotkey.value = command.shortcut;
+            }
+            if (skipSongHotkey && command.name === "skip_song") {
+                skipSongHotkey.value = command.shortcut;
+            }
+        });
+    });
+}
+
+function updateHotkeys() {
+    playPauseHotkey = document.getElementById("playPauseHotkey");
+    skipSongHotkey = document.getElementById("skipSongHotkey");
+
+    playPauseDetails = {
+        name: "pause_play",
+        shortcut: playPauseHotkey.value
+    };
+    get_browser().commands.update(playPauseDetails).catch(() => {
+        alert("The Play/Pause hotkey entered is invalid!")
+    });
+
+    skipSongDetails = {
+        name: "skip_song",
+        shortcut: skipSongHotkey.value
+    };
+    get_browser().commands.update(skipSongDetails).catch(() => {
+        alert("The Skip Song hotkey entered is invalid!")
+    });;
+}
+
 document.addEventListener("DOMContentLoaded", function() {
     "use strict";
 
@@ -66,7 +103,7 @@ document.addEventListener("DOMContentLoaded", function() {
     bodyHeight = document.getElementById("bodyHeight");
     historyNum = document.getElementById("historyNum");
 
-    var background = get_browser().extension.getBackgroundPage();
+    initHotkeys();
     initBodySize();
 
     if (!forceSecure) {
@@ -76,7 +113,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     forceSecure.addEventListener("change", secureWarning);
     refresh_button.addEventListener("click", function () {
-        background.getStationList();
+        get_browser().extension.getBackgroundPage().getStationList();
     });
     default_button.addEventListener("click", function () {
         localStorage.bodyWidth = default_width;
@@ -119,6 +156,8 @@ document.addEventListener("DOMContentLoaded", function() {
         } else {
             localStorage.historyNum = historyNum.value;
         }
+
+        updateHotkeys();
 
         localStorage.forceSecure = forceSecure.checked;
     });

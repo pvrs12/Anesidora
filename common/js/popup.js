@@ -143,9 +143,36 @@ function goToHistory() {
     updateHistory();
 }
 
+function refreshStationList() {
+    "use strict";
+    let list = document.getElementById("stationList");
+    while(list.lastChild) {
+        list.removeChild(list.lastChild);
+    }
+    addStations();
+}
+
+function refreshStations() {
+    "use strict";
+    background.getStationList();
+
+    setTimeout(refreshStationList, 1000);
+}
+
 function addStations() {
     "use strict";
-    background.stationList.forEach(function (station) {
+    let filter = document.getElementById("stationFilterInput").value;
+    
+    background.stationList.sort((a, b) => {
+        return a.stationName.localeCompare(b.stationName)
+    });
+    
+    background.stationList.filter((station) => {
+        if (!filter) {
+            return true;
+        }
+        return station.stationName.toLowerCase().includes(filter.toLowerCase());
+    }).forEach(function (station) {
         $("#stationList").append(new Option(station.stationName, station.stationToken));
     });
 }
@@ -331,7 +358,6 @@ $(document).ready(function () {
     });
     $("#unWarning").hide();
     $("#pwWarning").hide();
-    $("#rightWarnRow").hide();
     $("#login").bind("submit", function () {
         localStorage.username = $("#username").val();
         localStorage.password = $("#password").val();
@@ -339,7 +365,6 @@ $(document).ready(function () {
         if (background.userAuthToken === "") {
             $("#unWarning").show();
             $("#pwWarning").show();
-            $("#rightWarnRow").show();
             $("#username").css({
                 "padding-left": "16px",
                 "width": "216px"
@@ -356,6 +381,18 @@ $(document).ready(function () {
             return false;
         }
     });
+
+    $("#stationFilterInput").bind("keypress change input paste", () => {
+        refreshStationList();
+    });
+
+    $("#stationRefreshButton").bind("click", () => {
+        refreshStations();
+    });
+
+    // document.getElementById("stationFilterInput").addEventListener("keypress", () => {
+    //     refreshStationList();
+    // });
 
     if (background.stationList !== undefined) {
         addStations();
