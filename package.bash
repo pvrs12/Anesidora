@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #download latest jquery
 mkdir -p common/js/jquery
 curl http://code.jquery.com/jquery-3.3.1.min.js > common/js/jquery/jquery-3.3.1.min.js 2>/dev/null

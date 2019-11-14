@@ -33,6 +33,19 @@ function stringToBytes(str) {
     return re;
 }
 
+function formatParameters(parameterObject) {
+    let params = []
+    for(let key in parameterObject) {
+        let value = parameterObject[key];
+        if (value.length > 0) {
+            params.push("{0}={1}".format(key, value));
+        } else {
+            params.push(key);
+        }
+    }
+    return params.join("&");
+}
+
 var clientStartTime = 0;
 var syncTime = 0;
 var userAuthToken = "";
@@ -58,17 +71,17 @@ function sendRequest(secure, encrypted, method, request, handler) {
         url = "http://tuner.pandora.com/services/json/?method=";
     }
     if (userAuthToken !== "") {
-        parameters = "&auth_token={0}&partner_id={1}&user_id={2}".format(encodeURIComponent(userAuthToken), partnerId, userId);
-        //parameters = "&auth_token=" + encodeURIComponent(userAuthToken) + "&partner_id=" + partnerId + "&user_id=" + userId;
+        let parameterObject = {
+            "auth_token": encodeURIComponent(userAuthToken),
+            "partner_id": partnerId,
+            "user_id": userId
+        }
+        parameters = "&{0}".format(formatParameters(parameterObject))
+        // parameters = "&auth_token={0}&partner_id={1}&user_id={2}".format(encodeURIComponent(userAuthToken), partnerId, userId);
     } else {
         parameters = "";
     }
-    var new_request;
-    if (encrypted) {
-        new_request = encrypt(request);
-    } else {
-        new_request = request;
-    }
+    let new_request = encrypted ? encrypt(request) : request;
     $.ajax({
         async: false,
         type: "POST",
@@ -114,11 +127,10 @@ function handleGetStationList(response) {
 
 function getStationList() {
     "use strict";
-    var request = "{\n\
-    'userAuthToken': '{0}',\n\
-    'syncTime': {1}\n\
-}".format(userAuthToken, getSyncTime(syncTime));
-    //var request = "{'userAuthToken':'" + userAuthToken + "','syncTime':" + getSyncTime(syncTime) + "}";
+    let request = JSON.stringify({
+        "userAuthToken": userAuthToken,
+        "syncTime": getSyncTime(syncTime)
+    });
     sendRequest(false, true,"user.getStationList", request, handleGetStationList);
 }
 
@@ -141,14 +153,20 @@ function userLogin(response) {
         return;
     }
 
-    var request = "{\n\
-    'loginType': 'user',\n\
-    'username': '{0}',\n\
-    'password': '{1}',\n\
-    'partnerAuthToken': '{2}',\n\
-    'syncTime': {3}\n\
-}".format(localStorage.username, localStorage.password, response.result.partnerAuthToken, getSyncTime(syncTime));
-    var parameters = "auth.userLogin&auth_token={0}&partner_id={1}".format(encodeURIComponent(response.result.partnerAuthToken), response.result.partnerId);
+    let request = JSON.stringify({
+        "loginType": "user",
+        "username": localStorage.username,
+        "password": localStorage.password,
+        "partnerAuthToken": response.result.partnerAuthToken,
+        "syncTime": getSyncTime(syncTime)
+    });
+    let parameterObject = {
+        "auth_token": encodeURIComponent(response.result.partnerAuthToken),
+        "partner_id": response.result.partnerId
+    }
+    let parameters = "auth.userLogin&{0}".format(formatParameters(parameterObject));
+
+    // var parameters = "auth.userLogin&auth_token={0}&partner_id={1}".format(encodeURIComponent(response.result.partnerAuthToken), response.result.partnerId);
     sendRequest(true, true, parameters, request, handleUserLogin);
 }
 
@@ -168,13 +186,13 @@ function handlePartnerLogin(response) {
 function partnerLogin() {
     "use strict";
     if (localStorage.username !== "" && localStorage.password !== "") {
-        var request = "{\n\
-    'username':'android',\n\
-    'password':'AC7IBG09A3DTSYM4R41UJWL07VLN8JI7',\n\
-    'version':'5',\n\
-    'deviceModel':'android-generic',\n\
-    'includeUrls':true\n\
-}";
+        let request = JSON.stringify({
+            "username": "android",
+            "password": "AC7IBG09A3DTSYM4R41UJWL07VLN8JI7",
+            "version": "5",
+            "deviceModel": "android-generic",
+            "includeUrls": true
+        });
         sendRequest(true, false, "auth.partnerLogin", request, handlePartnerLogin);
     }
 }
@@ -199,13 +217,17 @@ function handleGetPlaylist(response) {
 function getPlaylist(stationToken) {
     "use strict";
     sessionStorage.currentStation = stationToken;
-    var request = "{\n\
-    'stationToken': '{0}',\n\
-    'additionalAudioUrl': 'HTTP_192_MP3',\n\
-    'userAuthToken': '{1}',\n\
-    'syncTime': {2}\n\
-}".format(stationToken, userAuthToken, getSyncTime(syncTime));
-    //var request = "{'stationToken':'" + stationToken + "','additionalAudioUrl':'HTTP_192_MP3','userAuthToken':'" + userAuthToken + "','syncTime':" + getSyncTime(syncTime) + "}";
+    let audioFormats = [
+        "HTTP_128_MP3",
+        "HTTP_64_AACPLUS_ADTS"
+    ]
+
+    let request = JSON.stringify({
+        "stationToken": stationToken,
+        "additionalAudioUrl": audioFormats.join(","),
+        "userAuthToken": userAuthToken,
+        "syncTime": getSyncTime(syncTime)
+    });
     sendRequest(true, true, "station.getPlaylist", request, handleGetPlaylist);
 }
 
@@ -214,56 +236,45 @@ function addFeedback(songNum, rating) {
     if (currentSong.songRating && rating) {  // Bug fix for addFeedback being executed by bind()
         return;
     }
-    var request;
+    let song;
     if (songNum === -1) {
-        request = "{\n\
-    'trackToken': '{0}',\n\
-    'isPositive': {1},\n\
-    'userAuthToken': '{2}',\n\
-    'syncTime': {3}\n\
-}".format(currentSong.trackToken, rating, userAuthToken, getSyncTime(syncTime));
-        //request = "{'trackToken':'" + currentSong.trackToken + "','isPositive':" + rating + ",'userAuthToken':'" + userAuthToken + "','syncTime':" + getSyncTime(syncTime) + "}";
-        currentSong.songRating = rating;
-        if (rating === false) {
-            currentSong.disliked = true;
-        }
+        song = currentSong;
     } else {
-        request = "{\n\
-    'trackToken': '{0}',\n\
-    'isPositive': {1},\n\
-    'userAuthToken': '{2}',\n\
-    'syncTime': {3}\n\
-}".format(prevSongs[songNum].trackToken, rating, userAuthToken, getSyncTime(syncTime));
-        //request = "{'trackToken':'" + prevSongs[songNum].trackToken + "','isPositive':" + rating + ",'userAuthToken':'" + userAuthToken + "','syncTime':" + getSyncTime(syncTime) + "}";
-        prevSongs[songNum].songRating = rating;
-        if (rating === false) {
-            prevSongs[songNum].disliked = rating;
-        }
+        song = prevSongs[songNum];
+    }
+    let request = JSON.stringify({
+        "trackToken": song.trackToken,
+        "isPositive": rating,
+        "userAuthToken": userAuthToken,
+        "syncTime": getSyncTime(syncTime)
+    });
+    song.songRating = rating;
+    if (rating === false) {
+        song.disliked = true;
     }
     sendRequest(false, true, "station.addFeedback", request, function () { return undefined; });
 }
 
 function sleepSong() {
     "use strict";
-    var request = "{\n\
-    'trackToken': '{0}',\n\
-    'userAuthToken': '{1}',\n\
-    'syncTime': {2}\n\
-}".format(currentSong.trackToken, userAuthToken, getSyncTime(syncTime));
-    //var request = "{'trackToken':'" + currentSong.trackToken + "','userAuthToken':'" + userAuthToken + "','syncTime':" + getSyncTime(syncTime) + "}";
+    let request = JSON.stringify({
+        "trackToken": currentSong.trackToken,
+        "userAuthToken": userAuthToken,
+        "syncTime": getSyncTime(syncTime)
+    });
     sendRequest(false, true, "user.sleepSong", request, function () { return undefined; });
 }
 
 function setQuickMix(mixStations) {
     "use strict";
-    var mixStations_str = mixStations.toString().replace(/,/g, "','");
+    // TODO: Test this XXX
+    // var mixStations_str = mixStations.toString().replace(/,/g, "','");
 
-    var request = "{\n\
-    'quickMixStationIds': ['{0}'],\n\
-    'userAuthToken': '{1}',\n\
-    'syncTime': {2}\n\
-}".format(mixStations_str, userAuthToken, getSyncTime(syncTime));
-    //var request = "{'quickMixStationIds':['" + mixStations.toString().replace(/,/g, "','") + "'],'userAuthToken':'" + userAuthToken + "','syncTime':" + getSyncTime(syncTime) + "}";
+    let request = JSON.stringify({
+        "quickMixStationIds": mixStations,
+        "userAuthToken": userAuthToken,
+        "syncTime": getSyncTime(syncTime)
+    });
     sendRequest(false,true,"user.setQuickMix",request, function () { return undefined; });
 }
 
@@ -275,13 +286,13 @@ function handleSearch(response) {
 function search(searchString) {
     "use strict";
     //searchString = searchString.replace("&", "&amp").replace("'", "&apos").replace("\"", "&quot").replace("<", "&lt").replace(">", "&gt");
-    var request = "{\n\
-    'searchText': '{0}',\n\
-    'userAuthToken': '{1}',\n\
-    'syncTime': {2}\n\
-}".format(searchString, userAuthToken, getSyncTime(syncTime));
 
-    //var request = "{'searchText':'" + searchString + "','userAuthToken':'" + userAuthToken + "','syncTime':" + getSyncTime(syncTime) + "}";
+    let request = JSON.stringify({
+        "searchText": searchString,
+        "userAuthToken": userAuthToken,
+        "syncTime": getSyncTime(syncTime)
+    });
+
     sendRequest(false, true, "music.search", request, handleSearch);
 }
 
@@ -292,33 +303,30 @@ function handleCreateStation(response) {
 
 function createStation(musicToken) {
     "use strict";
-    var request = "{\n\
-    'musicToken': '{0}',\n\
-    'userAuthToken': '{1}',\n\
-    'syncTime': {2}\n\
-}".format(musicToken, userAuthToken, getSyncTime(syncTime));
-    //var request = "{'musicToken':'" + musicToken + "','userAuthToken':'" + userAuthToken + "','syncTime':" + getSyncTime(syncTime) + "}";
+    let request = JSON.stringify({
+        "musicToken": musicToken,
+        "userAuthToken": userAuthToken,
+        "syncTime": getSyncTime(syncTime)
+    });
     sendRequest(false, true, "station.createStation", request, handleCreateStation);
 }
 
 function deleteStation(stationToken) {
-    "use strict";    
-    var request = "{\n\
-    'stationToken': '{0}',\n\
-    'userAuthToken': '{1}',\n\
-    'syncTime': {2}\n\
-}".format(stationToken, userAuthToken, getSyncTime(syncTime));
-    //var request = "{'stationToken':'" + stationToken + "','userAuthToken':'" + userAuthToken + "','syncTime':" + getSyncTime(syncTime) + "}";
+    "use strict";
+    let request = JSON.stringify({
+        "stationToken": stationToken,
+        "userAuthToken": userAuthToken,
+        "syncTime": getSyncTime(syncTime)
+    });
     sendRequest(false, true, "station.deleteStation", request, function () { return undefined; });
 }
 
 function explainTrack() {
     "use strict";
-    var request = "{\n\
-    'trackToken': '{0}',\n\
-    'userAuthToken': '{1}',\n\
-    'syncTime': {2}\n\
-}".format(currentSong.trackToken, userAuthToken, getSyncTime(syncTime));
-    //var request = "{'trackToken':'" + currentSong.trackToken + "','userAuthToken':'" + userAuthToken + "','syncTime':" + getSyncTime(syncTime) + "}";
+    let request = JSON.stringify({
+        "trackToken": currentSong.trackToken,
+        "userAuthToken": userAuthToken,
+        "syncTime": getSyncTime(syncTime)
+    });
     sendRequest(false, true, "track.explainTrack", request, function () { return undefined; });
 }
