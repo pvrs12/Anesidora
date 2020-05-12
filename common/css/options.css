@@ -3,13 +3,16 @@
     font-family: Verdana,Arial;
     font-size: 12px; 
     font-weight:normal;
+	scrollbar-color: rgba(249,249,250,.4) rgba(20,20,25,.3);
 }
+
 @media (prefers-color-scheme: dark) {
 	:root {
 		--bg-color: #202023;
 		--color: white;
 	}
 }
+
 @media (prefers-color-scheme: light) {
 	:root {
 		--bg-color: white;
@@ -19,41 +22,39 @@
 
 body {
 	background: var(--bg-color);
+	color: var(--color);
 	width: 100%;
+
+	/* Center horizontally */
 	display: flex;
 	align-items: center;
 	flex-direction: column;
+
 	font-size: 15px;
 	font-weight: normal;
 	margin: 0;
 }
-#lastFmStatus
-{
-    padding: 10px 0px 0px 10px;
-}
-.options-group {
-	border: 1px solid black;
-	font-style: italic;
-}
 
-.options-button {
-	margin-top:20px;
-	text-align:center;
-	width:100%; 
-	
-	border:1px solid black;
-	background-color:gray;
-	color:white;
-	font-weight:bold;
-}
 form {
 	background: none;
 }
-form > div {
-	display: block;
-	/*! overflow: hidden; */
+
+#preview {
+	border: 1px solid rgba(249,249,250,0.2);
+	border-radius: 2px;
+	background: linear-gradient(45deg,gray,var(--bg-color));
+	margin-bottom: 2em;
+	transition: all 100ms;
 }
-div > input[type="number"], div > input[type="text"] {
+/* Maybe sometime later I'll make this look like the actual player instead of just a placeholder? */
+
+label {
+	display: block;
+	width: 50%;
+	float: left;
+}
+
+input[type="number"], input[type="text"] {
 	display: block;
 	font-family: inherit;
 	font-size: inherit;
@@ -63,24 +64,32 @@ div > input[type="number"], div > input[type="text"] {
 	border: 1px solid rgba(249,249,250,0.2);
 	border-radius: 2px;
 	color: inherit;
-	background-color: var(--in-content-box-background);
-}
-button:enabled:hover {
-	background-color: var(--in-content-button-background-hover);
-}
-button[type="submit"]:enabled:hover {
-	background-color: #003eaa;
+	background-color:  #202023;
 }
 input:hover {
 	border-color: rgba(249,249,250,0.3) !important;
 }
-html|input[type="email"]:enabled:not(:focus):hover, html|input[type="tel"]:enabled:not(:focus):hover, html|input[type="text"]:enabled:not(:focus):hover, html|input[type="password"]:enabled:not(:focus):hover, html|input[type="url"]:enabled:not(:focus):hover, html|input[type="number"]:enabled:not(:focus):hover, html|textarea:enabled:not(:focus):hover, xul|search-textbox:not([disabled="true"]):not([focused]):hover {
+input:enabled:not(:focus):hover {
 	border-color: rgba(249,249,250,0.3)
 }
-html|input[type="email"]:focus, html|input[type="tel"]:focus, html|input[type="text"]:focus, html|input[type="password"]:focus, html|input[type="url"]:focus, html|input[type="number"]:focus, html|textarea:focus, xul|search-textbox[focused] {
+input:focus {
 	border-color: #0a84ff;
 	box-shadow: 0 0 0 1px #0a84ff, 0 0 0 4px rgba(10,132,255,0.3);
 }
+
+#check {
+	margin-top: 0.4em;
+}
+
+#httpWarning {
+	float: unset;
+	width: 100%;
+	opacity: 0;
+	font-weight: bolder;
+	height: max-content;
+	transition: opacity 100ms;
+}
+
 input[type="checkbox"]:checked {
 	background-image: url("chrome://global/skin/icons/check.svg");
 	-moz-context-properties: fill;
@@ -96,25 +105,25 @@ input[type="checkbox"] {
 	border-radius: 2px;
 	margin: 0;
 	margin-inline-end: 10px;
-	background-color: var(--in-content-box-background);
+	background-color: #202023;
 	background-position: center;
 	background-repeat: no-repeat;
 	vertical-align: middle;
 }
 
+input[type="checkbox"]:not(:disabled):hover {
+	border-color: #0a84ff;
+}
+
 button:focus,
 input[type="checkbox"]:focus {
-  outline: 2px solid var(--in-content-border-active) !important;
+  outline: 2px solid #0a84ff !important;
   /* offset outline to align with 1px border-width set for buttons/menulists above. */
   outline-offset: -1px !important;
   /* Make outline-radius slightly bigger than the border-radius set above,
    * to make the thicker outline corners look smooth */
   -moz-outline-radius: 3px !important;
-  box-shadow: 0 0 0 4px var(--in-content-border-active-shadow) !important;
-}
-
-xul|checkbox:not([disabled="true"]):hover > xul|*.checkbox-check, html|input[type="checkbox"]:not(:disabled):hover {
-	border-color: #0a84ff;
+  box-shadow: 0 0 0 4px rgba(249,249,250,0.3) !important;
 }
 
 button {
@@ -125,7 +134,7 @@ button {
 	color: inherit !important;
 	border: 1px solid transparent;
 	border-radius: 2px;
-	background-color: var(--in-content-button-background);
+	background-color: rgba(249,249,250,0.1);
 	font-weight: 400;
 	padding: 0 10px;
 	text-decoration: none;
@@ -135,67 +144,17 @@ button {
 	font: inherit;
 }
 
+button:enabled:hover {
+	background-color: rgba(249,249,250,0.15);
+}
+
 button[type="submit"] {
 	background-color: #0060df;
 	color: #FFF !important;
 }
 
-label {
-	display: block;
-	width: 50%;
-	float: left;
-}
-#httpWarning {
-	float: unset;
-	width: 100%;
-	opacity: 0;
-	font-weight: bolder;
-	height: max-content;
-	transition: opacity 100ms;
+button[type="submit"]:enabled:hover {
+	background-color: #003eaa;
 }
 
-#check {
-	margin-top: 0.4em;
-}
-#preview {
-	border: 1px solid rgba(249,249,250,0.2);
-	border-radius: 2px;
-	background: linear-gradient(45deg,gray,transparent);
-	margin-bottom: 2em;
-	transition: all 100ms;
-}
-:root {
-	--in-content-page-background: #2A2A2E;
-	--in-content-page-color: rgb(249, 249, 250);
-	--in-content-text-color: var(--in-content-page-color);
-	--in-content-deemphasized-text: var(--grey-40);
-	--in-content-box-background: #202023;
-	--in-content-box-background-hover: rgba(249,249,250,0.15);
-	--in-content-box-background-active: rgba(249,249,250,0.2);
-	--in-content-box-background-odd: rgba(249,249,250,0.05);
-	--in-content-box-info-background: rgba(249,249,250,0.15);
-	--in-content-border-color: rgba(249,249,250,0.2);
-	--in-content-border-hover: rgba(249,249,250,0.3);
-	--in-content-box-border-color: rgba(249,249,250,0.2);
-	--in-content-button-background: rgba(249,249,250,0.1);
-	--in-content-button-background-hover: rgba(249,249,250,0.15);
-	--in-content-button-background-active: rgba(249,249,250,0.2);
-	--in-content-category-background-hover: rgba(249,249,250,0.1);
-	--in-content-category-background-active: rgba(249,249,250,0.15);
-	--in-content-category-background-selected-hover: rgba(249,249,250,0.15);
-	--in-content-category-background-selected-active: rgba(249,249,250,0.2);
-	--in-content-table-background: #202023;
-	--in-content-table-border-dark-color: rgba(249,249,250,0.2);
-	--in-content-table-header-background: #002b57;
-	--in-content-dialog-header-background: rgba(249,249,250,0.05);
-	--in-content-category-text-selected: var(--blue-40);
-	--in-content-category-text-selected-active: var(--blue-50);
-	--in-content-link-color: var(--blue-40);
-	--in-content-link-color-hover: var(--blue-50);
-	--in-content-link-color-active: var(--blue-60);
-	--in-content-link-color-visited: var(--blue-40);
-	--in-content-tab-color: var(--in-content-page-color);
-	--card-outline-color: var(--grey-60);
-	scrollbar-color: rgba(249,249,250,.4) rgba(20,20,25,.3);
-}
 
