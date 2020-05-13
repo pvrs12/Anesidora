@@ -142,6 +142,7 @@ button {
 	font-size: 1em;
 	padding: 3px;
 	font: inherit;
+	text-align: center;
 }
 
 button:enabled:hover {
