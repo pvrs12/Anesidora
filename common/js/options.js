@@ -12,19 +12,22 @@ var refresh_button;
 var default_button;
 var logout_button;
 var save_button;
-
+var preview;
+var form;
 var forceSecure;
 var httpWarning_label;
 
 var bodyWidth;
 var bodyHeight;
 var historyNum;
+var bodyWidthNum = min_width;
+var bodyHeightNum = min_height;
 
 function secureWarning() {
     if (forceSecure.checked) {
-        httpWarning_label.style.display = "none";
+        httpWarning_label.style.opacity = 0;
     } else {
-        httpWarning_label.style.display = "block";
+        httpWarning_label.style.opacity = 1;
     }
 }
 
@@ -44,6 +47,8 @@ function initBodySize() {
     }
 
     bodyWidth.value = localStorage.bodyWidth;
+    preview.style.width = localStorage.bodyWidth + "px";
+    preview.style.height = localStorage.bodyHeight + "px";
     bodyHeight.value = localStorage.bodyHeight;
     historyNum.value = localStorage.historyNum;
 
@@ -95,7 +100,7 @@ document.addEventListener("DOMContentLoaded", function() {
     logout_button = document.getElementById("logout");
     default_button = document.getElementById("default");
     save_button = document.getElementById("save");
-
+	preview = document.getElementById("preview");
     forceSecure = document.getElementById("forceSecure");
     httpWarning_label = document.getElementById("httpWarning");
 
@@ -110,7 +115,48 @@ document.addEventListener("DOMContentLoaded", function() {
         // only run the following when on options.htm
         return;
     }
-
+	
+	function handleSizeChange() {
+		if (bodyHeight) {
+			preview.style.height = bodyHeight.value + "px";
+		}
+		if (bodyWidth) {
+			preview.style.width = bodyWidth.value + "px";
+		}
+	}
+	if (bodyWidth) {
+		bodyWidth.addEventListener('input', handleSizeChange);
+	}
+	if (bodyHeight) {
+		bodyHeight.addEventListener('input', handleSizeChange);
+		bodyHeight.addEventListener('input', heightStuff);
+	}
+	
+	form = document.querySelector('form');
+	let putBackTimeout;
+	function heightStuff() {
+		if (form) {
+			if (putBackTimeout) {
+				clearTimeout(putBackTimeout);
+			}
+			var posx = form.getBoundingClientRect().x,
+				posy = form.getBoundingClientRect().y;
+			document.body.style.minHeight = getComputedStyle(document.body).height;
+			form.style.position = "absolute";
+			form.style.zIndex = 2;
+			form.style.top = posy + window.pageYOffset + "px";
+			form.style.left = posx + window.pageXOffset + "px";	
+			function putBack() {
+				form.style.position = "",
+				form.style.zIndex = "",
+				form.style.top = "",
+				form.style.left = "",
+				document.body.style.height = "";
+			}
+			putBackTimeout = setTimeout(putBack, 100);
+		}			
+	}
+	
     forceSecure.addEventListener("change", secureWarning);
     refresh_button.addEventListener("click", function () {
         get_browser().extension.getBackgroundPage().getStationList();
@@ -125,6 +171,7 @@ document.addEventListener("DOMContentLoaded", function() {
         bodyHeight.value = localStorage.bodyHeight;
         historyNum.value = localStorage.historyNum;
         forceSecure.checked = localStorage.forceSecure;
+        handleSizeChange();
     });
     logout_button.addEventListener("click", function () {
         localStorage.username = "";
@@ -133,30 +180,32 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 
     save_button.addEventListener("click", function () {
+    	var msg = "";
         if (bodyWidth.value < min_width) {
             localStorage.bodyWidth = min_width;
-            alert("The width must be greater than or equal to " + min_width + "!");
+            msg += ("Player width must be greater than or equal to " + min_width + ".\n");
             bodyWidth.value = min_width;
         } else {
             localStorage.bodyWidth = bodyWidth.value;
         }
         if (bodyHeight.value < min_height) {
             localStorage.bodyHeight = min_height;
-            alert("The height must be greater than or equal to " + min_height + "!");
+            msg += ("Player height must be greater than or equal to " + min_height + ".\n");
             bodyHeight = min_height;
         } else {
             localStorage.bodyHeight = bodyHeight.value;
         }
         if (historyNum.value < min_history) {
             localStorage.historyNum = min_history;
-            alert("You must have at least " + min_history + " item" + min_history > 1
-                ? "s"
-                : "" + " in history");
+            msg += ("You must have at least " + min_history + " item" + ((min_history>1)?"s":"") + " in your history.\n");
             historyNum.value = min_history;
         } else {
             localStorage.historyNum = historyNum.value;
         }
-
+        if (msg) {
+        	alert(msg);
+		}
+		
         updateHotkeys();
 
         localStorage.forceSecure = forceSecure.checked;
