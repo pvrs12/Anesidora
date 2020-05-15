@@ -569,3 +569,17 @@ span, a, #nowPlayingContainerCell, #nowPlayingContainer, #nowPlaying {
 	flex-direction: column;
 }
 
+
+/* Make it default onto the player controls */
+#historyPanel {
+	left: calc(var(--width) * -1);
+}
+#leftPanel {
+	left: 0;
+}
+#midPanel {
+	left: calc(var(--width) * 1);
+}
+#rightPanel {
+	left: calc(var(--width) * 2);
+}
