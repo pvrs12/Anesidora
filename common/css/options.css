@@ -47,14 +47,14 @@ form {
 	transition: all 100ms;
 }
 /* Maybe sometime later I'll make this look like the actual player instead of just a placeholder? */
-
+/* Later Hugh here - I DID */
 label {
 	display: block;
 	width: 50%;
 	float: left;
 }
 
-input[type="number"], input[type="text"] {
+input[type="number"], input[type="text"], select {
 	display: block;
 	font-family: inherit;
 	font-size: inherit;
@@ -142,19 +142,23 @@ button {
 	font-size: 1em;
 	padding: 3px;
 	font: inherit;
+	text-align: center;
 }
 
 button:enabled:hover {
 	background-color: rgba(249,249,250,0.15);
 }
 
-button[type="submit"] {
+button#save {
 	background-color: #0060df;
 	color: #FFF !important;
 }
 
-button[type="submit"]:enabled:hover {
+button#save:enabled:hover {
 	background-color: #003eaa;
 }
 
-
+#style {
+	-moz-appearance: menulist;
+	width: 46%;
+}
