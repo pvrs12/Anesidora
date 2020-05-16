@@ -15,15 +15,15 @@
 </head>
 <body style="resize:both">
     <div id="anesidora">
-    	<div id="prevTab">
-    		<span></span>
-    	</div>
-    	<div id="nextTab">
-    		<span></span>
-    	</div>
+        <div id="prevTab">
+            <span></span>
+        </div>
+        <div id="nextTab">
+            <span></span>
+        </div>
         <div id=historyPanel class=panel>
             <div id=historyDiv class="container" style="overflow-x:hidden">
-            	
+                
             </div>
         </div>
         <div id=leftPanel class=panel>
@@ -34,75 +34,75 @@
                     </a> 
                 </div>
                 <div class="innerContainer">
-	                <div class="grid-cell" id="scrubberCell">
-	                    <div id="scrubber"></div>
-	                </div>
-	                <div class="flex-2">
-			            <div class="grid-cell" id="nowPlayingContainerCell">
-			                <div class="scrollerContainer" id="nowPlayingContainer">
-			                    <div class="scrollerText" id="nowPlaying">
-			                        <a id="artistLink" href="#"></a>
-			                        <span id="dash">Play to resume last station</span>
-			                        <a id="titleLink" href="#"></a>
-			                    </div>
-			                </div>
-		                </div>
-		                <div class="innerInnerContainer">
-				            <div class="playPauseButtonCell grid-cell">
-				                <img title="Play" id="playButton" src="images/New/play.svg" class=hoverImg />
-					            <img title="Pause" id="pauseButton" src="images/New/pause.svg" style="display:none" class=hoverImg />
-					        </div>
-					        <div class="skipButtonCell grid-cell">
-					            <img title="Next song" id="skipButton" src="images/New/forward.svg" class=hoverImg />
-					        </div>
-					        <div class="tUpButtonCell grid-cell">
-					            <img title="Like this song" id="tUpButton" src="images/New/like.svg" class=hoverImg />
-					        </div>
-					        <div class="tDownButtonCell grid-cell">
-					            <img title="Dislike this song" id="tDownButton" src="images/New/dislike.svg" class=hoverImg />
-					        </div>
-					        <div class="sleepButtonCell grid-cell"> 
-					            <img title="I'm tired of this song" id="sleepButton" src="images/New/hourglass.svg" class=hoverImg />
-					        </div>
-					        <div class="downloadButtonCell grid-cell">
-					            <img title="Download this song" id="downloadButton" src="images/New/download.svg" class=hoverImg />
-					        </div>
-					        <div class="moreInfoButtonCell grid-cell">
-					            <img title="Options" id="moreInfoButton" src="images/New/settings.svg" class=hoverImg />
-					        </div>
-					    </div>
-		                <div id="volumeCell"> 
-		                	<img src="images/New/volume.svg" />
-		                    <div title="Volume" id="volume"></div> 
-		                </div>
-			        </div>
-	            </div>
-			</div>
+                    <div class="grid-cell" id="scrubberCell">
+                        <div id="scrubber"></div>
+                    </div>
+                    <div class="flex-2">
+                        <div class="grid-cell" id="nowPlayingContainerCell">
+                            <div class="scrollerContainer" id="nowPlayingContainer">
+                                <div class="scrollerText" id="nowPlaying">
+                                    <a id="artistLink" href="#"></a>
+                                    <span id="dash">Play to resume last station</span>
+                                    <a id="titleLink" href="#"></a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="innerInnerContainer">
+                            <div class="playPauseButtonCell grid-cell">
+                                <img title="Play" id="playButton" src="images/New/play.svg" class=hoverImg />
+                                <img title="Pause" id="pauseButton" src="images/New/pause.svg" style="display:none" class=hoverImg />
+                            </div>
+                            <div class="skipButtonCell grid-cell">
+                                <img title="Next song" id="skipButton" src="images/New/forward.svg" class=hoverImg />
+                            </div>
+                            <div class="tUpButtonCell grid-cell">
+                                <img title="Like this song" id="tUpButton" src="images/New/like.svg" class=hoverImg />
+                            </div>
+                            <div class="tDownButtonCell grid-cell">
+                                <img title="Dislike this song" id="tDownButton" src="images/New/dislike.svg" class=hoverImg />
+                            </div>
+                            <div class="sleepButtonCell grid-cell"> 
+                                <img title="I'm tired of this song" id="sleepButton" src="images/New/hourglass.svg" class=hoverImg />
+                            </div>
+                            <div class="downloadButtonCell grid-cell">
+                                <img title="Download this song" id="downloadButton" src="images/New/download.svg" class=hoverImg />
+                            </div>
+                            <div class="moreInfoButtonCell grid-cell">
+                                <img title="Options" id="moreInfoButton" src="images/New/settings.svg" class=hoverImg />
+                            </div>
+                        </div>
+                        <div id="volumeCell"> 
+                            <img src="images/New/volume.svg" />
+                            <div title="Volume" id="volume"></div> 
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
         <div id=midPanel class=panel>
-        	<div class="container">
-	            <div id="stationHeaderdiv" class="labeled-input">
-	            	<label>Search</label>
-	                <input type="text" id="stationFilterInput" />
-	                <img title="Refresh" id="stationRefreshButton" src="images/New/refreshStationList.svg" />
-	            </div>
-	            <div id=stationListDiv>
-	            </div>
-	        </div>
+            <div class="container">
+                <div id="stationHeaderdiv" class="labeled-input">
+                    <label>Search</label>
+                    <input type="text" id="stationFilterInput" />
+                    <img title="Refresh" id="stationRefreshButton" src="images/New/refreshStationList.svg" />
+                </div>
+                <div id=stationListDiv>
+                </div>
+            </div>
         </div>
         <div id=rightPanel class=panel>
             <div class="container">
                 <form id="login" action="">
-                	<div class="labeled-input" id="li1">
-                		<label>email</label>
+                    <div class="labeled-input" id="li1">
+                        <label>email</label>
                         <input id="username" tabindex="1"/>
                         <div id="unWarning" class="ui-icon ui-icon-alert"></div>
                     </div>
                     <div class="labeled-input" id="li2">
-                    	<label>password</label>
+                        <label>password</label>
                         <input id="password" type="password" tabindex="2" />
                         <div id="pwWarning" class="ui-icon ui-icon-alert"></div>
-					</div>
+                    </div>
                         <input id="save" type="submit" value="Save" />
                         <a href="https://github.com/pvrs12/Anesidora/blob/master/login.md" target="_blank"> Concerned about security?</a>
                 </form>

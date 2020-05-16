@@ -13,7 +13,7 @@ function init() {
     
     document.querySelector('.full').src = (localStorage.whichPlayer || "new") + ".htm";
     document.querySelector('.full').addEventListener('load', () => {
-    	document.body.style.opacity = 1;
+        document.body.style.opacity = 1;
     });
 }
 init();

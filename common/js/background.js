@@ -50,15 +50,15 @@ function nextSong(depth=1) {
     
     /* I put this over here so that it works for every song change. */
     if (currentSong) {
-    	stationImgs[currentSong.stationId] = (comingSong.albumArtUrl || currentSong.albumArtUrl||stationImgs[currentSong.stationId]) || "/images/New/default_album.svg"; 
-    	// try for a new cover; if that doesn't work, keep the old; if there is no old, go for a default one
-		localStorage.stationImgs = JSON.stringify(stationImgs);
-	    prevSongs.push(currentSong); 
-	    while(prevSongs.length > localStorage.historyNum){
-	        prevSongs.shift();
-	     }
-	}
-	/* /paste */
+        stationImgs[currentSong.stationId] = (comingSong.albumArtUrl || currentSong.albumArtUrl||stationImgs[currentSong.stationId]) || "/images/New/default_album.svg"; 
+        // try for a new cover; if that doesn't work, keep the old; if there is no old, go for a default one
+        localStorage.stationImgs = JSON.stringify(stationImgs);
+        prevSongs.push(currentSong); 
+        while(prevSongs.length > localStorage.historyNum){
+            prevSongs.shift();
+         }
+    }
+    /* /paste */
 
     if (currentPlaylist === undefined || currentPlaylist.length === 0) {
         getPlaylist(localStorage.lastStation);

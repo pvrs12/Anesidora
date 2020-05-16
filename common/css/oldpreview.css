@@ -8,11 +8,11 @@
     background-color: transparent;
 }
 #preview2 ::-webkit-scrollbar-thumb:vertical {
-	background-color: #8397aa;
-	border-radius: 5px;
+    background-color: #8397aa;
+    border-radius: 5px;
     -webkit-border-radius: 5px;
-	border: 2px solid white;
-	background-clip: padding-pox;
+    border: 2px solid white;
+    background-clip: padding-pox;
     -webkit-background-clip: padding-box;
 }
 #preview2 * {
@@ -31,51 +31,51 @@
   text-decoration: underline;
 }
 #preview2 .hoverImg:hover {
-	filter:hue-rotate(180deg) saturate(500%);
+    filter:hue-rotate(180deg) saturate(500%);
 }
 #preview2 .deadLink {
-	text-decoration: none;
+    text-decoration: none;
 }
 #preview2 .historyTitle {
-	text-decoration: underline;
-	text-overflow: ellipsis;
+    text-decoration: underline;
+    text-overflow: ellipsis;
 }
 #preview2 .historyInfoLink {
-	cursor:pointer;
+    cursor:pointer;
 }
 #preview2 .historyCoverArt {
-	max-width:100%;
-	max-height:15px;
-	min-width:15px;
-	min-height:15px;
-}	
+    max-width:100%;
+    max-height:15px;
+    min-width:15px;
+    min-height:15px;
+}    
 #preview2 #coverArt {
-	max-width:100%;
-	max-height:120px;
+    max-width:100%;
+    max-height:120px;
 
-	border:1px solid #8397aa;
+    border:1px solid #8397aa;
 }
 #preview2 #stationList{
-	border-radius: 5px;
-	-webkit-border-radius: 5px;
-	border:1px solid #8397aa;
-	font-family: Verdana,Arial;
-	font-size:12px;
+    border-radius: 5px;
+    -webkit-border-radius: 5px;
+    border:1px solid #8397aa;
+    font-family: Verdana,Arial;
+    font-size:12px;
 }
 #preview2 {
-	position: absolute;
-	background: white;
-	width: var(--width);
-	height: var(--height);
-	background:linear-gradient(#e5eaf0, white);
-	z-index: 9999;
-	transition: opacity 250ms;
-	opacity: 0;
+    position: absolute;
+    background: white;
+    width: var(--width);
+    height: var(--height);
+    background:linear-gradient(#e5eaf0, white);
+    z-index: 9999;
+    transition: opacity 250ms;
+    opacity: 0;
 }
 #preview2 .centered {
-	position: relative;
-	top: 50%;
-	transform: translateY(-50%);
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
 }
 #preview2 .scrollerContainer
 {
@@ -102,10 +102,10 @@
     left: 50px;
     top: 16px;
     text-align: center;
-	width: 100px;
-	border-radius: 10px;
-	-webkit-border-radius: 10px;
-	box-shadow: 0 0 5px #888888;
+    width: 100px;
+    border-radius: 10px;
+    -webkit-border-radius: 10px;
+    box-shadow: 0 0 5px #888888;
     -webkit-box-shadow: 0 0 5px #888888;
     line-height: 10px;
 }
@@ -138,82 +138,82 @@
     left: 10px;
 }
 #preview2 .popup {
-	display: grid;
-	grid-template-columns: repeat(11, 1fr);
-	grid-template-rows: repeat(3, 1fr);
-	grid-gap: 3px;
-	
-	align-items: center;
-	justify-content: space-around;
-	width: var(--width);
-	height: var(--height);
+    display: grid;
+    grid-template-columns: repeat(11, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    grid-gap: 3px;
+    
+    align-items: center;
+    justify-content: space-around;
+    width: var(--width);
+    height: var(--height);
 }
 #preview2 #historyCell {
-	grid-row: 1 / span 3;
-	grid-column: 1 / span 1;
+    grid-row: 1 / span 3;
+    grid-column: 1 / span 1;
 }
 #preview2 #coverLinkCell {
-	grid-row: 1 / span 3;
-	grid-column: 2 / span 1;
+    grid-row: 1 / span 3;
+    grid-column: 2 / span 1;
 }
 #preview2 #nowPlayingContainerCell {
-	grid-row: 1 / span 1;
-	grid-column: 3 / span 7;
+    grid-row: 1 / span 1;
+    grid-column: 3 / span 7;
 }
 #preview2 #volumeCell {
-	grid-row: 1 / span 3;
-	grid-column: 10 / span 1;
+    grid-row: 1 / span 3;
+    grid-column: 10 / span 1;
 }
 #preview2 #nextButtonCell {
-	grid-row: 1 / span 3;
-	grid-column: 11 / span 1;
+    grid-row: 1 / span 3;
+    grid-column: 11 / span 1;
 }
 
 #preview2 #scrubberCell {
-	grid-row: 2 / span 1;
-	grid-column: 3 / span 7;
-	
-	/*put some space between the album art*/
-	padding-left: 3px;
+    grid-row: 2 / span 1;
+    grid-column: 3 / span 7;
+    
+    /*put some space between the album art*/
+    padding-left: 3px;
 }
 
 #preview2 #playPauseButtonCell {
-	grid-row: 3 / span 1;
-	grid-column: 3 / span 1;
+    grid-row: 3 / span 1;
+    grid-column: 3 / span 1;
 }
 #preview2 #skipButtonCell {
-	grid-row: 3 / span 1;
-	grid-column: 4 / span 1;
+    grid-row: 3 / span 1;
+    grid-column: 4 / span 1;
 }
 #preview2 #tUpButtonCell {
-	grid-row: 3 / span 1;
-	grid-column: 5 / span 1;
+    grid-row: 3 / span 1;
+    grid-column: 5 / span 1;
 }
 #preview2 #tDownButtonCell {
-	grid-row: 3 / span 1;
-	grid-column: 6 / span 1;
+    grid-row: 3 / span 1;
+    grid-column: 6 / span 1;
 }
 #preview2 #sleepButtonCell {
-	grid-row: 3 / span 1;
-	grid-column: 7 / span 1;
+    grid-row: 3 / span 1;
+    grid-column: 7 / span 1;
 }
 #preview2 #downloadButtonCell {
-	grid-row: 3 / span 1;
-	grid-column: 8 / span 1;
+    grid-row: 3 / span 1;
+    grid-column: 8 / span 1;
 }
 #preview2 #moreInfoButtonCell {
-	grid-row: 3 / span 1;
-	grid-column: 9 / span 1;
+    grid-row: 3 / span 1;
+    grid-column: 9 / span 1;
 }
 
 #preview2 #historyDiv {
-	float:left;
+    float:left;
 }
 
 #preview2 #prevButtonDiv {
-	float:left;
-	margin-right: 3px;
-	height: 100%;
+    float:left;
+    margin-right: 3px;
+    height: 100%;
 }
 
 #preview2 #stationHeaderDiv {
@@ -242,10 +242,10 @@
 }
 #preview2 #stationList {
     width: 100%;
-	height: 100%;
+    height: 100%;
 }
 
 #preview2 #leftPanel {
-	width: var(--width);
-	height: var(--height);
+    width: var(--width);
+    height: var(--height);
 }

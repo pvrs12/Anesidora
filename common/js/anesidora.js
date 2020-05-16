@@ -98,7 +98,7 @@ async function sendRequest(secure, encrypted, method, request, handler) {
                     partnerLogin();
                     break;
                 default:
-                	console.log('sendRequest failed: ',parameters, request, response);
+                    console.log('sendRequest failed: ',parameters, request, response);
                 }
                 if (method == "station.getPlaylist" && failed == false) {
                     getPlaylist(sessionStorage.currentStation);
@@ -235,7 +235,7 @@ function addFeedback(songNum, rating) {
         return;
     }
     if (!songNum || isNaN(songNum)) { // just in case
-    	return;
+        return;
     }
     
     let song;
@@ -245,16 +245,16 @@ function addFeedback(songNum, rating) {
         song = prevSongs[songNum];
     }
     if (rating == song.songRating) {
-    	return;
+        return;
     }
     if (rating === true || rating === false) {
     
     } else if (rating < 0) {
-    	rating = false;
+        rating = false;
     } else if (rating == 0) {
-    	return;
+        return;
     } else if (rating > 0) {
-    	rating = true;
+        rating = true;
     }
 
     let request = JSON.stringify({

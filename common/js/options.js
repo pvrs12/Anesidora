@@ -1,33 +1,33 @@
 /*globals alert, get_browser*/
 
 var minimums = {
-	width: {
-		'new': 160,
-		'old': 310
-	},
-	height: {
-		'new': 230,
-		'old': 50
-	},
-	history: {
-		'new': 1,
-		'old': 1
-	}
+    width: {
+        'new': 160,
+        'old': 310
+    },
+    height: {
+        'new': 230,
+        'old': 50
+    },
+    history: {
+        'new': 1,
+        'old': 1
+    }
 }
 var defaults = {
-	player: 'new',
-	width: {
-		'new': 350,
-		'old': 350
-	},
-	height: {
-		'new': 450,
-		'old': 100
-	},
-	history: {
-		'new': 20,
-		'old': 10
-	}
+    player: 'new',
+    width: {
+        'new': 350,
+        'old': 350
+    },
+    height: {
+        'new': 450,
+        'old': 100
+    },
+    history: {
+        'new': 20,
+        'old': 10
+    }
 }
 
 var style;
@@ -47,19 +47,19 @@ var bodyWidthNum = (localStorage.width==undefined?(localStorage.whichPlayer==und
 var bodyHeightNum = (localStorage.height==undefined?(localStorage.whichPlayer==undefined?defaults.height[defaults.player]:defaults.width[localStorage.whichPlayer]):localStorage.height);
 
 if (localStorage.themeInfo == undefined) {
-	localStorage.themeInfo = JSON.stringify({
-		'background': '#3a3a3a',
-		'font-family': 'Verdana, Arial, sans-serif',
-		'font-size': '12px',
-		'text-color': '#FFF',
-		'inverse-color': '#000',
-		'accent-color': '#00f782',
-		'accent-color-darker': '#00ae5c',
-		'tabSize': '20px',
-		'warning-bgcolor': '#ff3722',
-		'warning-color': '#FFF',
-		'album-bg': '#6a6c26'
-	});
+    localStorage.themeInfo = JSON.stringify({
+        'background': '#3a3a3a',
+        'font-family': 'Verdana, Arial, sans-serif',
+        'font-size': '12px',
+        'text-color': '#FFF',
+        'inverse-color': '#000',
+        'accent-color': '#00f782',
+        'accent-color-darker': '#00ae5c',
+        'tabSize': '20px',
+        'warning-bgcolor': '#ff3722',
+        'warning-color': '#FFF',
+        'album-bg': '#6a6c26'
+    });
 }
 
 function secureWarning() {
@@ -73,7 +73,7 @@ function secureWarning() {
 function initBodySize() {
     "use strict";
     if (localStorage.whichPlayer === undefined) {
-    	localStorage.whichPlayer = defaults.player;
+        localStorage.whichPlayer = defaults.player;
     }
     // for convenience,
     var whichPlayer = localStorage.whichPlayer;
@@ -90,34 +90,34 @@ function initBodySize() {
         localStorage.forceSecure = true;
     }
     document.documentElement.style.setProperty('--height', localStorage.bodyHeight +'px');
-	document.documentElement.style.setProperty('--width', localStorage.bodyWidth+'px');
+    document.documentElement.style.setProperty('--width', localStorage.bodyWidth+'px');
 
-	if (!forceSecure) {
-		return; // alright that's enough
-	}	
+    if (!forceSecure) {
+        return; // alright that's enough
+    }    
     bodyWidth.value = localStorage.bodyWidth;
     bodyHeight.value = localStorage.bodyHeight;
     historyNum.value = localStorage.historyNum;
-	if (localStorage.whichPlayer == 'new') {
-		document.getElementById('preview').style.opacity = 1;
-		document.getElementById('preview2').style.opacity = 0;
-	} else {
-		document.getElementById('preview').style.opacity = 0;
-		document.getElementById('preview2').style.opacity = 1;
-	}
-	style.value = localStorage.whichPlayer;
-	document.getElementById('theming').addEventListener('click', (e) => {
-		e.preventDefault();
-		window.location = "theming.htm";
-		return false;
-	});
+    if (localStorage.whichPlayer == 'new') {
+        document.getElementById('preview').style.opacity = 1;
+        document.getElementById('preview2').style.opacity = 0;
+    } else {
+        document.getElementById('preview').style.opacity = 0;
+        document.getElementById('preview2').style.opacity = 1;
+    }
+    style.value = localStorage.whichPlayer;
+    document.getElementById('theming').addEventListener('click', (e) => {
+        e.preventDefault();
+        window.location = "theming.htm";
+        return false;
+    });
     forceSecure.checked = localStorage.forceSecure !== "false" && localStorage.forceSecure;
 
     secureWarning();
 }
 
 function initHotkeys() {
-	
+    
     get_browser().commands.getAll().then(commands => {
         commands.forEach(command => {
             playPauseHotkey = document.getElementById("playPauseHotkey");
@@ -164,7 +164,7 @@ document.addEventListener("DOMContentLoaded", function() {
     forceSecure = document.getElementById("forceSecure");
     httpWarning_label = document.getElementById("httpWarning");
 
-	style = document.getElementById("playerStyle");
+    style = document.getElementById("playerStyle");
     bodyWidth = document.getElementById("bodyWidth");
     bodyHeight = document.getElementById("bodyHeight");
     historyNum = document.getElementById("historyNum");
@@ -176,80 +176,80 @@ document.addEventListener("DOMContentLoaded", function() {
         // only run the following when on options.htm
         return;
     }
-	
-	if (bodyWidth) {
-		bodyWidth.addEventListener('input', heightStuff);
-	}
-	if (bodyHeight) {
-		bodyHeight.addEventListener('input', heightStuff);
-	}
-	if (style) {
-		style.addEventListener('change', () => {
-			if (style.value != 'new' && style.value != 'old') return;
-			if (style.value == 'new') {
-				document.getElementById('preview').style.opacity = 1;
-				document.getElementById('preview2').style.opacity = 0;
-			} else {
-				document.getElementById('preview').style.opacity = 0;
-				document.getElementById('preview2').style.opacity = 1;
-			}
-    		bodyHeight.value = defaults.height[style.value];
+    
+    if (bodyWidth) {
+        bodyWidth.addEventListener('input', heightStuff);
+    }
+    if (bodyHeight) {
+        bodyHeight.addEventListener('input', heightStuff);
+    }
+    if (style) {
+        style.addEventListener('change', () => {
+            if (style.value != 'new' && style.value != 'old') return;
+            if (style.value == 'new') {
+                document.getElementById('preview').style.opacity = 1;
+                document.getElementById('preview2').style.opacity = 0;
+            } else {
+                document.getElementById('preview').style.opacity = 0;
+                document.getElementById('preview2').style.opacity = 1;
+            }
+            bodyHeight.value = defaults.height[style.value];
             bodyWidth.value = defaults.width[style.value];
-			heightStuff(); // change sizes to minimums, if needed
-		});
-	}
-	
-	form = document.querySelector('form');
-	let putBackTimeout;
-	function heightStuff() {
-		if (form) {
-			if (putBackTimeout) {
-				clearTimeout(putBackTimeout);
-			}
-			let effHeight = bodyHeight.value; // effective width & height
-			let effWidth = bodyWidth.value;
-	    	if (bodyHeight.value < minimums.height[style.value]) {
-	    		effHeight = minimums.height[style.value];
-	    	}
-		    if (bodyWidth.value < minimums.width[style.value]) {
-	            effWidth = minimums.width[style.value];
-	        }
-	        console.log('Got to this point');
-			var posx = form.getBoundingClientRect().x,
-				posy = form.getBoundingClientRect().y;
-			document.body.style.minHeight = getComputedStyle(document.body).height;
-			form.style.position = "absolute";
-			form.style.zIndex = 2;
-			form.style.top = posy + window.pageYOffset + "px";
-			form.style.left = posx + window.pageXOffset + "px";	
-    		document.documentElement.style.setProperty('--height', effHeight +'px');
-			document.documentElement.style.setProperty('--width', effWidth+'px');
-			function putBack() {
-				form.style.position = "",
-				form.style.zIndex = "",
-				form.style.top = "",
-				form.style.left = "",
-				document.body.style.height = "";
-			}
-			putBackTimeout = setTimeout(putBack, 100);
+            heightStuff(); // change sizes to minimums, if needed
+        });
+    }
+    
+    form = document.querySelector('form');
+    let putBackTimeout;
+    function heightStuff() {
+        if (form) {
+            if (putBackTimeout) {
+                clearTimeout(putBackTimeout);
+            }
+            let effHeight = bodyHeight.value; // effective width & height
+            let effWidth = bodyWidth.value;
+            if (bodyHeight.value < minimums.height[style.value]) {
+                effHeight = minimums.height[style.value];
+            }
+            if (bodyWidth.value < minimums.width[style.value]) {
+                effWidth = minimums.width[style.value];
+            }
+            console.log('Got to this point');
+            var posx = form.getBoundingClientRect().x,
+                posy = form.getBoundingClientRect().y;
+            document.body.style.minHeight = getComputedStyle(document.body).height;
+            form.style.position = "absolute";
+            form.style.zIndex = 2;
+            form.style.top = posy + window.pageYOffset + "px";
+            form.style.left = posx + window.pageXOffset + "px";    
+            document.documentElement.style.setProperty('--height', effHeight +'px');
+            document.documentElement.style.setProperty('--width', effWidth+'px');
+            function putBack() {
+                form.style.position = "",
+                form.style.zIndex = "",
+                form.style.top = "",
+                form.style.left = "",
+                document.body.style.height = "";
+            }
+            putBackTimeout = setTimeout(putBack, 100);
 
-		}			
-	}
-	
+        }            
+    }
+    
     forceSecure.addEventListener("change", secureWarning);
     refresh_button.addEventListener("click", function () {
         get_browser().extension.getBackgroundPage().getStationList();
     });
     default_button.addEventListener("click", function () {
-    	// for convenience,
-    	var whichPlayer = style.value;
+        // for convenience,
+        var whichPlayer = style.value;
         localStorage.bodyWidth = defaults.width[whichPlayer];
         localStorage.bodyHeight = defaults.height[whichPlayer];
         localStorage.historyNum = defaults.history[whichPlayer];
         localStorage.forceSecure = true;
         
-   		document.documentElement.style.setProperty('--height', defaults.height[whichPlayer] +'px');
-		document.documentElement.style.setProperty('--width', defaults.width[whichPlayer]+'px');
+           document.documentElement.style.setProperty('--height', defaults.height[whichPlayer] +'px');
+        document.documentElement.style.setProperty('--width', defaults.width[whichPlayer]+'px');
 
         bodyWidth.value = localStorage.bodyWidth;
         bodyHeight.value = localStorage.bodyHeight;
@@ -264,21 +264,21 @@ document.addEventListener("DOMContentLoaded", function() {
 
 
     save_button.addEventListener("click", function (e) {
-    	var msg = "";
+        var msg = "";
 
-    	if (style && (style.value == "new" || style.value == "old")) {
-	        localStorage.whichPlayer = style.value;
-	    } else {
-	    	alert("How did you even get here?");
-	    	e.preventDefault(e);
-	    	return false;
-	    }    	
-	    // I keep writing this, but _for convenience_,
-    	var player = style.value;
-    	var min_width = minimums.width[player];
-    	var min_height = minimums.height[player];
-    	var min_history = minimums.history[player];
-    	
+        if (style && (style.value == "new" || style.value == "old")) {
+            localStorage.whichPlayer = style.value;
+        } else {
+            alert("How did you even get here?");
+            e.preventDefault(e);
+            return false;
+        }        
+        // I keep writing this, but _for convenience_,
+        var player = style.value;
+        var min_width = minimums.width[player];
+        var min_height = minimums.height[player];
+        var min_history = minimums.history[player];
+        
         if (bodyWidth.value < min_width) {
             localStorage.bodyWidth = min_width; 
             msg += ("Player width must be greater than or equal to " + min_width + ".\n");
@@ -301,9 +301,9 @@ document.addEventListener("DOMContentLoaded", function() {
             localStorage.historyNum = historyNum.value;
         }
         if (msg) {
-        	alert(msg);
-		}
-		
+            alert(msg);
+        }
+        
         updateHotkeys();
 
         localStorage.forceSecure = forceSecure.checked;

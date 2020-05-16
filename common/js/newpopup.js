@@ -31,23 +31,23 @@ var tabsInit = false;
 var panelOn = 0;
 function goToPanel(which) {
     "use strict";
-	if (!tabsInit) return;
-	if (which == 0) {
-		updateHistory();
-	}
-	panelOn = which;
-	for (let i = 0; i < panels.length; i++) {
-		document.getElementById(panels[i]).style.left = "calc(var(--width) * "+(i-which)+")";
-	}
-	
+    if (!tabsInit) return;
+    if (which == 0) {
+        updateHistory();
+    }
+    panelOn = which;
+    for (let i = 0; i < panels.length; i++) {
+        document.getElementById(panels[i]).style.left = "calc(var(--width) * "+(i-which)+")";
+    }
+    
 }
 
 function initTabs() {
-	"use strict"
-	for (let i = 0; i < panels.length; i++) {
-		document.getElementById(panels[i]).style.left = "calc(var(--width) * "+i+")";
-	}
-	tabsInit = true;
+    "use strict"
+    for (let i = 0; i < panels.length; i++) {
+        document.getElementById(panels[i]).style.left = "calc(var(--width) * "+i+")";
+    }
+    tabsInit = true;
 }
 
 function goToLogin() {
@@ -87,13 +87,13 @@ function downloadSong(url, title) {
 function updateHistory() {
     "use strict";
     clearHistory();
-	const historyDiv = document.getElementById('historyDiv');
+    const historyDiv = document.getElementById('historyDiv');
     background.prevSongs.reverse().forEach(function (song, i) {
-    	
-    	let elem = document.createElement('div');
-    	elem.classList.add('historyItem');
-    	let cover = document.createElement('div');
-    	cover.classList.add('historyCover');
+        
+        let elem = document.createElement('div');
+        elem.classList.add('historyItem');
+        let cover = document.createElement('div');
+        cover.classList.add('historyCover');
         let overlay = document.createElement('div');
         overlay.classList.add('historyOverlay');
         let holder = document.createElement('div');
@@ -114,22 +114,22 @@ function updateHistory() {
         historyDiv.appendChild(elem);
         elem.appendChild(holder);
         if (song.albumArtUrl) {
-	        cover.style.background = `url("${song.albumArtUrl}")`;
-	    } else {
-	    	cover.style.background = 'url("/images/New/default_album.svg")';
-	    }
-	    holder.appendChild(cover);
+            cover.style.background = `url("${song.albumArtUrl}")`;
+        } else {
+            cover.style.background = 'url("/images/New/default_album.svg")';
+        }
+        holder.appendChild(cover);
         holder.appendChild(overlay);
         overlay.appendChild(actions);
         actions.appendChild(likeAction);
-		
+        
         let likeStatus = "like";
         if (song.songRating == -1) {
-        	likeStatus = "disliked";
+            likeStatus = "disliked";
         } else if (song.songRating == 0) {
-        	likeStatus = "like";
+            likeStatus = "like";
         } else if (song.songRating == 1) {
-        	likeStatus = "liked";
+            likeStatus = "liked";
         }
         likeAction.src = "images/New/"+(likeStatus=="liked"?"liked":"like")+".svg";
         actions.appendChild(downloadAction);
@@ -139,35 +139,35 @@ function updateHistory() {
         elem.appendChild(nameSpan);
         nameSpan.innerText = song.songName;
         let historyNum = i,
-			thisSong = song; // I, too, had your problem, until I discovered the magic of 'let'!
+            thisSong = song; // I, too, had your problem, until I discovered the magic of 'let'!
         cover.addEventListener('click', () => {
-        	get_browser().tabs.create({
-        		'url': thisSong.songDetailUrl
-        	});
+            get_browser().tabs.create({
+                'url': thisSong.songDetailUrl
+            });
         });
         likeAction.addEventListener('click', (e) => {
-        	if (likeStatus == 'liked') {
-        		return;
-        	}
-        	background.addFeedback(historyNum, 1);
-        	likeAction.src = "images/New/liked.svg";
-        	dislikeAction.src = "images/New/dislike.svg";
-        	likeStatus = "liked";
-        	e.preventDefault(e);
+            if (likeStatus == 'liked') {
+                return;
+            }
+            background.addFeedback(historyNum, 1);
+            likeAction.src = "images/New/liked.svg";
+            dislikeAction.src = "images/New/dislike.svg";
+            likeStatus = "liked";
+            e.preventDefault(e);
         });
         downloadAction.addEventListener('click', (e) => {
-        	downloadSong(song.audioUrlMap.highQuality.audioUrl, song.songName);
-        	e.preventDefault(e);
+            downloadSong(song.audioUrlMap.highQuality.audioUrl, song.songName);
+            e.preventDefault(e);
         });
         dislikeAction.addEventListener('click', (e) => {
-        	if (likeStatus == 'disliked') {
-        		return;
-        	}
-        	background.addFeedback(historyNum, -1);
-        	dislikeAction.src = "images/New/disliked.svg";
-        	likeAction.src = "images/New/like.svg";
-        	likeStatus = "disliked";
-        	e.preventDefault(e);
+            if (likeStatus == 'disliked') {
+                return;
+            }
+            background.addFeedback(historyNum, -1);
+            dislikeAction.src = "images/New/disliked.svg";
+            likeAction.src = "images/New/like.svg";
+            likeStatus = "disliked";
+            e.preventDefault(e);
         });
     });
 }
@@ -196,9 +196,9 @@ function refreshStations() {
 var stationCallbacks = [];
 
 function updateStationCovers() {
-	for (let i = 0; i < stationCallbacks.length; i++) {
-		stationCallbacks[i]();
-	}
+    for (let i = 0; i < stationCallbacks.length; i++) {
+        stationCallbacks[i]();
+    }
 }
 
 function addStations() {
@@ -208,20 +208,20 @@ function addStations() {
     background.stationList.sort((a, b) => {
         return a.stationName.localeCompare(b.stationName)
     });
-	stationCallbacks = [];
+    stationCallbacks = [];
     background.stationList.filter((station) => {
         if (!filter) {
             return true;
         }
         return station.stationName.toLowerCase().includes(filter.toLowerCase());
     }).forEach(function (station) {
-    	if (!background.stationImgs[station.stationId]) {
-    		background.stationImgs[station.stationId] = "/images/New/default_album.svg";
-    	}
-    	let elem = document.createElement('div');
-    	elem.classList.add('historyItem');
-    	let cover = document.createElement('div');
-    	cover.classList.add('historyCover');
+        if (!background.stationImgs[station.stationId]) {
+            background.stationImgs[station.stationId] = "/images/New/default_album.svg";
+        }
+        let elem = document.createElement('div');
+        elem.classList.add('historyItem');
+        let cover = document.createElement('div');
+        cover.classList.add('historyCover');
         let overlay = document.createElement('div');
         overlay.classList.add('historyOverlay');
         let holder = document.createElement('div');
@@ -235,29 +235,29 @@ function addStations() {
         document.getElementById('stationListDiv').appendChild(elem);
         elem.appendChild(holder);
         cover.style.background = `url("${background.stationImgs[station.stationId]}")`;
-	    holder.appendChild(cover);
+        holder.appendChild(cover);
         holder.appendChild(overlay);
         overlay.appendChild(actions);
         actions.appendChild(playAction);
-		playAction.src = "/images/New/player.svg";
+        playAction.src = "/images/New/player.svg";
         elem.appendChild(nameSpan);
         nameSpan.innerText = station.stationName;
         let thisStation = station;
         if (station.stationDetailUrl != "") {
-	        cover.addEventListener('click', () => {
-	        	get_browser().tabs.create({
-	        		'url': station.stationDetailUrl
-	        	});
-	        });
-	    }
-	    playAction.addEventListener('click', () => {
-	    	background.play(thisStation.stationToken);
-	    	goToPanel(1);
-	    	handleSwitch();
-	    });
-	    stationCallbacks.push(() => {
-	    	cover.style.background = `url("${background.stationImgs[thisStation.stationId]}")`;
-	    });
+            cover.addEventListener('click', () => {
+                get_browser().tabs.create({
+                    'url': station.stationDetailUrl
+                });
+            });
+        }
+        playAction.addEventListener('click', () => {
+            background.play(thisStation.stationToken);
+            goToPanel(1);
+            handleSwitch();
+        });
+        stationCallbacks.push(() => {
+            cover.style.background = `url("${background.stationImgs[thisStation.stationId]}")`;
+        });
     });
 }
 
@@ -330,9 +330,9 @@ function drawPlayer() {
 document.documentElement.style.setProperty('--height', localStorage.bodyHeight +'px');
 document.documentElement.style.setProperty('--width', localStorage.bodyWidth+'px');
 if (localStorage.themeInfo&&localStorage.themeInfo!=="") {
-	for (let key in JSON.parse(localStorage.themeInfo)) {
-		document.documentElement.style.setProperty('--'+key, JSON.parse(localStorage.themeInfo)[key]);
-	}
+    for (let key in JSON.parse(localStorage.themeInfo)) {
+        document.documentElement.style.setProperty('--'+key, JSON.parse(localStorage.themeInfo)[key]);
+    }
 }
 $(document).ready(function () {
     "use strict";
@@ -342,10 +342,10 @@ $(document).ready(function () {
         }
     });
     initBodySize();
-	
+    
     document.documentElement.style.setProperty('--height', localStorage.bodyHeight +'px');
-	document.documentElement.style.setProperty('--width', localStorage.bodyWidth+'px');
-	
+    document.documentElement.style.setProperty('--width', localStorage.bodyWidth+'px');
+    
 //    var scrollerWidth = $("body").width() * 0.6;
 //    $(".scrollerContainer").width(scrollerWidth);
     $("#coverArt").css({
@@ -440,16 +440,16 @@ $(document).ready(function () {
     $("#stationFilterInput").bind("keypress change input paste", () => {
         refreshStationList();
     });
-	let lockRotate = false;
+    let lockRotate = false;
     $("#stationRefreshButton").bind("click", () => {
-    	if (!lockRotate) {
-	    	document.getElementById('stationRefreshButton').style.animation = "rotate 500ms ease-in-out";
-	    	lockRotate = true;
-	    }
+        if (!lockRotate) {
+            document.getElementById('stationRefreshButton').style.animation = "rotate 500ms ease-in-out";
+            lockRotate = true;
+        }
         refreshStations();
         setTimeout(() => {
-	    	document.getElementById('stationRefreshButton').style.animation = "";
-	    	lockRotate = false;
+            document.getElementById('stationRefreshButton').style.animation = "";
+            lockRotate = false;
         }, 500);
     });
 
@@ -478,24 +478,24 @@ $(document).ready(function () {
 
 
     const scrollerText = document.getElementsByClassName('scrollerText')[0];
-	scrollerText.addEventListener('mouseover', () => {
-	    if ($('.scrollerText').width() - $('#nowPlayingContainerCell').width() > 0) {
-			$(".scrollerText").css({
-				transition: 'left '+ (($('.scrollerText').width() - $('#nowPlayingContainerCell').width())*30) + 'ms linear',
-				left: $('#nowPlayingContainerCell').width() - $('.scrollerText').width()
-			});
-	    } else {
-	    	$('.scrollerText').css({
-	    		left: '0px'
-	    	});
-	    }
-	});
-	scrollerText.addEventListener('mouseleave', () => {
-	    //move it to left immediately
-	    $('.scrollerText').css({
-	        left: 0
-	    });
-	});
+    scrollerText.addEventListener('mouseover', () => {
+        if ($('.scrollerText').width() - $('#nowPlayingContainerCell').width() > 0) {
+            $(".scrollerText").css({
+                transition: 'left '+ (($('.scrollerText').width() - $('#nowPlayingContainerCell').width())*30) + 'ms linear',
+                left: $('#nowPlayingContainerCell').width() - $('.scrollerText').width()
+            });
+        } else {
+            $('.scrollerText').css({
+                left: '0px'
+            });
+        }
+    });
+    scrollerText.addEventListener('mouseleave', () => {
+        //move it to left immediately
+        $('.scrollerText').css({
+            left: 0
+        });
+    });
 
     if (background.mp3Player.src !== "") {
         if (background.mp3Player.currentTime > 0) {
@@ -507,40 +507,40 @@ $(document).ready(function () {
     }
     handleSwitch();
     document.querySelector('#prevTab > span').addEventListener('click', () => {
-    	if (panelOn > 0) {
-    		goToPanel(panelOn-1);
-    	}
-		handleSwitch();
+        if (panelOn > 0) {
+            goToPanel(panelOn-1);
+        }
+        handleSwitch();
     });
     document.querySelector('#nextTab > span').addEventListener('click', () => {
-    	if (panelOn < 2) {
-    		goToPanel(panelOn+1);
-    	}
-		handleSwitch();
+        if (panelOn < 2) {
+            goToPanel(panelOn+1);
+        }
+        handleSwitch();
     });
     updateHistory();
 });
 function handleSwitch() {
-	if (panelOn <= 0) {
-		document.querySelector('#prevTab > span').style.opacity = "0";
-		document.querySelector('#prevTab > span').style.pointerEvents = 'none';
-	} else {
-		document.querySelector('#prevTab > span').style.opacity = "";
-		document.querySelector('#prevTab > span').style.pointerEvents = "";
-	}
-	if (panelOn >= 2) {
-		document.querySelector('#nextTab > span').style.opacity = "0";
-		document.querySelector('#nextTab > span').style.pointerEvents = 'none';
-	} else {
-		document.querySelector('#nextTab > span').style.opacity = "";
-		document.querySelector('#nextTab > span').style.pointerEvents = "";
-	}
-	if (panelOn == 3) { // login screen
-		document.querySelector('#nextTab > span').style.opacity = "0";
-		document.querySelector('#nextTab > span').style.pointerEvents = "none";
-		document.querySelector('#prevTab > span').style.opacity = "0";
-		document.querySelector('#prevTab > span').style.pointerEvents = "none";
-	}
+    if (panelOn <= 0) {
+        document.querySelector('#prevTab > span').style.opacity = "0";
+        document.querySelector('#prevTab > span').style.pointerEvents = 'none';
+    } else {
+        document.querySelector('#prevTab > span').style.opacity = "";
+        document.querySelector('#prevTab > span').style.pointerEvents = "";
+    }
+    if (panelOn >= 2) {
+        document.querySelector('#nextTab > span').style.opacity = "0";
+        document.querySelector('#nextTab > span').style.pointerEvents = 'none';
+    } else {
+        document.querySelector('#nextTab > span').style.opacity = "";
+        document.querySelector('#nextTab > span').style.pointerEvents = "";
+    }
+    if (panelOn == 3) { // login screen
+        document.querySelector('#nextTab > span').style.opacity = "0";
+        document.querySelector('#nextTab > span').style.pointerEvents = "none";
+        document.querySelector('#prevTab > span').style.opacity = "0";
+        document.querySelector('#prevTab > span').style.pointerEvents = "none";
+    }
 }
 
 function pause_audio () {
