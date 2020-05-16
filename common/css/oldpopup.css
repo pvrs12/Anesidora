@@ -1,3 +1,17 @@
+:root {
+	--background: linear-gradient(#e5eaf0,white);
+	--font-family: Verdana, Arial, sans-serif;
+	--font-size: 12px;
+	--text-color: black;
+	--accent-color-primary: #8397aa;
+	--accent-color-secondary: white;
+	--text-color-inverse: white;
+	--interactive-background: transparent;
+	--interactive-background-active: #4a90d9;
+	--input-bg: white;
+	--input-color: black;
+}
+
 ::-webkit-scrollbar {
     width: 10px;
 }
@@ -17,8 +31,8 @@
 }
 * {
     outline: none;
-    font-family: Verdana,Arial;
-    font-size: 12px;
+    font-family: var(--font-family);
+    font-size: var(--font-size);
     font-weight: normal;
 }
 html {
@@ -29,13 +43,14 @@ body {
 	overflow:hidden;
 	padding: 0;
 	margin: 0;
-	background:linear-gradient(#e5eaf0,white);
+	background:var(--background);
+	color: var(--text-color);
 }
 a {
-    font-family: Verdana,Arial;
-    font-size: 12px;
+    font-family: var(--font-family);
+    font-size: var(--font-size);
     text-decoration: none;
-    color: Black;
+    color: var(--text-color);
 }
 a:hover {
   text-decoration: underline;
@@ -63,7 +78,7 @@ a:hover {
 	max-width:100%;
 	max-height:120px;
 
-	border:1px solid #8397aa;
+	border:1px solid var(--accent-color-primary);
 }
 #stationList{
 	border-radius: 5px;
@@ -245,4 +260,37 @@ a:hover {
 #stationList {
     width: 100%;
 	height: 100%;
+}
+#volume {
+	border: 1px solid var(--accent-color-primary);
+	background: var(--accent-color-secondary);
+}
+.ui-slider-range.ui-corner-all.ui-widget-header.ui-slider-range-min {
+	background: var(--accent-color-primary);
+}
+.ui-slider-handle.ui-corner-all.ui-state-default {
+	border: var(--accent-color-primary);
+	background: var(--accent-color-secondary);
+}
+#scrubber {
+	border: 1px solid var(--accent-color-primary);
+	background: var(--accent-color-secondary);
+}
+#stationList {
+	border: 1px solid var(--accent-color-primary);
+	font-family: var(--font-family);
+	font-size: var(--font-size);
+	background: var(--interactive-background);
+}
+option {
+	color: var(--text-color);
+	background: transparent;
+}
+option:active {
+	background: var(--interactive-background-active);
+	color: var(--text-color-inverse);
+}
+input {
+	background: var(--input-bg);
+	color: var(--input-color);
 }

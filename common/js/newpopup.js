@@ -329,6 +329,11 @@ function drawPlayer() {
 
 document.documentElement.style.setProperty('--height', localStorage.bodyHeight +'px');
 document.documentElement.style.setProperty('--width', localStorage.bodyWidth+'px');
+if (localStorage.themeInfo&&localStorage.themeInfo!=="") {
+	for (let key in JSON.parse(localStorage.themeInfo)) {
+		document.documentElement.style.setProperty('--'+key, JSON.parse(localStorage.themeInfo)[key]);
+	}
+}
 $(document).ready(function () {
     "use strict";
     $("body").bind("click", function (e) {
@@ -343,9 +348,6 @@ $(document).ready(function () {
 	
 //    var scrollerWidth = $("body").width() * 0.6;
 //    $(".scrollerContainer").width(scrollerWidth);
-    $("#volume").css({
-        "height": $("body").height() - 5
-    });
     $("#coverArt").css({
         "min-width": Math.min($("body").height() * 0.75, $("body").width() * 0.1)
     });
@@ -359,6 +361,22 @@ $(document).ready(function () {
         $("pauseButton").show();
         $("playButton").hide();
     }
+
+    $("#volume").slider({
+        range: "min",
+        min: 0,
+        max: 70,
+        value: (localStorage.volume)
+            ? localStorage.volume * 100
+            : 20,
+        slide: function (ignore, ui) {
+            background.mp3Player.volume = ui.value / 100;
+        },
+        stop: function (ignore, ui) {
+            $(ui.handle).removeClass("ui-state-focus");
+            localStorage.volume = ui.value / 100;
+        }
+    });
 
     $("#scrubber").slider({
         range: "min",
@@ -400,22 +418,7 @@ $(document).ready(function () {
     $("#moreInfoButton").bind("click", function () {
         window.open("options.htm", "_blank");
     });
-    $("#volume").slider({
-        orientation: "vertical",
-        range: "min",
-        min: 0,
-        max: 70,
-        value: (localStorage.volume)
-            ? localStorage.volume * 100
-            : 20,
-        slide: function (ignore, ui) {
-            background.mp3Player.volume = ui.value / 100;
-        },
-        stop: function (ignore, ui) {
-            $(ui.handle).removeClass("ui-state-focus");
-            localStorage.volume = ui.value / 100;
-        }
-    });
+
     $("#unWarning").hide();
     $("#pwWarning").hide();
     $("#login").bind("submit", function () {

@@ -1,10 +1,10 @@
 function init() {
     "use strict";
     if (localStorage.bodyWidth === undefined || localStorage.bodyWidth === 0) {
-        localStorage.bodyWidth = default_width;
+        localStorage.bodyWidth = defaults.width[localStorage.player || defaults.player];
     }
     if (localStorage.bodyHeight === undefined || localStorage.bodyHeight === 0) {
-        localStorage.bodyHeight = default_height;
+        localStorage.bodyHeight = defaults.height[localStorage.player || defaults.player];
     }
     document.body.style.width = localStorage.bodyWidth + "px";
     document.body.style.height = localStorage.bodyHeight + "px";

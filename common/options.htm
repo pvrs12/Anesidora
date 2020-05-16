@@ -2,6 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
 		<meta charset="utf-8">
+		<title>Anesidora Options</title>
     	<script type="text/javascript" src="./js/platform_specific.js"></script>
     	<link href="./css/options.css" rel="stylesheet" type="text/css">
     	<link href="./css/preview.css" rel="stylesheet" type="text/css">
@@ -152,7 +153,7 @@
     	<form>
     		<div>
 		        <label class="browser-style">Player Style</label>
-		        <select id="style">
+		        <select id="playerStyle">
 		        	<option value="new">New</option>
 		        	<option value="old">Old</option>
 		        </select>
@@ -173,7 +174,8 @@
 		        
 		        <label class="browser-style">Force HTTPS</label>
 		        <input type="checkbox" id="forceSecure" class="browser-style">
-    	    <label class="browser-style" style="color: red; opacity: 0; height: max-content;" id="httpWarning">Are you sure you want to allow unencrypted traffic?</label></div>
+		    </div>
+	   	    <label class="browser-style" style="color: red; opacity: 0; height: max-content;" id="httpWarning">Are you sure you want to allow unencrypted traffic?</label>
 			<div>
 		        <label class="browser-style">Play/Pause Hotkey</label>
 		        <input type="text" id="playPauseHotkey" class="browser-style">
@@ -183,6 +185,7 @@
 		        <input type="text" id="skipSongHotkey" class="browser-style">
 		    </div>
 			<div>
+				<button type="button" id="theming" clsas="browser-style">Theme</button>
 		        <button type="button" id="refresh" class="browser-style">Refresh Stations</button>
 		        <button type="button" id="logout" class="browser-style">Logout</button>
 		        <button type="button" id="default" class="browser-style">Defaults</button>

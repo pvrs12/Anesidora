@@ -20,10 +20,22 @@
 	--height: 0px;
 	--transitiontime: 350ms;
 	--size: calc(var(--width) / 4);
+	--background: #3a3a3a;
+	--font-family: Verdana, Arial, sans-serif;
+	--font-size: 12px;
+	--text-color: white;
+	--inverse-color: black;
+	--accent-color: #00F782;
+	--accent-color-darker: #00AE5C;
+	--tabSize: 20px;
+	--warning-bgcolor: #ff3722;
+	--warning-color: white;
+	--album-bg: #6a6c26;
 }
 .container {
 	flex-grow: 1;
 	height: 100%;
+	background: var(--background);
 }
 .switch {
 	width: min-content;
@@ -48,18 +60,18 @@ body {
 	margin: 0;
 	overflow:hidden;
 	background:none;
-	font-family: Verdana, Arial, sans-serif;
-	font-size: 12px;
+	font-family: var(--font-family);
+	font-size: var(--font-size);
 	text-decoration: none;
-	color: white;
+	color: var(--text-color);
 	width: var(--width);
 	height: var(--height);
 }
 a {
-    font-family: Verdana,Arial;
-    font-size: inherit;
+    font-family: var(--font-family);
+    font-size: var(--font-size);
     text-decoration: none;
-    color: white;
+    color: var(--text-color);
     font-weight: bold;
 }
 a:hover {
@@ -72,41 +84,16 @@ a:hover {
 .deadLink {
 	text-decoration: none;
 }
-.historyTitle {
-	text-decoration: underline;
-	text-overflow: ellipsis;
-}
-.historyInfoLink {
-	cursor:pointer;
-}
-.historyCoverArt {
-	max-width:100%;
-	max-height:15px;
-	min-width:15px;
-	min-height:15px;
-}
 #coverArt {
 	width: 100%;
-}
-#stationList{
-	border-radius: 5px;
-	-webkit-border-radius: 5px;
-	border:1px solid #8397aa;
-	font-family: Verdana,Arial;
-	font-size:12px;
 }
 #anesidora{
 	position:absolute;
 	float:left;
 	width: var(--width);
 	height: var(--height);
-	overflow: hidden;
-	background: #3a3a3a;
-}
-.centered {
-	position: relative;
-	top: 50%;
-	transform: translateY(-50%);
+	/*! overflow: hidden; */
+	background: var(--background);
 }
 .scrollerContainer
 {
@@ -115,59 +102,13 @@ a:hover {
     display: block;
     overflow: hidden;
     height: 2em;
-    font-size: 14px;
+    font-size: calc(var(--font-size) + 5px);
 }
 .scrollerText
 {
     left: 0px;
     position: absolute;
     white-space: nowrap;
-}
-.details
-{
-    background-color: rgba(255,255,255,.8);
-    border: 2px solid #8397aa;
-    z-index: 65535;
-    margin: 10px auto;
-    padding: 1px 0px 3px 0px;
-    position: relative;
-    left: 50px;
-    top: 16px;
-    text-align: center;
-	width: 100px;
-	border-radius: 10px;
-	-webkit-border-radius: 10px;
-	box-shadow: 0 0 5px #888888;
-    -webkit-box-shadow: 0 0 5px #888888;
-    line-height: 10px;
-}
-.details a
-{
-    font-family: Verdana,Arial;
-    font-size: 10px;
-    font-weight: normal;
-}
-.details-arrow-border
-{
-    border-color: transparent transparent #8397aa transparent;
-    border-style: solid;
-    border-width: 5px;
-    height: 0;
-    width: 0;
-    position: absolute;
-    top: -12px;
-    left: 10px;
-}
-.details-arrow
-{
-    border-color: transparent transparent #FFFFFF transparent;
-    border-style: solid;
-    border-width: 5px;
-    height: 0;
-    width: 0;
-    position: absolute;
-    top: -9px;
-    left: 10px;
 }
 .panel {
 	position: absolute;
@@ -178,22 +119,11 @@ a:hover {
 	height: var(--height);
 	transition: left var(--transitiontime);
 }
-.popup {
-	display: flex;
-	align-items: center;
-	justify-content: space-around;
-}
 
 #historyDiv {
-	float:left;
+	float: left;
 	overflow-x: hidden;
-	overflow-y: scroll;
-}
-
-#prevButtonDiv {
-	float:left;
-	margin-right: 3px;
-	height: 100%;
+	overflow-y: auto;
 }
 
 #stationHeaderDiv {
@@ -203,14 +133,14 @@ a:hover {
 
 #stationFilterInput {
     height: 36px;
-    
     vertical-align: middle;
     box-sizing: border-box;
+	width: calc(100% - 51px) !important !important;
 }
 
 #stationRefreshButton {
     vertical-align: middle;
-    border: solid 1px #00F782;
+    border: solid 1px var(--accent-color);
     padding: 7px;
     height: 5%;
     box-sizing: border-box;
@@ -221,8 +151,8 @@ a:hover {
 }
 
 #stationListDiv {
-    height: calc(100% - 39px);
-    margin: 3px;
+    height: calc(100% - 55px);
+    margin: 0;
     overflow: auto;
     
 }
@@ -230,14 +160,14 @@ a:hover {
     width: 100%;
 	height: 100%;
 }
-
-.grid-cell {
+.innerInnerContainer > *{
 	display: inline-block;
 }
 #nowPlayingContainerCell {
 	width: 90%;
 	height: min-content;
 	margin-top: 0.6rem;
+	margin-bottom: -9px;
 }
 .scrollerContainer {
 	width: 100%;
@@ -298,7 +228,7 @@ a:hover {
 .ui-slider-horizontal .ui-slider-range {
 	border: 0;
 	border-radius: 0;
-	background: #00F782;
+	background: var(--accent-color);
 }
 
 .hoverImg {
@@ -321,14 +251,14 @@ a:hover {
 #prevTab > span, #nextTab > span {
 	opacity: 0.5;
     display: inline-block;
-    width: 20px;
-    height: 20px;
+    width: var(--tabSize);
+    height: var(--tabSize);
     background: transparent no-repeat center center;
     background-size: 100% 100%;
     pointer-events: all;
-	transition: opacity 250ms;
-	z-index:99;
-	filter: drop-shadow(0px 0px 2px black) drop-shadow(0px 0px 2px black);
+		transition: opacity 250ms;
+		z-index:99;
+		filter: drop-shadow(0px 0px 2px black) drop-shadow(0px 0px 2px black);
 }
 #prevTab > span:hover, #nextTab > span:hover {
 	opacity: 0.9;
@@ -356,11 +286,11 @@ a:hover {
 	position: absolute;
 	top: 5px;
 	left: 0.7rem;
-	color: white;
+	color: var(--color);
 	text-transform: uppercase;
 	font-family: sans-serif;
 	font-size: 0.7rem;
-	background: #3a3a3a;
+	background: var(--background);
 	padding: 0.1em;
 	padding-left: 0.5em;
 	padding-right: 0.5em;
@@ -368,31 +298,23 @@ a:hover {
 }
 .labeled-input > input, #save {
 	background: none;
-	border: solid 1px #00F782;
+	border: solid 1px var(--accent-color);
 	height: 1.2em;
 	font-size: larger;
-	padding: 0.5em;
+	padding: 7px;
 	box-sizing: content-box;
 	border-radius: 13px;
-	color: white;
+	color: var(--text-color);
 	width: auto !important;
-	padding-left: 1.1em;
 	transition: all 250ms;
 }
-
-#rightPanel {
-	flex-direction: row;
-	background: #3a3a3a;
-	color: white;
-	align-items: center;
-}
-
 
 #rightPanel > .container {
 	display: flex;
 	flex-direction: row;
 	align-items: center;
 }
+
 #save {
 	margin-top: 1em;
 	padding: 5px 15px !important;
@@ -406,11 +328,11 @@ a:hover {
 	width: 100%;
 }
 #save:hover {
-	background: #00F782;
-	color: black;
+	background: var(--accent-color);
+	color: var(--inverse-color);
 }
 #save:focus {
-	filter: drop-shadow(0px 0px 5px #00F782);
+	filter: drop-shadow(0px 0px 5px var(--accent-color));
 }
 #pwWarning, #unWarning {
 	position: absolute;
@@ -418,7 +340,7 @@ a:hover {
 	left: -20px;
 }
 #save:active {
-	filter: drop-shadow(0px 0px 5px #00F782);
+	filter: drop-shadow(0px 0px 5px var(--accent-color));
 }
 #login a {
 	margin-top: 1em;
@@ -430,7 +352,7 @@ a:hover {
 	font-size: 24px;
 }
 .labeled-input > input:focus {
-	border: solid 1px #00AE5C;
+	border: solid 1px var(--accent-color-darker);
 }
 .labeled-input.warning::before {
 	opacity: 1;
@@ -440,7 +362,8 @@ a:hover {
 	left: -1.5em;
 	z-index: 100;
 	top: 50%;
-	background: #ff3722;
+	background: var(--warning-bgcolor);
+	color: var(--warning-color);
 	content: "!";
 	width: 13px;
 	height: 13px;
@@ -457,7 +380,7 @@ a:hover {
 	height: var(--size);
 	background: url("/images/New/default_album.svg");
 	background-size: 100% !important;
-	background-color: #6a6c26 !important;
+	background-color: var(--album-bg) !important;
 	display: inline-block;
 }
 .historyOverlay {
@@ -512,6 +435,9 @@ a:hover {
 	text-align: center;
 	user-select: text;
 	padding: 4px 0px;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	overflow: hidden;
 }
 * {
 	user-select: none;
@@ -529,16 +455,7 @@ span, a, #nowPlayingContainerCell, #nowPlayingContainer, #nowPlaying {
 	opacity: 1;
 	background: radial-gradient(rgba(0,0,0,0.8),rgba(0,0,0,0.1));
 }
-#volumeCell {
-	visibility: hidden;
-	display: none;
-	opacity: 0;
-	z-index: -999;
-}
 
-#stationFilterInput {
-	width: 100% !important;
-}
 
 #stationHeaderdiv {
 	width: 90%;
@@ -582,4 +499,59 @@ span, a, #nowPlayingContainerCell, #nowPlayingContainer, #nowPlaying {
 }
 #rightPanel {
 	left: calc(var(--width) * 2);
+}
+
+/* Make an empty history panel look less janky */
+
+#historyDiv:empty:before {
+	content: "History is empty";
+	width: 100%;
+	text-align: center;
+	display: block;
+	font-size: calc(var(--width) / 7);
+	color: rgba(255,255,255,0.3);
+	animation: fadeIn 500ms ease-in-out;
+}
+#historyDiv:empty {
+	display: flex;
+	align-items: center;
+	flex-direction: row;
+}
+
+@keyframes fadeIn {
+	0% {
+		opacity: 0;
+	}
+	100% {
+		opacity: 1;
+	}
+}
+
+/* Volume */
+
+#volumeCell > img {
+	width: calc(var(--width) / 10);
+	pointer-events: none;
+}
+#volume {
+	width: calc(var(--width)/2);
+	border: 0;
+}
+#volumeCell {
+	display: flex;
+	align-items: center;
+	padding: 0;
+	margin: 0;
+	margin-top: -8px;
+}
+#volume .ui-slider-handle {
+	opacity: 1;
+	background: white;
+	border: 0;
+	height: 10px;
+	width: 10px;
+	top: -3px;
+	border-radius: 100%;
+}
+#volume .ui-slider-range {
 }

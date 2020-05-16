@@ -46,6 +46,22 @@ var bodyWidthNum = (localStorage.width==undefined?(localStorage.whichPlayer==und
 // if localStorage.whichPlayer _also_ doesn't exists, get it from defaults according to default player
 var bodyHeightNum = (localStorage.height==undefined?(localStorage.whichPlayer==undefined?defaults.height[defaults.player]:defaults.width[localStorage.whichPlayer]):localStorage.height);
 
+if (localStorage.themeInfo == undefined) {
+	localStorage.themeInfo = JSON.stringify({
+		'background': '#3a3a3a',
+		'font-family': 'Verdana, Arial, sans-serif',
+		'font-size': '12px',
+		'text-color': '#FFF',
+		'inverse-color': '#000',
+		'accent-color': '#00f782',
+		'accent-color-darker': '#00ae5c',
+		'tabSize': '20px',
+		'warning-bgcolor': '#ff3722',
+		'warning-color': '#FFF',
+		'album-bg': '#6a6c26'
+	});
+}
+
 function secureWarning() {
     if (forceSecure.checked) {
         httpWarning_label.style.opacity = 0;
@@ -90,7 +106,11 @@ function initBodySize() {
 		document.getElementById('preview2').style.opacity = 1;
 	}
 	style.value = localStorage.whichPlayer;
-		
+	document.getElementById('theming').addEventListener('click', (e) => {
+		e.preventDefault();
+		window.location = "theming.htm";
+		return false;
+	});
     forceSecure.checked = localStorage.forceSecure !== "false" && localStorage.forceSecure;
 
     secureWarning();
@@ -144,7 +164,7 @@ document.addEventListener("DOMContentLoaded", function() {
     forceSecure = document.getElementById("forceSecure");
     httpWarning_label = document.getElementById("httpWarning");
 
-	style = document.getElementById("style");
+	style = document.getElementById("playerStyle");
     bodyWidth = document.getElementById("bodyWidth");
     bodyHeight = document.getElementById("bodyHeight");
     historyNum = document.getElementById("historyNum");
