@@ -252,6 +252,11 @@ function addStations() {
         }
         playAction.addEventListener('click', () => {
             background.play(thisStation.stationToken);
+            elem.classList.add('activeStation');
+            if (lastActiveStation) {
+                lastActiveStation.classList.remove('activeStation');
+            }
+            lastActiveStation = elem;
             goToPanel(1);
             handleSwitch();
         });
@@ -260,6 +265,7 @@ function addStations() {
         });
     });
 }
+var lastActiveStation = '';
 
 function updatePlayer() {
     "use strict";

@@ -553,5 +553,8 @@ span, a, #nowPlayingContainerCell, #nowPlayingContainer, #nowPlaying {
     top: -3px;
     border-radius: 100%;
 }
-#volume .ui-slider-range {
+
+.activeStation {
+    filter: drop-shadow(0px 0px 7px var(--accent-color));
+    transition: filter 250ms;
 }

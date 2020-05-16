@@ -50,7 +50,7 @@ function nextSong(depth=1) {
     
     /* I put this over here so that it works for every song change. */
     if (currentSong) {
-        stationImgs[currentSong.stationId] = (comingSong.albumArtUrl || currentSong.albumArtUrl||stationImgs[currentSong.stationId]) || "/images/New/default_album.svg"; 
+        stationImgs[localStorage.lastStation] = (currentSong.albumArtUrl||stationImgs[localStorage.lastStation]) || "/images/New/default_album.svg"; 
         // try for a new cover; if that doesn't work, keep the old; if there is no old, go for a default one
         localStorage.stationImgs = JSON.stringify(stationImgs);
         prevSongs.push(currentSong); 
