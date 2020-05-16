@@ -221,6 +221,7 @@ function handleFileLoad(event){
 		setVar(key, resParsed[key]);
 		controls[key].input.value = resParsed[key];
 	}
+	themeInfo = resParsed;
 }
 initPreview();
 initControls();
