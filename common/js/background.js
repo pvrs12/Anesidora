@@ -53,10 +53,12 @@ function nextSong(depth=1) {
         stationImgs[localStorage.lastStation] = (currentSong.albumArtUrl||stationImgs[localStorage.lastStation]) || "/images/New/default_album.svg"; 
         // try for a new cover; if that doesn't work, keep the old; if there is no old, go for a default one
         localStorage.stationImgs = JSON.stringify(stationImgs);
-        prevSongs.push(currentSong); 
-        while(prevSongs.length > localStorage.historyNum){
-            prevSongs.shift();
-         }
+        if (currentSong != prevSongs[prevSongs.length-1]) {
+            prevSongs.push(currentSong);
+            while(prevSongs.length > localStorage.historyNum){
+                prevSongs.shift();
+            }
+        }
     }
     /* /paste */
 
