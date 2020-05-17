@@ -30,7 +30,9 @@
             <div class="popup container">
                 <div id="coverLinkCell" class="slight-margin"> 
                     <a id="coverLink" href="#">
-                        <img title="Click to view album details" id="coverArt" src="images/cover.png" />
+                        <div class="icon" title="Click to view album details" id="coverArt">
+                            <span></span>
+                        </div>
                     </a> 
                 </div>
                 <div class="innerContainer">
@@ -49,30 +51,48 @@
                         </div>
                         <div class="innerInnerContainer">
                             <div class="playPauseButtonCell grid-cell">
-                                <img title="Play" id="playButton" src="images/New/play.svg" class=hoverImg />
-                                <img title="Pause" id="pauseButton" src="images/New/pause.svg" style="display:none" class=hoverImg />
+                                <div title="Play" id="playButton" class="hoverImg icon">
+                                    <span></span>
+                                </div>
+                                <div title="Pause" id="pauseButton" style="display:none" class="hoverImg icon">
+                                    <span></span>
+                                </div>
                             </div>
                             <div class="skipButtonCell grid-cell">
-                                <img title="Next song" id="skipButton" src="images/New/forward.svg" class=hoverImg />
+                                <div title="Next song" id="skipButton" class="hoverImg icon" >
+                                    <span></span>
+                                </div>
                             </div>
                             <div class="tUpButtonCell grid-cell">
-                                <img title="Like this song" id="tUpButton" src="images/New/like.svg" class=hoverImg />
+                                <div title="Like this song" id="tUpButton" class="hoverImg icon" >
+                                    <span></span>
+                                </div>
                             </div>
                             <div class="tDownButtonCell grid-cell">
-                                <img title="Dislike this song" id="tDownButton" src="images/New/dislike.svg" class=hoverImg />
+                                <div title="Dislike this song" id="tDownButton" class="hoverImg icon" >
+                                    <span></span>
+                                </div>
                             </div>
                             <div class="sleepButtonCell grid-cell"> 
-                                <img title="I'm tired of this song" id="sleepButton" src="images/New/hourglass.svg" class=hoverImg />
+                                <div title="I'm tired of this song" id="sleepButton" class="hoverImg icon">
+                                    <span></span>
+                                </div>
                             </div>
                             <div class="downloadButtonCell grid-cell">
-                                <img title="Download this song" id="downloadButton" src="images/New/download.svg" class=hoverImg />
+                                <div title="Download this song" id="downloadButton" class="hoverImg icon" >
+                                    <span></span>
+                                </div>
                             </div>
                             <div class="moreInfoButtonCell grid-cell">
-                                <img title="Options" id="moreInfoButton" src="images/New/settings.svg" class=hoverImg />
+                                <div title="Options" id="moreInfoButton" class="hoverImg icon" >
+                                    <span></span>
+                                </div>
                             </div>
                         </div>
                         <div id="volumeCell"> 
-                            <img src="images/New/volume.svg" />
+                            <div id="volIcon" class="hoverImg icon">
+                                <span></span>
+                            </div>
                             <div title="Volume" id="volume"></div> 
                         </div>
                     </div>
@@ -84,7 +104,9 @@
                 <div id="stationHeaderdiv" class="labeled-input">
                     <label>Search</label>
                     <input type="text" id="stationFilterInput" />
-                    <img title="Refresh" id="stationRefreshButton" src="images/New/refreshStationList.svg" />
+                    <div title="Refresh" id="stationRefreshButton" class="hoverImg icon">
+                        <span>
+                    </div>
                 </div>
                 <div id=stationListDiv>
                 </div>
@@ -111,6 +133,3 @@
     </div>
 </body>
 </html>
-<!--
-<div class="historyItem"><div class="historyCover"><div class="historyOverlay"><div class="actions"><img class="like" src="images/New/like.svg"><img class="download" src="images/New/download.svg"><img class="dislike" src="images/New/dislike.svg"></div></div></div><span>To The Stars</span></div>
--->

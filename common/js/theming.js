@@ -15,7 +15,10 @@ if (themeInfo == undefined) {
         'tabSize': '20px',
         'warning-bgcolor': '#ff3722',
         'warning-color': '#FFFFFF',
-        'album-bg': '#6a6c26'
+        'album-bg': '#86aaae',
+        'button-color': '#ffffff',
+        'active-button-color': '#ffa700',
+        'album-color': '#000000'
     }
     localStorage.themeInfo = JSON.stringify(themeInfo);
 }
@@ -173,6 +176,27 @@ var themeItems = [
         'type': 'color',
         'property': 'album-bg',
         'func': function(a) {return a;}
+    },
+    {
+        'name': 'Button Color',
+        'desc': 'The color of the buttons on the player.',
+        'type': 'color',
+        'property': 'button-color',
+        'func': function(a) { return a; }
+    },
+    {
+        'name': 'Active Button Color',
+        'desc': 'The color of active buttons - for example, if a song is liked, the like button will be this color.',
+        'type': 'color',
+        'property': 'active-button-color',
+        'func': function(a) { return a; }
+    },
+    {
+        'name': 'Default Album Color',
+        'desc': 'The color of the default album cover.',
+        'type': 'color',
+        'property': 'album-color',
+        'func': function(a) { return a; }
     }
 ]
 
@@ -197,31 +221,31 @@ function handleFileSelect(event){
     reader.readAsText(event.target.files[0])
 }
 function handleFileLoad(event){
-	//verify file
-	let res = event.target.result;
-	try {
-		JSON.parse(res);
-	} catch(e) {
-		alert('Invalid file: '+e);
-		return;
-	}
-	let resParsed = JSON.parse(res);
-	for (let key in themeInfo) {
-		if (!resParsed.hasOwnProperty(key)) {
-			alert('File is missing property: '+key);
-			return;
-		}
-		if (themeInfo[key].type && themeInfo[key].type == "color" && !(/^#([0-9A-F]{3}){1,2}$/i.test(resParsed[key]))) {
-			alert(`${key}: Please use hex color codes, not '${resParsed[key]}'`);
-			return;
-		}
-	}
-	// do stuff
-	for (let key in themeInfo) {
-		setVar(key, resParsed[key]);
-		controls[key].input.value = resParsed[key];
-	}
-	themeInfo = resParsed;
+    //verify file
+    let res = event.target.result;
+    try {
+        JSON.parse(res);
+    } catch(e) {
+        alert('Invalid file: '+e);
+        return;
+    }
+    let resParsed = JSON.parse(res);
+    for (let key in themeInfo) {
+        if (!resParsed.hasOwnProperty(key)) {
+            alert('File is missing property: '+key);
+            return;
+        }
+        if (themeInfo[key].type && themeInfo[key].type == "color" && !(/^#([0-9A-F]{3}){1,2}$/i.test(resParsed[key]))) {
+            alert(`${key}: Please use hex color codes, not '${resParsed[key]}'`);
+            return;
+        }
+    }
+    // do stuff
+    for (let key in themeInfo) {
+        setVar(key, resParsed[key]);
+        controls[key].input.value = resParsed[key];
+    }
+    themeInfo = resParsed;
 }
 initPreview();
 initControls();

@@ -94,21 +94,23 @@ function updateHistory() {
         elem.classList.add('historyItem');
         let cover = document.createElement('div');
         cover.classList.add('historyCover');
+        cover.classList.add('icon');
         let overlay = document.createElement('div');
         overlay.classList.add('historyOverlay');
         let holder = document.createElement('div');
         holder.classList.add('holder');
         let actions = document.createElement('div');
         actions.classList.add('actions');
-        let likeAction = document.createElement('img');
-        likeAction.classList.add('like');
+        let likeAction = document.createElement('div');
         likeAction.classList.add('hoverImg');
-        let downloadAction = document.createElement('img');
+        likeAction.classList.add('icon');
+        let downloadAction = document.createElement('div');
         downloadAction.classList.add('download');
         downloadAction.classList.add('hoverImg');
-        let dislikeAction = document.createElement('img');
-        dislikeAction.classList.add('dislike');
+        downloadAction.classList.add('icon');
+        let dislikeAction = document.createElement('div');
         dislikeAction.classList.add('hoverImg');
+        dislikeAction.classList.add('icon');
         let nameSpan = document.createElement('span');
         
         historyDiv.appendChild(elem);
@@ -116,12 +118,14 @@ function updateHistory() {
         if (song.albumArtUrl) {
             cover.style.background = `url("${song.albumArtUrl}")`;
         } else {
-            cover.style.background = 'url("/images/New/default_album.svg")';
+            cover.style.background = '';
+            cover.appendChild(document.createElement('span'));
         }
         holder.appendChild(cover);
         holder.appendChild(overlay);
         overlay.appendChild(actions);
         actions.appendChild(likeAction);
+        likeAction.appendChild(document.createElement('span'));
         
         let likeStatus = "like";
         if (song.songRating == -1) {
@@ -131,11 +135,12 @@ function updateHistory() {
         } else if (song.songRating == 1) {
             likeStatus = "liked";
         }
-        likeAction.src = "images/New/"+(likeStatus=="liked"?"liked":"like")+".svg";
+        likeAction.classList.add((likeStatus=="liked"?"liked":"like"));
         actions.appendChild(downloadAction);
-        downloadAction.src = "images/New/download.svg";
+        downloadAction.appendChild(document.createElement('span'));
         actions.appendChild(dislikeAction);
-        dislikeAction.src = "images/New/"+(likeStatus=="disliked"?"disliked":"dislike")+".svg";
+        dislikeAction.appendChild(document.createElement('span'));
+        dislikeAction.classList.add((likeStatus=="disliked"?"disliked":"dislike"));
         elem.appendChild(nameSpan);
         nameSpan.innerText = song.songName;
         let historyNum = i,
@@ -150,8 +155,10 @@ function updateHistory() {
                 return;
             }
             background.addFeedback(historyNum, 1);
-            likeAction.src = "images/New/liked.svg";
-            dislikeAction.src = "images/New/dislike.svg";
+            likeAction.classList.add('liked');
+            likeAction.classList.remove('like');
+            dislikeAction.classList.add('dislike');
+            dislikeAction.classList.remove('disliked');
             likeStatus = "liked";
             e.preventDefault(e);
         });
@@ -164,8 +171,10 @@ function updateHistory() {
                 return;
             }
             background.addFeedback(historyNum, -1);
-            dislikeAction.src = "images/New/disliked.svg";
-            likeAction.src = "images/New/like.svg";
+            likeAction.classList.remove('liked');
+            likeAction.classList.add('like');
+            dislikeAction.classList.remove('dislike');
+            dislikeAction.classList.add('disliked');
             likeStatus = "disliked";
             e.preventDefault(e);
         });
@@ -228,18 +237,25 @@ function addStations() {
         holder.classList.add('holder');
         let actions = document.createElement('div');
         actions.classList.add('actions');
-        let playAction = document.createElement('img');
+        let playAction = document.createElement('div');
         playAction.classList.add('hoverImg');
+        playAction.classList.add('stationPlay');
+        playAction.classList.add('icon');
         let nameSpan = document.createElement('span');
         
         document.getElementById('stationListDiv').appendChild(elem);
         elem.appendChild(holder);
         cover.style.background = `url("${background.stationImgs[station.stationId]}")`;
         holder.appendChild(cover);
+        if (background.stationImgs[station.stationId] == "/images/New/default_album.svg") {
+            cover.classList.add('icon');
+            cover.appendChild(document.createElement('span'));
+            cover.style.background = '';
+        }
         holder.appendChild(overlay);
         overlay.appendChild(actions);
         actions.appendChild(playAction);
-        playAction.src = "/images/New/player.svg";
+        playAction.appendChild(document.createElement('span'));
         elem.appendChild(nameSpan);
         nameSpan.innerText = station.stationName;
         let thisStation = station;
@@ -261,7 +277,13 @@ function addStations() {
             handleSwitch();
         });
         stationCallbacks.push(() => {
+            if (background.stationImgs[station.stationId] == "/images/New/default_album.svg") {
+                cover.classList.add('icon');
+            cover.style.background = ``;
+            } else {
+                cover.classList.remove('icon');
             cover.style.background = `url("${background.stationImgs[thisStation.stationId]}")`;
+            }
         });
     });
 }
@@ -274,7 +296,12 @@ function updatePlayer() {
             get_browser().tabs.create({
                 "url": background.currentSong.albumDetailUrl
             });
-        }).attr("src", background.currentSong.albumArtUrl);
+        })
+        if (background.currentSong.albumArtUrl != '') {
+            document.getElementById('coverArt').style.backgroundImage = 'url("'+background.currentSong.albumArtUrl+'")'
+        } else {
+            document.getElementById('coverArt').style.background = '';
+        }
         $("#artistLink").unbind().text(background.currentSong.artistName);
         $("#titleLink").unbind().text(background.currentSong.songName);
         $("#artistLink").unbind().bind("click", function () {
@@ -289,12 +316,15 @@ function updatePlayer() {
         }).text(background.currentSong.songName);
         $("#dash").text(" - ");
         if (background.currentSong.songRating) {
-            $("#tUpButton").unbind("click").attr("src", "images/New/liked.svg");
+            $("#tUpButton").unbind("click");
+            document.getElementById('tUpButton').classList.add('liked');
+            document.getElementById('tUpButton').classList.remove('like');
         } else {
-            $("#tUpButton").attr("src", "images/New/like.svg");
+            document.getElementById('tUpButton').classList.add('like');
+            document.getElementById('tUpButton').classList.remove('liked');
             $("#tUpButton").click(function () {
                 background.addFeedback(-1, true);
-                $("#tUpButton").attr("src", "images/New/liked.svg");
+            document.getElementById('tUpButton').classList.add('liked');
                 $("#tUpButton").unbind("click");
             });
         }
@@ -353,10 +383,7 @@ $(document).ready(function () {
     document.documentElement.style.setProperty('--width', localStorage.bodyWidth+'px');
     
 //    var scrollerWidth = $("body").width() * 0.6;
-//    $(".scrollerContainer").width(scrollerWidth);
-    $("#coverArt").css({
-        "min-width": Math.min($("body").height() * 0.75, $("body").width() * 0.1)
-    });
+//    $(".scrollerContainer").width(scrollerWidth
     initTabs();
     
 

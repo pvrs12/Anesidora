@@ -31,6 +31,9 @@
     --warning-bgcolor: #ff3722;
     --warning-color: white;
     --album-bg: #6a6c26;
+    --button-color: white;
+    --active-button-color: #ffa700;
+    --album-color: red;
 }
 .container {
     flex-grow: 1;
@@ -85,7 +88,8 @@ a:hover {
     text-decoration: none;
 }
 #coverArt {
-    width: 100%;
+    width: var(--width);
+    height: var(--width);
 }
 #anesidora{
     position:absolute;
@@ -167,7 +171,7 @@ a:hover {
     width: 90%;
     height: min-content;
     margin-top: 0.6rem;
-    margin-bottom: -9px;
+    margin-bottom: -14px;
 }
 .scrollerContainer {
     width: 100%;
@@ -192,7 +196,6 @@ a:hover {
 #coverArt {
     min-width: var(--width);
     transition: width 350ms;
-    background: url("/images/New/default_album.svg");
     background-size: 100%;
     background-repeat: no-repeat;
 }
@@ -376,9 +379,8 @@ a:hover {
 
 
 .historyCover {
-    width: var(--size);
-    height: var(--size);
-    background: url("/images/New/default_album.svg");
+    width: var(--size) !important;
+    height: var(--size) !important;
     background-size: 100% !important;
     background-color: var(--album-bg) !important;
     display: inline-block;
@@ -397,7 +399,7 @@ a:hover {
     position: absolute;
     top: 0;
 }
-.actions > img {
+.actions > div {
     width: var(--imgsize);
     height: var(--imgsize);
     /*! background: white; */
@@ -405,6 +407,9 @@ a:hover {
     pointer-events: all;
     cursor: pointer;
     --imgsize: calc(var(--size) / 4);
+}
+.actions > div > span {
+    --icon-size: calc(var(--size) / 4) !important;
 }
 .actions {
     display: flex;
@@ -557,4 +562,101 @@ span, a, #nowPlayingContainerCell, #nowPlayingContainer, #nowPlaying {
 .activeStation {
     filter: drop-shadow(0px 0px 7px var(--accent-color));
     transition: filter 250ms;
+}
+
+/* Icons */
+.icon, .icon > span {
+    --icon-size: calc(var(--width) / 8);
+}
+.icon {
+    width: var(--icon-size);
+    height: var(--icon-size);
+    overflow: hidden;
+}
+
+.icon > span {
+    margin-left: -100%;
+    display: block;
+    width: var(--icon-size);
+    height: var(--icon-size);
+    background-image: url("/images/New/default_album.svg");
+    background-size: 100%;
+    background-position: -100% 0;
+    filter: drop-shadow(var(--icon-size) 0px var(--button-color));
+}
+
+#coverArt > span {
+    background-image: url("/images/New/default_album.svg");
+}
+#playButton > span {
+    background-image: url("/images/New/play.svg");
+}
+#pauseButton > span {
+    background-image: url("/images/New/pause.svg");
+}
+#skipButton > span {
+    background-image: url("/images/New/forward.svg");
+}
+#tUpButton > span {
+    background-image: url("/images/New/like.svg");
+}
+#tDownButton > span {
+    background-image: url("/images/New/dislike.svg");
+}
+#sleepButton > span {
+    background-image: url("/images/New/hourglass.svg");
+}
+#downloadButton > span {
+    background-image: url("/images/New/download.svg");
+}
+#moreInfoButton > span {
+    background-image: url("/images/New/settings.svg");
+}
+#volIcon > span {
+    background-image: url("/images/New/volume.svg");
+}
+#stationRefreshButton > span {
+    background-image: url("/images/New/refreshStationList.svg");
+    --icon-size: calc(36px - 14px) !important;
+    margin-left: -230%;
+    background-position: -100% 0;
+    filter: drop-shadow(calc(calc(var(--icon-size) * 2) + 2px) -1px var(--button-color));
+}
+.stationPlay > span {
+    background-image: url("/images/New/player.svg");
+    filter: drop-shadow(calc(var(--icon-size) + 2px) 0px var(--button-color));
+}
+.historyCover > span {
+    background-image: url("/images/New/default_album.svg");
+    filter: drop-shadow(var(--icon-size) 0px var(--album-color));
+}
+.like > span {
+    background-image: url("/images/New/like.svg");
+}
+.liked > span {
+    background-image: url("/images/New/liked.svg");
+    filter: drop-shadow(var(--icon-size) 0px var(--active-button-color));
+}
+.download > span {
+    background-image: url("/images/New/download.svg");
+}
+.dislike > span {
+    background-image: url("/images/New/dislike.svg");
+}
+.disliked > span {
+    background-image: url("/images/New/disliked.svg");
+    filter: drop-shadow(var(--icon-size) 0px var(--active-button-color));
+}
+#coverArt > span {
+    --icon-size:  var(--width);
+    filter: drop-shadow(var(--icon-size) 0px var(--album-color));
+}
+.historyCover > span {
+    --icon-size: var(--size);
+}
+#coverArt[style*="background"] > span {
+    opacity: 0;
+}
+#coverArt:not([style*="background"]) {
+    background: var(--album-bg);
 }
