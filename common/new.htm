@@ -1,0 +1,135 @@
+<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8">
+    <title>Anesidora</title>
+    <script src="/js/jquery/jquery-3.3.1.min.js" type="text/javascript"></script>
+    <script src="/js/jquery/jquery-ui.min.js" type="text/javascript"></script>
+
+    <script type="text/javascript" src="./js/platform_specific.js"></script>
+    <script type="text/javascript" src="./js/options.js"></script>
+    <script type="text/javascript" src="./js/newpopup.js"></script>
+
+    <link href="css/newpopup.css" rel="stylesheet" type="text/css" />
+    <link href="css/anesidora/jquery-ui-1.8.6.custom.css" rel="stylesheet" type="text/css" />
+</head>
+<body style="resize:both">
+    <div id="anesidora">
+        <div id="prevTab">
+            <span></span>
+        </div>
+        <div id="nextTab">
+            <span></span>
+        </div>
+        <div id=historyPanel class=panel>
+            <div id=historyDiv class="container" style="overflow-x:hidden">
+                
+            </div>
+        </div>
+        <div id=leftPanel class=panel>
+            <div class="popup container">
+                <div id="coverLinkCell" class="slight-margin"> 
+                    <a id="coverLink" href="#">
+                        <div class="icon" title="Click to view album details" id="coverArt">
+                            <span></span>
+                        </div>
+                    </a> 
+                </div>
+                <div class="innerContainer">
+                    <div class="grid-cell" id="scrubberCell">
+                        <div id="scrubber"></div>
+                    </div>
+                    <div class="flex-2">
+                        <div class="grid-cell" id="nowPlayingContainerCell">
+                            <div class="scrollerContainer" id="nowPlayingContainer">
+                                <div class="scrollerText" id="nowPlaying">
+                                    <a id="artistLink" href="#"></a>
+                                    <span id="dash">Play to resume last station</span>
+                                    <a id="titleLink" href="#"></a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="innerInnerContainer">
+                            <div class="playPauseButtonCell grid-cell">
+                                <div title="Play" id="playButton" class="hoverImg icon">
+                                    <span></span>
+                                </div>
+                                <div title="Pause" id="pauseButton" style="display:none" class="hoverImg icon">
+                                    <span></span>
+                                </div>
+                            </div>
+                            <div class="skipButtonCell grid-cell">
+                                <div title="Next song" id="skipButton" class="hoverImg icon" >
+                                    <span></span>
+                                </div>
+                            </div>
+                            <div class="tUpButtonCell grid-cell">
+                                <div title="Like this song" id="tUpButton" class="hoverImg icon" >
+                                    <span></span>
+                                </div>
+                            </div>
+                            <div class="tDownButtonCell grid-cell">
+                                <div title="Dislike this song" id="tDownButton" class="hoverImg icon" >
+                                    <span></span>
+                                </div>
+                            </div>
+                            <div class="sleepButtonCell grid-cell"> 
+                                <div title="I'm tired of this song" id="sleepButton" class="hoverImg icon">
+                                    <span></span>
+                                </div>
+                            </div>
+                            <div class="downloadButtonCell grid-cell">
+                                <div title="Download this song" id="downloadButton" class="hoverImg icon" >
+                                    <span></span>
+                                </div>
+                            </div>
+                            <div class="moreInfoButtonCell grid-cell">
+                                <div title="Options" id="moreInfoButton" class="hoverImg icon" >
+                                    <span></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="volumeCell"> 
+                            <div id="volIcon" class="hoverImg icon">
+                                <span></span>
+                            </div>
+                            <div title="Volume" id="volume"></div> 
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id=midPanel class=panel>
+            <div class="container">
+                <div id="stationHeaderdiv" class="labeled-input">
+                    <label>Search</label>
+                    <input type="text" id="stationFilterInput" />
+                    <div title="Refresh" id="stationRefreshButton" class="hoverImg icon">
+                        <span>
+                    </div>
+                </div>
+                <div id=stationListDiv>
+                </div>
+            </div>
+        </div>
+        <div id=rightPanel class=panel>
+            <div class="container">
+                <form id="login" action="">
+                    <div class="labeled-input" id="li1">
+                        <label>email</label>
+                        <input id="username" tabindex="1"/>
+                        <div id="unWarning" class="ui-icon ui-icon-alert"></div>
+                    </div>
+                    <div class="labeled-input" id="li2">
+                        <label>password</label>
+                        <input id="password" type="password" tabindex="2" />
+                        <div id="pwWarning" class="ui-icon ui-icon-alert"></div>
+                    </div>
+                        <input id="save" type="submit" value="Save" />
+                        <a href="https://github.com/pvrs12/Anesidora/blob/master/login.md" target="_blank"> Concerned about security?</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

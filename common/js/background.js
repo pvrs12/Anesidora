@@ -5,6 +5,9 @@ var callback;
 var currentSong;
 var comingSong;
 var prevSongs = [];
+var stationImgs = (localStorage.stationImgs && JSON.parse(localStorage.stationImgs)) || {
+
+}
 
 function setCallbacks(updatePlayer,drawPlayer,downloadSong){
     callback = {
@@ -44,6 +47,21 @@ function nextSong(depth=1) {
         // console.log("What? We recursed down 4 times?");
         return;
     }
+    
+    /* I put this over here so that it works for every song change. */
+    if (currentSong) {
+        stationImgs[localStorage.lastStation] = (currentSong.albumArtUrl||stationImgs[localStorage.lastStation]) || "/images/New/default_album.svg"; 
+        // try for a new cover; if that doesn't work, keep the old; if there is no old, go for a default one
+        localStorage.stationImgs = JSON.stringify(stationImgs);
+        if (currentSong != prevSongs[prevSongs.length-1]) {
+            prevSongs.push(currentSong);
+            while(prevSongs.length > localStorage.historyNum){
+                prevSongs.shift();
+            }
+        }
+    }
+    /* /paste */
+
     if (currentPlaylist === undefined || currentPlaylist.length === 0) {
         getPlaylist(localStorage.lastStation);
     }
@@ -159,13 +177,13 @@ $(document).ready(function () {
             return;
         }
     }).bind("ended", function () {
-        if (currentSong.songRating != "1") {
-            prevSongs.push(currentSong);
-            //console.log("History Num = "+localStorage.historyNum);
-            while(prevSongs.length > localStorage.historyNum){
-                prevSongs.shift();
-            }
+        /* Moved to nextSong
+        prevSongs.push(currentSong);
+        //console.log("History Num = "+localStorage.historyNum);
+        while(prevSongs.length > localStorage.historyNum){
+            prevSongs.shift();
         }
+        */
         nextSong();
     }).bind("timeupdate", function () {
         try {
