@@ -46,6 +46,8 @@ var bodyWidthNum = (localStorage.width==undefined?(localStorage.whichPlayer==und
 // if localStorage.whichPlayer _also_ doesn't exists, get it from defaults according to default player
 var bodyHeightNum = (localStorage.height==undefined?(localStorage.whichPlayer==undefined?defaults.height[defaults.player]:defaults.width[localStorage.whichPlayer]):localStorage.height);
 
+var background = get_browser().extension.getBackgroundPage();
+
 if (localStorage.themeInfo == undefined) {
     localStorage.themeInfo = JSON.stringify({
         'background': '#3a3a3a',
@@ -101,6 +103,9 @@ function initBodySize() {
     bodyWidth.value = localStorage.bodyWidth;
     bodyHeight.value = localStorage.bodyHeight;
     historyNum.value = localStorage.historyNum;
+
+    load_player_details();
+
     if (localStorage.whichPlayer == 'new') {
         document.getElementById('preview').style.opacity = 1;
         document.getElementById('preview2').style.opacity = 0;
@@ -108,6 +113,10 @@ function initBodySize() {
         document.getElementById('preview').style.opacity = 0;
         document.getElementById('preview2').style.opacity = 1;
     }
+
+    // document.getElementById("new-coverArt").style.minWidth = 
+    // document.getElementById("old-coverArt").style.minWidth = Math.min(document.body.style.height * 0.75, document.body.style.width * 0.1);
+
     style.value = localStorage.whichPlayer;
     document.getElementById('theming').addEventListener('click', (e) => {
         e.preventDefault();
@@ -120,7 +129,6 @@ function initBodySize() {
 }
 
 function initHotkeys() {
-    
     get_browser().commands.getAll().then(commands => {
         commands.forEach(command => {
             playPauseHotkey = document.getElementById("playPauseHotkey");
@@ -133,6 +141,9 @@ function initHotkeys() {
                 skipSongHotkey.value = command.shortcut;
             }
         });
+    }).catch(function(e) {
+        // Fix an issue with Chrome on the options page
+        e.preventDefault();
     });
 }
 
@@ -154,7 +165,22 @@ function updateHotkeys() {
     };
     get_browser().commands.update(skipSongDetails).catch(() => {
         alert("The Skip Song hotkey entered is invalid!")
-    });;
+    });
+}
+
+function load_player_details() {
+    if (!background.currentSong) {
+        return;
+    }
+
+    document.getElementById("new-coverArt").src = background.currentSong.albumArtUrl;
+    document.getElementById("old-coverArt").src = background.currentSong.albumArtUrl;
+
+    document.getElementById("new-artistLink").textContent = background.currentSong.artistName;
+    document.getElementById("old-artistLink").textContent = background.currentSong.artistName;
+
+    document.getElementById("new-titleLink").textContent = background.currentSong.songName;
+    document.getElementById("old-titleLink").textContent = background.currentSong.songName;
 }
 
 document.addEventListener("DOMContentLoaded", function() {
@@ -188,7 +214,9 @@ document.addEventListener("DOMContentLoaded", function() {
     }
     if (style) {
         style.addEventListener('change', () => {
-            if (style.value != 'new' && style.value != 'old') return;
+            if (style.value != 'new' && style.value != 'old') {
+                return;
+            }
             if (style.value == 'new') {
                 document.getElementById('preview').style.opacity = 1;
                 document.getElementById('preview2').style.opacity = 0;
@@ -204,6 +232,7 @@ document.addEventListener("DOMContentLoaded", function() {
     
     form = document.querySelector('form');
     let putBackTimeout;
+
     function heightStuff() {
         if (form) {
             if (putBackTimeout) {
@@ -217,7 +246,7 @@ document.addEventListener("DOMContentLoaded", function() {
             if (bodyWidth.value < minimums.width[style.value]) {
                 effWidth = minimums.width[style.value];
             }
-            console.log('Got to this point');
+            // console.log('Got to this point');
             var posx = form.getBoundingClientRect().x,
                 posy = form.getBoundingClientRect().y;
             document.body.style.minHeight = getComputedStyle(document.body).height;
@@ -236,12 +265,12 @@ document.addEventListener("DOMContentLoaded", function() {
             }
             putBackTimeout = setTimeout(putBack, 100);
 
-        }            
+        }
     }
-    
+
     forceSecure.addEventListener("change", secureWarning);
     refresh_button.addEventListener("click", function () {
-        get_browser().extension.getBackgroundPage().getStationList();
+        background.getStationList();
     });
     default_button.addEventListener("click", function () {
         // for convenience,
@@ -250,8 +279,8 @@ document.addEventListener("DOMContentLoaded", function() {
         localStorage.bodyHeight = defaults.height[whichPlayer];
         localStorage.historyNum = defaults.history[whichPlayer];
         localStorage.forceSecure = true;
-        
-           document.documentElement.style.setProperty('--height', defaults.height[whichPlayer] +'px');
+
+        document.documentElement.style.setProperty('--height', defaults.height[whichPlayer] +'px');
         document.documentElement.style.setProperty('--width', defaults.width[whichPlayer]+'px');
 
         bodyWidth.value = localStorage.bodyWidth;
@@ -265,7 +294,6 @@ document.addEventListener("DOMContentLoaded", function() {
         localStorage.lastStation = "";
     });
 
-
     save_button.addEventListener("click", function (e) {
         var msg = "";
 
@@ -275,15 +303,15 @@ document.addEventListener("DOMContentLoaded", function() {
             alert("How did you even get here?");
             e.preventDefault(e);
             return false;
-        }        
+        }
         // I keep writing this, but _for convenience_,
         var player = style.value;
         var min_width = minimums.width[player];
         var min_height = minimums.height[player];
         var min_history = minimums.history[player];
-        
+
         if (bodyWidth.value < min_width) {
-            localStorage.bodyWidth = min_width; 
+            localStorage.bodyWidth = min_width;
             msg += ("Player width must be greater than or equal to " + min_width + ".\n");
             bodyWidth.value = min_width;
         } else {
@@ -306,11 +334,11 @@ document.addEventListener("DOMContentLoaded", function() {
         if (msg) {
             alert(msg);
         }
-        
+
         updateHotkeys();
 
         localStorage.forceSecure = forceSecure.checked;
-        
+
         // prevent page refresh on save - each should do but I'm doing both
         e.preventDefault(e); 
         return false;

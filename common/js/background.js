@@ -47,10 +47,10 @@ function nextSong(depth=1) {
         // console.log("What? We recursed down 4 times?");
         return;
     }
-    
+
     /* I put this over here so that it works for every song change. */
     if (currentSong) {
-        stationImgs[localStorage.lastStation] = (currentSong.albumArtUrl||stationImgs[localStorage.lastStation]) || "/images/New/default_album.svg"; 
+        stationImgs[localStorage.lastStation] = (currentSong.albumArtUrl||stationImgs[localStorage.lastStation]) || "/images/new/default_album.svg"; 
         // try for a new cover; if that doesn't work, keep the old; if there is no old, go for a default one
         localStorage.stationImgs = JSON.stringify(stationImgs);
         if (currentSong != prevSongs[prevSongs.length-1]) {
@@ -95,6 +95,7 @@ function nextSong(depth=1) {
             //purge the current list, then run this function again
             nextSong(depth + 1);
         }
+
         if (localStorage.notifications === "true") {
             var options = {
                 type: "list",
@@ -106,7 +107,7 @@ function nextSong(depth=1) {
                     { title: "", message: comingSong.artistName + " - " + comingSong.songName }
                 ]
             };
-    
+
             var xhr2 = new XMLHttpRequest();
             xhr2.open("GET", currentSong.albumArtUrl);
             xhr2.responseType = "blob";
@@ -123,12 +124,8 @@ function nextSong(depth=1) {
 function downloadSong() {
     var url = "";
     if (currentSong.additionalAudioUrl != null) {
-        // console.log("Downloading alternate url");
-        // console.log(currentSong);
         url = currentSong.additionalAudioUrl;
     } else {
-        // console.log("Downloading normal url");
-        // console.log(currentSong);
         url = currentSong.audioUrlMap.highQuality.audioUrl;
     }
     callback.downloadSong(url, currentSong.songName);

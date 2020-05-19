@@ -2,8 +2,8 @@ var previewLoaded = false;
 var preview = document.getElementById('preview');
 var localStorage = get_browser().extension.getBackgroundPage().localStorage;
 
-var themeInfo = (localStorage.themeInfo!==undefined?JSON.parse(localStorage.themeInfo):undefined);
-if (themeInfo == undefined) {
+var themeInfo = (localStorage.themeInfo !== undefined ? JSON.parse(localStorage.themeInfo) : undefined);
+if (themeInfo === undefined) {
     themeInfo = {
         'background': '#3a3a3a',
         'font-family': 'Verdana, Arial, sans-serif',
@@ -22,6 +22,7 @@ if (themeInfo == undefined) {
     }
     localStorage.themeInfo = JSON.stringify(themeInfo);
 }
+
 function initPreview() {
     "use strict";
     if (localStorage.bodyWidth === undefined || localStorage.bodyWidth === 0) {
@@ -30,7 +31,7 @@ function initPreview() {
     if (localStorage.bodyHeight === undefined || localStorage.bodyHeight === 0) {
         localStorage.bodyHeight = defaults.height[localStorage.player || defaults.player];
     }
-    preview.style.width = localStorage.bodyWidth*4 + "px";
+    preview.style.width = localStorage.bodyWidth * 4 + "px";
     preview.style.height = localStorage.bodyHeight + "px";
     preview.style.transform = "scale("+ (window.innerWidth * 0.8)/(localStorage.bodyWidth * 4) + ")";
     
@@ -44,6 +45,7 @@ function initPreview() {
     });
     
 }
+
 var controls = {};
 function initControls() {
     for (let i = 0; i < themeItems.length; i++) {
@@ -71,7 +73,7 @@ function initControls() {
         a.item = themeItems[i];
         controls[a.item.property] = a;
     }
-    
+
     document.getElementById('default').addEventListener('click', () => {
         themeInfo = {
             'background': '#3a3a3a',
@@ -84,32 +86,36 @@ function initControls() {
             'tabSize': '20px',
             'warning-bgcolor': '#ff3722',
             'warning-color': '#FFFFFF',
-            'album-bg': '#6a6c26'
+            'album-bg': '#86aaae',
+            'button-color': '#ffffff',
+            'active-button-color': '#ffa700',
+            'album-color': '#000000'
         }
         for (let key in themeInfo) {
             setVar(key, themeInfo[key]);
             controls[key].input.value = themeInfo[key];
         }
     });
+
     document.getElementById('save').addEventListener('click', () => {
         localStorage.themeInfo = JSON.stringify(themeInfo);
     });
 }
+
 function setVar(cssVar, value) {
     if (!previewLoaded) {
         return;
     }
     preview.contentDocument.documentElement.style.setProperty('--'+cssVar, value);
 }
+
 var themeItems = [
     {
         'name': 'Background',
         'desc': 'The background of the player.',
         'property': 'background',
         'type': 'color',
-        'func': function(a) {
-                return a;
-        }
+        'func': function(a) { return a; }
     },
     {
         'name': 'Font',
@@ -121,9 +127,7 @@ var themeItems = [
         'name':'Font Size',
         'desc': 'The size of the font used in the player.',
         'property': 'font-size',
-        'func': function(a) {
-                    return a;
-                }
+        'func': function(a) { return a; }
     },
     {
         'name': 'Text Color',
@@ -157,25 +161,21 @@ var themeItems = [
         'name': 'Tab Size',
         'desc': 'The width of the buttons used to switch which panel you\'re on.',
         'property': 'tabSize',
-        'func': function(a) {
-                    return a;
-                }
+        'func': function(a) { return a; }
     },
     {
         'name': 'Warning Background',
         'desc': 'The background used for warnings in the player.',
         'type': 'color',
         'property': 'warning-bgcolor',
-        'func': function(a) {
-            return a;
-        }
+        'func': function(a) { return a; }
     },
     {
         'name': 'Album Background',
         'desc': 'The background for albums that use the default cover image.',
         'type': 'color',
         'property': 'album-bg',
-        'func': function(a) {return a;}
+        'func': function(a) { return a; }
     },
     {
         'name': 'Button Color',
@@ -212,7 +212,7 @@ function export2json() {
     a.click();
     document.body.removeChild(a);
 }
-document.getElementById('inport').addEventListener('change', handleFileSelect, false);
+document.getElementById('import').addEventListener('change', handleFileSelect, false);
 document.getElementById('export').addEventListener('click', export2json);
 
 function handleFileSelect(event){
@@ -220,6 +220,7 @@ function handleFileSelect(event){
     reader.onload = handleFileLoad;
     reader.readAsText(event.target.files[0])
 }
+
 function handleFileLoad(event){
     //verify file
     let res = event.target.result;
@@ -247,5 +248,6 @@ function handleFileLoad(event){
     }
     themeInfo = resParsed;
 }
+
 initPreview();
 initControls();

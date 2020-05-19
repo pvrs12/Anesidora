@@ -39,7 +39,6 @@ function goToPanel(which) {
     for (let i = 0; i < panels.length; i++) {
         document.getElementById(panels[i]).style.left = "calc(var(--width) * "+(i-which)+")";
     }
-    
 }
 
 function initTabs() {
@@ -89,7 +88,6 @@ function updateHistory() {
     clearHistory();
     const historyDiv = document.getElementById('historyDiv');
     background.prevSongs.reverse().forEach(function (song, i) {
-        
         let elem = document.createElement('div');
         elem.classList.add('historyItem');
         let cover = document.createElement('div');
@@ -112,7 +110,7 @@ function updateHistory() {
         dislikeAction.classList.add('hoverImg');
         dislikeAction.classList.add('icon');
         let nameSpan = document.createElement('span');
-        
+
         historyDiv.appendChild(elem);
         elem.appendChild(holder);
         if (song.albumArtUrl) {
@@ -126,7 +124,7 @@ function updateHistory() {
         overlay.appendChild(actions);
         actions.appendChild(likeAction);
         likeAction.appendChild(document.createElement('span'));
-        
+
         let likeStatus = "like";
         if (song.songRating == -1) {
             likeStatus = "disliked";
@@ -225,7 +223,7 @@ function addStations() {
         return station.stationName.toLowerCase().includes(filter.toLowerCase());
     }).forEach(function (station) {
         if (!background.stationImgs[station.stationId]) {
-            background.stationImgs[station.stationId] = "/images/New/default_album.svg";
+            background.stationImgs[station.stationId] = "/images/new/default_album.svg";
         }
         let elem = document.createElement('div');
         elem.classList.add('historyItem');
@@ -247,7 +245,7 @@ function addStations() {
         elem.appendChild(holder);
         cover.style.background = `url("${background.stationImgs[station.stationId]}")`;
         holder.appendChild(cover);
-        if (background.stationImgs[station.stationId] == "/images/New/default_album.svg") {
+        if (background.stationImgs[station.stationId] == "/images/new/default_album.svg") {
             cover.classList.add('icon');
             cover.appendChild(document.createElement('span'));
             cover.style.background = '';
@@ -277,7 +275,7 @@ function addStations() {
             handleSwitch();
         });
         stationCallbacks.push(() => {
-            if (background.stationImgs[station.stationId] == "/images/New/default_album.svg") {
+            if (background.stationImgs[station.stationId] == "/images/new/default_album.svg") {
                 cover.classList.add('icon');
             cover.style.background = ``;
             } else {
@@ -370,6 +368,7 @@ if (localStorage.themeInfo&&localStorage.themeInfo!=="") {
         document.documentElement.style.setProperty('--'+key, JSON.parse(localStorage.themeInfo)[key]);
     }
 }
+
 $(document).ready(function () {
     "use strict";
     $("body").bind("click", function (e) {
@@ -378,14 +377,13 @@ $(document).ready(function () {
         }
     });
     initBodySize();
-    
+
     document.documentElement.style.setProperty('--height', localStorage.bodyHeight +'px');
     document.documentElement.style.setProperty('--width', localStorage.bodyWidth+'px');
-    
+
 //    var scrollerWidth = $("body").width() * 0.6;
 //    $(".scrollerContainer").width(scrollerWidth
     initTabs();
-    
 
     if (background.mp3Player.paused) {
         $("pauseButton").hide();
@@ -432,7 +430,7 @@ $(document).ready(function () {
     $("#tUpButton").bind("click", function () {
         background.addFeedback(-1, true);
         if (background.currentSong.songRating === true) {
-            $("#tUpButton").unbind("click").attr("src", "images/New/liked.svg");
+            $("#tUpButton").unbind("click").attr("src", "images/new/liked.svg");
         }
     });
     $("#tDownButton").bind("click", function () {
@@ -509,7 +507,6 @@ $(document).ready(function () {
         }
     }
 
-
     const scrollerText = document.getElementsByClassName('scrollerText')[0];
     scrollerText.addEventListener('mouseover', () => {
         if ($('.scrollerText').width() - $('#nowPlayingContainerCell').width() > 0) {
@@ -553,6 +550,7 @@ $(document).ready(function () {
     });
     updateHistory();
 });
+
 function handleSwitch() {
     if (panelOn <= 0) {
         document.querySelector('#prevTab > span').style.opacity = "0";
