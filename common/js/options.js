@@ -129,11 +129,19 @@ function initBodySize() {
 }
 
 function initHotkeys() {
-    get_browser().commands.getAll().then(commands => {
+    function commands_function(commands) {
         commands.forEach(command => {
             playPauseHotkey = document.getElementById("playPauseHotkey");
             skipSongHotkey = document.getElementById("skipSongHotkey");
-            
+
+            //editing hotkeys doesn't work in chrome apparently.
+            if (is_chrome()) {
+                playPauseHotkey.disabled = "disabled";
+                playPauseHotkey.title = "This cannot be changed in Chrome";
+                skipSongHotkey.disabled = "disabled";
+                skipSongHotkey.title = "This cannot be changed in Chrome";
+            }
+
             if (playPauseHotkey && command.name === "pause_play") {
                 playPauseHotkey.value = command.shortcut;
             }
@@ -141,31 +149,43 @@ function initHotkeys() {
                 skipSongHotkey.value = command.shortcut;
             }
         });
-    }).catch(function(e) {
-        // Fix an issue with Chrome on the options page
-        e.preventDefault();
-    });
+    }
+
+    //This is infuriating. Both browsers implement the "browser.commands.getAll()" function
+    // but firefox utilizes a promise and chrome an older-style callback function
+    // Chrome: https://developer.chrome.com/extensions/commands
+    // Firefox: https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/commands/getAll
+    if (is_chrome()) {
+        get_browser().commands.getAll(commands_function);
+    } else {
+        get_browser().commands.getAll().then(commands_function);
+    }
 }
 
 function updateHotkeys() {
     playPauseHotkey = document.getElementById("playPauseHotkey");
     skipSongHotkey = document.getElementById("skipSongHotkey");
 
-    playPauseDetails = {
-        name: "pause_play",
-        shortcut: playPauseHotkey.value
-    };
-    get_browser().commands.update(playPauseDetails).catch(() => {
-        alert("The Play/Pause hotkey entered is invalid!")
-    });
+    // once again a fairly major difference between the browsers with commands
+    if (is_chrome()) {
+        return;
+    } else {
+        playPauseDetails = {
+            name: "pause_play",
+            shortcut: playPauseHotkey.value
+        };
+        get_browser().commands.update(playPauseDetails).catch(() => {
+            alert("The Play/Pause hotkey entered is invalid!")
+        });
 
-    skipSongDetails = {
-        name: "skip_song",
-        shortcut: skipSongHotkey.value
-    };
-    get_browser().commands.update(skipSongDetails).catch(() => {
-        alert("The Skip Song hotkey entered is invalid!")
-    });
+        skipSongDetails = {
+            name: "skip_song",
+            shortcut: skipSongHotkey.value
+        };
+        get_browser().commands.update(skipSongDetails).catch(() => {
+            alert("The Skip Song hotkey entered is invalid!")
+        });
+    }
 }
 
 function load_player_details() {

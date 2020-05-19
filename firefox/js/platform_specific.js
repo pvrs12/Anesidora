@@ -16,6 +16,10 @@ function get_is_android() {
     });
 }
 
+function is_chrome() {
+    return false;
+}
+
 function platform_specific() {
     if (!is_android) {
         get_browser().browserAction.setPopup({popup: "/popup.htm"});
