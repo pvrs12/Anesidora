@@ -9,8 +9,6 @@ function zeroPad(num, places) {
     return String(Math.pow(10, places) + Math.floor(num)).substring(1);
 }
 
-var currentPanel = null;
-
 var background = get_browser().extension.getBackgroundPage();
 
 function initBodySize() {
@@ -26,7 +24,6 @@ function initBodySize() {
 }
 
 const panels = ["historyPanel", "leftPanel", "midPanel", "rightPanel"];
-const panelHolder = document.getElementById('anesidora');
 var tabsInit = false;
 var panelOn = 0;
 
@@ -43,7 +40,7 @@ function goToPanel(which) {
 }
 
 function initTabs() {
-    "use strict"
+    "use strict";
     for (let i = 0; i < panels.length; i++) {
         document.getElementById(panels[i]).style.left = "calc(var(--width) * "+i+")";
     }
@@ -67,6 +64,7 @@ function goToPlayer() {
 
 function clearHistory() {
     "use strict";
+    const historyDiv = document.getElementById("historyDiv");
     while (historyDiv.hasChildNodes()) {
         historyDiv.removeChild(historyDiv.firstChild);
     }
@@ -87,44 +85,44 @@ function downloadSong(url, title) {
 function updateHistory() {
     "use strict";
     clearHistory();
-    const historyDiv = document.getElementById('historyDiv');
+    const historyDiv = document.getElementById("historyDiv");
     background.prevSongs.reverse().forEach(function (song, i) {
-        let historyElem = document.createElement('div');
-        historyElem.classList.add('historyItem');
-        let cover = document.createElement('div');
-        cover.classList.add('historyCover');
-        cover.classList.add('icon');
-        let overlay = document.createElement('div');
-        overlay.classList.add('historyOverlay');
-        let holder = document.createElement('div');
-        holder.classList.add('holder');
-        let actions = document.createElement('div');
-        actions.classList.add('actions');
-        let likeAction = document.createElement('div');
-        likeAction.classList.add('hoverImg');
-        likeAction.classList.add('icon');
-        let downloadAction = document.createElement('div');
-        downloadAction.classList.add('download');
-        downloadAction.classList.add('hoverImg');
-        downloadAction.classList.add('icon');
-        let dislikeAction = document.createElement('div');
-        dislikeAction.classList.add('hoverImg');
-        dislikeAction.classList.add('icon');
-        let nameSpan = document.createElement('span');
+        let historyElem = document.createElement("div");
+        historyElem.classList.add("historyItem");
+        let cover = document.createElement("div");
+        cover.classList.add("historyCover");
+        cover.classList.add("icon");
+        let overlay = document.createElement("div");
+        overlay.classList.add("historyOverlay");
+        let holder = document.createElement("div");
+        holder.classList.add("holder");
+        let actions = document.createElement("div");
+        actions.classList.add("actions");
+        let likeAction = document.createElement("div");
+        likeAction.classList.add("hoverImg");
+        likeAction.classList.add("icon");
+        let downloadAction = document.createElement("div");
+        downloadAction.classList.add("download");
+        downloadAction.classList.add("hoverImg");
+        downloadAction.classList.add("icon");
+        let dislikeAction = document.createElement("div");
+        dislikeAction.classList.add("hoverImg");
+        dislikeAction.classList.add("icon");
+        let nameSpan = document.createElement("span");
 
         historyDiv.appendChild(historyElem);
         historyElem.appendChild(holder);
         if (song.albumArtUrl) {
             cover.style.background = `url("${song.albumArtUrl}")`;
         } else {
-            cover.style.background = '';
-            cover.appendChild(document.createElement('span'));
+            cover.style.background = "";
+            cover.appendChild(document.createElement("span"));
         }
         holder.appendChild(cover);
         holder.appendChild(overlay);
         overlay.appendChild(actions);
         actions.appendChild(likeAction);
-        likeAction.appendChild(document.createElement('span'));
+        likeAction.appendChild(document.createElement("span"));
 
         let likeStatus = "like";
         if (song.songRating == -1) {
@@ -136,58 +134,52 @@ function updateHistory() {
         }
         likeAction.classList.add((likeStatus == "liked" ? "liked" : "like"));
         actions.appendChild(downloadAction);
-        downloadAction.appendChild(document.createElement('span'));
+        downloadAction.appendChild(document.createElement("span"));
         actions.appendChild(dislikeAction);
-        dislikeAction.appendChild(document.createElement('span'));
+        dislikeAction.appendChild(document.createElement("span"));
         dislikeAction.classList.add((likeStatus == "disliked" ? "disliked" : "dislike"));
         historyElem.appendChild(nameSpan);
         nameSpan.textContent = song.songName;
 
         let historyNum = i;
-        let thisSong = song; // I, too, had your problem, until I discovered the magic of 'let'!
-        cover.addEventListener('click', () => {
+        let thisSong = song; // I, too, had your problem, until I discovered the magic of "let"!
+        cover.addEventListener("click", () => {
             get_browser().tabs.create({
-                'url': thisSong.songDetailUrl
+                "url": thisSong.songDetailUrl
             });
         });
 
-        likeAction.addEventListener('click', (e) => {
-            if (likeStatus == 'liked') {
+        likeAction.addEventListener("click", (e) => {
+            if (likeStatus == "liked") {
                 return;
             }
             background.addFeedback(historyNum, 1);
-            likeAction.classList.add('liked');
-            likeAction.classList.remove('like');
-            dislikeAction.classList.add('dislike');
-            dislikeAction.classList.remove('disliked');
+            likeAction.classList.add("liked");
+            likeAction.classList.remove("like");
+            dislikeAction.classList.add("dislike");
+            dislikeAction.classList.remove("disliked");
             likeStatus = "liked";
             e.preventDefault(e);
         });
 
-        downloadAction.addEventListener('click', (e) => {
+        downloadAction.addEventListener("click", (e) => {
             downloadSong(song.audioUrlMap.highQuality.audioUrl, song.songName);
             e.preventDefault(e);
         });
 
-        dislikeAction.addEventListener('click', (e) => {
-            if (likeStatus == 'disliked') {
+        dislikeAction.addEventListener("click", (e) => {
+            if (likeStatus == "disliked") {
                 return;
             }
             background.addFeedback(historyNum, -1);
-            likeAction.classList.remove('liked');
-            likeAction.classList.add('like');
-            dislikeAction.classList.remove('dislike');
-            dislikeAction.classList.add('disliked');
+            likeAction.classList.remove("liked");
+            likeAction.classList.add("like");
+            dislikeAction.classList.remove("dislike");
+            dislikeAction.classList.add("disliked");
             likeStatus = "disliked";
             e.preventDefault(e);
         });
     });
-}
-
-function goToHistory() {
-    "use strict";
-    goToPanel(0);
-    updateHistory();
 }
 
 function refreshStationList() {
@@ -218,7 +210,7 @@ function addStations() {
     let filter = document.getElementById("stationFilterInput").value;
 
     background.stationList.sort((a, b) => {
-        return a.stationName.localeCompare(b.stationName)
+        return a.stationName.localeCompare(b.stationName);
     });
     stationCallbacks = [];
     background.stationList.filter((station) => {
@@ -230,57 +222,57 @@ function addStations() {
         if (!background.stationImgs[station.stationId]) {
             background.stationImgs[station.stationId] = "/images/new/default_album.svg";
         }
-        let stationElem = document.createElement('div');
-        stationElem.classList.add('historyItem');
-        let cover = document.createElement('div');
-        cover.classList.add('historyCover');
-        let overlay = document.createElement('div');
-        overlay.classList.add('historyOverlay');
-        let holder = document.createElement('div');
-        holder.classList.add('holder');
-        let actions = document.createElement('div');
-        actions.classList.add('actions');
-        let playAction = document.createElement('div');
-        playAction.classList.add('hoverImg');
-        playAction.classList.add('stationPlay');
-        playAction.classList.add('icon');
-        let nameSpan = document.createElement('span');
+        let stationElem = document.createElement("div");
+        stationElem.classList.add("historyItem");
+        let cover = document.createElement("div");
+        cover.classList.add("historyCover");
+        let overlay = document.createElement("div");
+        overlay.classList.add("historyOverlay");
+        let holder = document.createElement("div");
+        holder.classList.add("holder");
+        let actions = document.createElement("div");
+        actions.classList.add("actions");
+        let playAction = document.createElement("div");
+        playAction.classList.add("hoverImg");
+        playAction.classList.add("stationPlay");
+        playAction.classList.add("icon");
+        let nameSpan = document.createElement("span");
         
-        document.getElementById('stationListDiv').appendChild(stationElem);
+        document.getElementById("stationListDiv").appendChild(stationElem);
         stationElem.appendChild(holder);
         cover.style.background = `url("${background.stationImgs[station.stationId]}")`;
         holder.appendChild(cover);
         if (background.stationImgs[station.stationId] == "/images/new/default_album.svg") {
-            cover.classList.add('icon');
-            cover.appendChild(document.createElement('span'));
-            cover.style.background = '';
+            cover.classList.add("icon");
+            cover.appendChild(document.createElement("span"));
+            cover.style.background = "";
         }
         holder.appendChild(overlay);
         overlay.appendChild(actions);
         actions.appendChild(playAction);
-        playAction.appendChild(document.createElement('span'));
+        playAction.appendChild(document.createElement("span"));
         stationElem.appendChild(nameSpan);
 
         nameSpan.textContent = station.stationName;
         let thisStation = station;
 
         if (station.stationDetailUrl != "") {
-            cover.addEventListener('click', () => {
+            cover.addEventListener("click", () => {
                 get_browser().tabs.create({
-                    'url': station.stationDetailUrl
+                    "url": station.stationDetailUrl
                 });
             });
         }
 
-        playAction.addEventListener('click', () => {
+        playAction.addEventListener("click", () => {
             background.nextSongStation(thisStation.stationToken);
-            stationElem.classList.add('activeStation');
+            stationElem.classList.add("activeStation");
             if (lastActiveStation) {
-                lastActiveStation.classList.remove('activeStation');
+                lastActiveStation.classList.remove("activeStation");
             }
             lastActiveStation = stationElem;
 
-            // This is due to a bug where switching stations doesn't start the correct next song...
+            // This is due to a bug where switching stations doesn"t start the correct next song...
             //yee haw lazy fixes!
             // background.nextSong();
             goToPanel(1);
@@ -291,16 +283,16 @@ function addStations() {
         // if default, theme it with `icon`
         stationCallbacks.push(() => {
             if (background.stationImgs[station.stationId] == "/images/new/default_album.svg") {
-                cover.classList.add('icon');
-                cover.style.background = ``;
+                cover.classList.add("icon");
+                cover.style.background = "";
             } else {
-                cover.classList.remove('icon');
+                cover.classList.remove("icon");
                 cover.style.background = `url("${background.stationImgs[thisStation.stationId]}")`;
             }
         });
     });
 }
-var lastActiveStation = '';
+var lastActiveStation = "";
 
 function updatePlayer() {
     "use strict";
@@ -309,11 +301,11 @@ function updatePlayer() {
             get_browser().tabs.create({
                 "url": background.currentSong.albumDetailUrl
             });
-        })
-        if (background.currentSong.albumArtUrl != '') {
-            document.getElementById('coverArt').style.backgroundImage = 'url("'+background.currentSong.albumArtUrl+'")'
+        });
+        if (background.currentSong.albumArtUrl != "") {
+            document.getElementById("coverArt").style.backgroundImage = "url(\""+background.currentSong.albumArtUrl+"\")";
         } else {
-            document.getElementById('coverArt').style.background = '';
+            document.getElementById("coverArt").style.background = "";
         }
         $("#artistLink").unbind().text(background.currentSong.artistName);
         $("#titleLink").unbind().text(background.currentSong.songName);
@@ -330,14 +322,14 @@ function updatePlayer() {
         $("#dash").text(" - ");
         if (background.currentSong.songRating) {
             $("#tUpButton").unbind("click");
-            document.getElementById('tUpButton').classList.add('liked');
-            document.getElementById('tUpButton').classList.remove('like');
+            document.getElementById("tUpButton").classList.add("liked");
+            document.getElementById("tUpButton").classList.remove("like");
         } else {
-            document.getElementById('tUpButton').classList.add('like');
-            document.getElementById('tUpButton').classList.remove('liked');
+            document.getElementById("tUpButton").classList.add("like");
+            document.getElementById("tUpButton").classList.remove("liked");
             $("#tUpButton").click(function () {
                 background.addFeedback(-1, true);
-            document.getElementById('tUpButton').classList.add('liked');
+                document.getElementById("tUpButton").classList.add("liked");
                 $("#tUpButton").unbind("click");
             });
         }
@@ -376,11 +368,11 @@ function drawPlayer() {
     }).attr("title", curMinutes + ":" + curSeconds + "/" + totalMinutes + ":" + totalSeconds);
 }
 
-document.documentElement.style.setProperty('--height', localStorage.bodyHeight +'px');
-document.documentElement.style.setProperty('--width', localStorage.bodyWidth+'px');
-if (localStorage.themeInfo&&localStorage.themeInfo!=="") {
+document.documentElement.style.setProperty("--height", localStorage.bodyHeight +"px");
+document.documentElement.style.setProperty("--width", localStorage.bodyWidth+"px");
+if (localStorage.themeInfo && localStorage.themeInfo !== "") {
     for (let key in JSON.parse(localStorage.themeInfo)) {
-        document.documentElement.style.setProperty('--'+key, JSON.parse(localStorage.themeInfo)[key]);
+        document.documentElement.style.setProperty("--" + key, JSON.parse(localStorage.themeInfo)[key]);
     }
 }
 
@@ -393,11 +385,11 @@ $(document).ready(function () {
     });
     initBodySize();
 
-    document.documentElement.style.setProperty('--height', localStorage.bodyHeight +'px');
-    document.documentElement.style.setProperty('--width', localStorage.bodyWidth+'px');
+    document.documentElement.style.setProperty("--height", localStorage.bodyHeight +"px");
+    document.documentElement.style.setProperty("--width", localStorage.bodyWidth + "px");
 
-//    var scrollerWidth = $("body").width() * 0.6;
-//    $(".scrollerContainer").width(scrollerWidth
+    //    var scrollerWidth = $("body").width() * 0.6;
+    //    $(".scrollerContainer").width(scrollerWidth
     initTabs();
 
     if (background.mp3Player.paused) {
@@ -472,8 +464,8 @@ $(document).ready(function () {
         localStorage.password = $("#password").val();
         background.partnerLogin();
         if (background.userAuthToken === "") {
-            document.getElementById("li1").classList.add('warning');
-            document.getElementById("li2").classList.add('warning');
+            document.getElementById("li1").classList.add("warning");
+            document.getElementById("li2").classList.add("warning");
             return false;
         } else {
             addStations();
@@ -489,12 +481,12 @@ $(document).ready(function () {
     let lockRotate = false;
     $("#stationRefreshButton").bind("click", () => {
         if (!lockRotate) {
-            document.getElementById('stationRefreshButton').style.animation = "rotate 500ms ease-in-out";
+            document.getElementById("stationRefreshButton").style.animation = "rotate 500ms ease-in-out";
             lockRotate = true;
         }
         refreshStations();
         setTimeout(() => {
-            document.getElementById('stationRefreshButton').style.animation = "";
+            document.getElementById("stationRefreshButton").style.animation = "";
             lockRotate = false;
         }, 500);
     });
@@ -522,22 +514,22 @@ $(document).ready(function () {
         }
     }
 
-    const scrollerText = document.getElementsByClassName('scrollerText')[0];
-    scrollerText.addEventListener('mouseover', () => {
-        if ($('.scrollerText').width() - $('#nowPlayingContainerCell').width() > 0) {
+    const scrollerText = document.getElementsByClassName("scrollerText")[0];
+    scrollerText.addEventListener("mouseover", () => {
+        if ($(".scrollerText").width() - $("#nowPlayingContainerCell").width() > 0) {
             $(".scrollerText").css({
-                transition: 'left '+ (($('.scrollerText').width() - $('#nowPlayingContainerCell').width())*30) + 'ms linear',
-                left: $('#nowPlayingContainerCell').width() - $('.scrollerText').width()
+                transition: "left "+ (($(".scrollerText").width() - $("#nowPlayingContainerCell").width())*30) + "ms linear",
+                left: $("#nowPlayingContainerCell").width() - $(".scrollerText").width()
             });
         } else {
-            $('.scrollerText').css({
-                left: '0px'
+            $(".scrollerText").css({
+                left: "0px"
             });
         }
     });
-    scrollerText.addEventListener('mouseleave', () => {
+    scrollerText.addEventListener("mouseleave", () => {
         //move it to left immediately
-        $('.scrollerText').css({
+        $(".scrollerText").css({
             left: 0
         });
     });
@@ -551,13 +543,13 @@ $(document).ready(function () {
         updatePlayer();
     }
     handleSwitch();
-    document.querySelector('#prevTab > span').addEventListener('click', () => {
+    document.querySelector("#prevTab > span").addEventListener("click", () => {
         if (panelOn > 0) {
             goToPanel(panelOn-1);
         }
         handleSwitch();
     });
-    document.querySelector('#nextTab > span').addEventListener('click', () => {
+    document.querySelector("#nextTab > span").addEventListener("click", () => {
         if (panelOn < 2) {
             goToPanel(panelOn+1);
         }
@@ -568,24 +560,24 @@ $(document).ready(function () {
 
 function handleSwitch() {
     if (panelOn <= 0) {
-        document.querySelector('#prevTab > span').style.opacity = "0";
-        document.querySelector('#prevTab > span').style.pointerEvents = 'none';
+        document.querySelector("#prevTab > span").style.opacity = "0";
+        document.querySelector("#prevTab > span").style.pointerEvents = "none";
     } else {
-        document.querySelector('#prevTab > span').style.opacity = "";
-        document.querySelector('#prevTab > span').style.pointerEvents = "";
+        document.querySelector("#prevTab > span").style.opacity = "";
+        document.querySelector("#prevTab > span").style.pointerEvents = "";
     }
     if (panelOn >= 2) {
-        document.querySelector('#nextTab > span').style.opacity = "0";
-        document.querySelector('#nextTab > span').style.pointerEvents = 'none';
+        document.querySelector("#nextTab > span").style.opacity = "0";
+        document.querySelector("#nextTab > span").style.pointerEvents = "none";
     } else {
-        document.querySelector('#nextTab > span').style.opacity = "";
-        document.querySelector('#nextTab > span').style.pointerEvents = "";
+        document.querySelector("#nextTab > span").style.opacity = "";
+        document.querySelector("#nextTab > span").style.pointerEvents = "";
     }
     if (panelOn == 3) { // login screen
-        document.querySelector('#nextTab > span').style.opacity = "0";
-        document.querySelector('#nextTab > span').style.pointerEvents = "none";
-        document.querySelector('#prevTab > span').style.opacity = "0";
-        document.querySelector('#prevTab > span').style.pointerEvents = "none";
+        document.querySelector("#nextTab > span").style.opacity = "0";
+        document.querySelector("#nextTab > span").style.pointerEvents = "none";
+        document.querySelector("#prevTab > span").style.opacity = "0";
+        document.querySelector("#prevTab > span").style.pointerEvents = "none";
     }
 }
 
