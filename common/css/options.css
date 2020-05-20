@@ -154,7 +154,7 @@ button:enabled:hover, a:hover {
 
 button#save {
     background-color: #0060df;
-    color: #FFF !important;
+    color: #FFF;
 }
 
 button#save:enabled:hover {
