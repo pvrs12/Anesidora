@@ -21,8 +21,10 @@ function play(stationToken) {
     if (stationToken !== localStorage.lastStation) {
         currentSong = undefined;
         getPlaylist(stationToken);
+        //adding this so album covers get on the right location
+        let prev_station = localStorage.lastStation;
         localStorage.lastStation = stationToken;
-        nextSong();
+        nextSong(depth=1, prev_station);
     } else {
         if (currentSong === undefined) {
             getPlaylist(localStorage.lastStation);
@@ -36,21 +38,28 @@ function play(stationToken) {
 }
 
 function nextSongStation(station) {
+    //adding this so album covers get on the right location
+    prev_station = localStorage.lastStation;
     localStorage.lastStation = station;
     getPlaylist(localStorage.lastStation);
     comingSong = undefined;
-    nextSong();
+    //adding this so album covers get on the right location
+    nextSong(depth=1, prev_station=prev_station);
 }
 
-function nextSong(depth=1) {
+function nextSong(depth=1, prev_station=undefined) {
     if (depth > 4){
-        // console.log("What? We recursed down 4 times?");
         return;
     }
+    if (!prev_station) {
+        //if the "prev_station" does not have a definition
+        //then we didn't swap, use the existing one
+        prev_station = localStorage.lastStation;
+    }
 
-    /* I put this over here so that it works for every song change. */
+    /* I (hucario) put this over here so that history and station art works for every song change. */
     if (currentSong) {
-        stationImgs[localStorage.lastStation] = (currentSong.albumArtUrl||stationImgs[localStorage.lastStation]) || "/images/new/default_album.svg"; 
+        stationImgs[prev_station] = (currentSong.albumArtUrl || stationImgs[prev_station]) || "/images/new/default_album.svg"; 
         // try for a new cover; if that doesn't work, keep the old; if there is no old, go for a default one
         localStorage.stationImgs = JSON.stringify(stationImgs);
         if (currentSong != prevSongs[prevSongs.length-1]) {
@@ -174,13 +183,6 @@ $(document).ready(function () {
             return;
         }
     }).bind("ended", function () {
-        /* Moved to nextSong
-        prevSongs.push(currentSong);
-        //console.log("History Num = "+localStorage.historyNum);
-        while(prevSongs.length > localStorage.historyNum){
-            prevSongs.shift();
-        }
-        */
         nextSong();
     }).bind("timeupdate", function () {
         try {
@@ -192,10 +194,5 @@ $(document).ready(function () {
             return;
         }
     }).bind("error", function () {
-        //console.log(err);
-        //if (errorCount > 3) {
-        //  alert("There seems to be an issue with Anesidora. To prevent Pandora account lockout Anesidora has been stopped.");
-        //  return;
-        //}
     });
 });

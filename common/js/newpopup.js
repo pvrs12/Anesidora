@@ -29,6 +29,7 @@ const panels = ["historyPanel", "leftPanel", "midPanel", "rightPanel"];
 const panelHolder = document.getElementById('anesidora');
 var tabsInit = false;
 var panelOn = 0;
+
 function goToPanel(which) {
     "use strict";
     if (!tabsInit) return;
@@ -88,8 +89,8 @@ function updateHistory() {
     clearHistory();
     const historyDiv = document.getElementById('historyDiv');
     background.prevSongs.reverse().forEach(function (song, i) {
-        let elem = document.createElement('div');
-        elem.classList.add('historyItem');
+        let historyElem = document.createElement('div');
+        historyElem.classList.add('historyItem');
         let cover = document.createElement('div');
         cover.classList.add('historyCover');
         cover.classList.add('icon');
@@ -111,8 +112,8 @@ function updateHistory() {
         dislikeAction.classList.add('icon');
         let nameSpan = document.createElement('span');
 
-        historyDiv.appendChild(elem);
-        elem.appendChild(holder);
+        historyDiv.appendChild(historyElem);
+        historyElem.appendChild(holder);
         if (song.albumArtUrl) {
             cover.style.background = `url("${song.albumArtUrl}")`;
         } else {
@@ -133,21 +134,23 @@ function updateHistory() {
         } else if (song.songRating == 1) {
             likeStatus = "liked";
         }
-        likeAction.classList.add((likeStatus=="liked"?"liked":"like"));
+        likeAction.classList.add((likeStatus == "liked" ? "liked" : "like"));
         actions.appendChild(downloadAction);
         downloadAction.appendChild(document.createElement('span'));
         actions.appendChild(dislikeAction);
         dislikeAction.appendChild(document.createElement('span'));
-        dislikeAction.classList.add((likeStatus=="disliked"?"disliked":"dislike"));
-        elem.appendChild(nameSpan);
-        nameSpan.innerText = song.songName;
-        let historyNum = i,
-            thisSong = song; // I, too, had your problem, until I discovered the magic of 'let'!
+        dislikeAction.classList.add((likeStatus == "disliked" ? "disliked" : "dislike"));
+        historyElem.appendChild(nameSpan);
+        nameSpan.textContent = song.songName;
+
+        let historyNum = i;
+        let thisSong = song; // I, too, had your problem, until I discovered the magic of 'let'!
         cover.addEventListener('click', () => {
             get_browser().tabs.create({
                 'url': thisSong.songDetailUrl
             });
         });
+
         likeAction.addEventListener('click', (e) => {
             if (likeStatus == 'liked') {
                 return;
@@ -160,10 +163,12 @@ function updateHistory() {
             likeStatus = "liked";
             e.preventDefault(e);
         });
+
         downloadAction.addEventListener('click', (e) => {
             downloadSong(song.audioUrlMap.highQuality.audioUrl, song.songName);
             e.preventDefault(e);
         });
+
         dislikeAction.addEventListener('click', (e) => {
             if (likeStatus == 'disliked') {
                 return;
@@ -211,7 +216,7 @@ function updateStationCovers() {
 function addStations() {
     "use strict";
     let filter = document.getElementById("stationFilterInput").value;
-    
+
     background.stationList.sort((a, b) => {
         return a.stationName.localeCompare(b.stationName)
     });
@@ -225,8 +230,8 @@ function addStations() {
         if (!background.stationImgs[station.stationId]) {
             background.stationImgs[station.stationId] = "/images/new/default_album.svg";
         }
-        let elem = document.createElement('div');
-        elem.classList.add('historyItem');
+        let stationElem = document.createElement('div');
+        stationElem.classList.add('historyItem');
         let cover = document.createElement('div');
         cover.classList.add('historyCover');
         let overlay = document.createElement('div');
@@ -241,8 +246,8 @@ function addStations() {
         playAction.classList.add('icon');
         let nameSpan = document.createElement('span');
         
-        document.getElementById('stationListDiv').appendChild(elem);
-        elem.appendChild(holder);
+        document.getElementById('stationListDiv').appendChild(stationElem);
+        stationElem.appendChild(holder);
         cover.style.background = `url("${background.stationImgs[station.stationId]}")`;
         holder.appendChild(cover);
         if (background.stationImgs[station.stationId] == "/images/new/default_album.svg") {
@@ -254,9 +259,11 @@ function addStations() {
         overlay.appendChild(actions);
         actions.appendChild(playAction);
         playAction.appendChild(document.createElement('span'));
-        elem.appendChild(nameSpan);
-        nameSpan.innerText = station.stationName;
+        stationElem.appendChild(nameSpan);
+
+        nameSpan.textContent = station.stationName;
         let thisStation = station;
+
         if (station.stationDetailUrl != "") {
             cover.addEventListener('click', () => {
                 get_browser().tabs.create({
@@ -264,23 +271,31 @@ function addStations() {
                 });
             });
         }
+
         playAction.addEventListener('click', () => {
-            background.play(thisStation.stationToken);
-            elem.classList.add('activeStation');
+            background.nextSongStation(thisStation.stationToken);
+            stationElem.classList.add('activeStation');
             if (lastActiveStation) {
                 lastActiveStation.classList.remove('activeStation');
             }
-            lastActiveStation = elem;
+            lastActiveStation = stationElem;
+
+            // This is due to a bug where switching stations doesn't start the correct next song...
+            //yee haw lazy fixes!
+            // background.nextSong();
             goToPanel(1);
             handleSwitch();
         });
+
+        //place station images or default image
+        // if default, theme it with `icon`
         stationCallbacks.push(() => {
             if (background.stationImgs[station.stationId] == "/images/new/default_album.svg") {
                 cover.classList.add('icon');
-            cover.style.background = ``;
+                cover.style.background = ``;
             } else {
                 cover.classList.remove('icon');
-            cover.style.background = `url("${background.stationImgs[thisStation.stationId]}")`;
+                cover.style.background = `url("${background.stationImgs[thisStation.stationId]}")`;
             }
         });
     });

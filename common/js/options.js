@@ -136,10 +136,14 @@ function initHotkeys() {
 
             //editing hotkeys doesn't work in chrome apparently.
             if (is_chrome()) {
-                playPauseHotkey.disabled = "disabled";
-                playPauseHotkey.title = "This cannot be changed in Chrome";
-                skipSongHotkey.disabled = "disabled";
-                skipSongHotkey.title = "This cannot be changed in Chrome";
+                if (playPauseHotkey) {
+                    playPauseHotkey.disabled = "disabled";
+                    playPauseHotkey.title = "This cannot be changed in Chrome";
+                }
+                if (skipSongHotkey) {
+                    skipSongHotkey.disabled = "disabled";
+                    skipSongHotkey.title = "This cannot be changed in Chrome";
+                }
             }
 
             if (playPauseHotkey && command.name === "pause_play") {
