@@ -164,7 +164,7 @@ function addStations() {
     let filter = document.getElementById("stationFilterInput").value;
     
     background.stationList.sort((a, b) => {
-        return a.stationName.localeCompare(b.stationName)
+        return a.stationName.localeCompare(b.stationName);
     });
     
     background.stationList.filter((station) => {

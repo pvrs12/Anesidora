@@ -7,7 +7,7 @@ var comingSong;
 var prevSongs = [];
 var stationImgs = (localStorage.stationImgs && JSON.parse(localStorage.stationImgs)) || {
 
-}
+};
 
 function setCallbacks(updatePlayer,drawPlayer,downloadSong){
     callback = {
@@ -24,7 +24,7 @@ function play(stationToken) {
         //adding this so album covers get on the right location
         let prev_station = localStorage.lastStation;
         localStorage.lastStation = stationToken;
-        nextSong(depth=1, prev_station);
+        nextSong(1, prev_station);
     } else {
         if (currentSong === undefined) {
             getPlaylist(localStorage.lastStation);
@@ -39,12 +39,12 @@ function play(stationToken) {
 
 function nextSongStation(station) {
     //adding this so album covers get on the right location
-    prev_station = localStorage.lastStation;
+    let prev_station = localStorage.lastStation;
     localStorage.lastStation = station;
     getPlaylist(localStorage.lastStation);
     comingSong = undefined;
     //adding this so album covers get on the right location
-    nextSong(depth=1, prev_station=prev_station);
+    nextSong(1, prev_station);
 }
 
 function nextSong(depth=1, prev_station=undefined) {
