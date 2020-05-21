@@ -183,16 +183,20 @@ label {
     flex-wrap: wrap;
     gap: 1%;
 }
-h1, h2 {
+h1 {
+    font-size: x-large;
+}
+h1, h2, a {
     width: 100%;
-    font-size: large;
     text-align: center;
     text-decoration: underline;
 }
-h2 {
+h2, a {
     font-size: medium;
 }
-
+a:link, a:visited {
+    color: blue;
+}
 
 
 #buttons > input {
