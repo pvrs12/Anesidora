@@ -98,7 +98,7 @@ async function sendRequest(secure, encrypted, method, request, handler) {
                     partnerLogin();
                     break;
                 default:
-                    console.log('sendRequest failed: ',parameters, request, response);
+                    console.log("sendRequest failed: ",parameters, request, response);
                 }
                 if (method == "station.getPlaylist" && failed == false) {
                     getPlaylist(sessionStorage.currentStation);
@@ -282,8 +282,6 @@ function sleepSong() {
 
 function setQuickMix(mixStations) {
     "use strict";
-    // TODO: Test this XXX
-    // var mixStations_str = mixStations.toString().replace(/,/g, "','");
 
     let request = JSON.stringify({
         "quickMixStationIds": mixStations,
@@ -300,7 +298,6 @@ function handleSearch(response) {
 
 function search(searchString) {
     "use strict";
-    //searchString = searchString.replace("&", "&amp").replace("'", "&apos").replace("\"", "&quot").replace("<", "&lt").replace(">", "&gt");
 
     let request = JSON.stringify({
         "searchText": searchString,

@@ -1,34 +1,51 @@
-/*globals alert, get_browser*/
+/*globals get_browser, is_chrome*/
 
 var minimums = {
     width: {
-        'new': 160,
-        'old': 310
+        "new": 160,
+        "old": 310
     },
     height: {
-        'new': 230,
-        'old': 50
+        "new": 230,
+        "old": 50
     },
     history: {
-        'new': 1,
-        'old': 1
+        "new": 1,
+        "old": 1
     }
-}
+};
+
 var defaults = {
-    player: 'new',
+    player: "new",
     width: {
-        'new': 350,
-        'old': 350
+        "new": 350,
+        "old": 350
     },
     height: {
-        'new': 450,
-        'old': 100
+        "new": 450,
+        "old": 100
     },
     history: {
-        'new': 20,
-        'old': 10
+        "new": 20,
+        "old": 10
+    },
+    theme: {
+        "background": "#3a3a3a",
+        "font-family": "Verdana, Arial, sans-serif",
+        "font-size": "12px",
+        "text-color": "#FFFFFF",
+        "inverse-color": "#000000",
+        "accent-color": "#00f782",
+        "accent-color-darker": "#00ae5c",
+        "tabSize": "20px",
+        "warning-bgcolor": "#ff3722",
+        "warning-color": "#FFFFFF",
+        "album-bg": "#86aaae",
+        "button-color": "#ffffff",
+        "active-button-color": "#ffa700",
+        "album-color": "#000000"
     }
-}
+};
 
 var style;
 var refresh_button;
@@ -41,28 +58,15 @@ var httpWarning_label;
 var bodyWidth;
 var bodyHeight;
 var historyNum;
-var bodyWidthNum = (localStorage.width==undefined?(localStorage.whichPlayer==undefined?defaults.width[defaults.player]:defaults.width[localStorage.whichPlayer]):localStorage.width);
+// var bodyWidthNum = (localStorage.width==undefined?(localStorage.whichPlayer==undefined?defaults.width[defaults.player]:defaults.width[localStorage.whichPlayer]):localStorage.width);
 // if localstorage doesn't have it, get it from defaults according to localstorage.whichPlayer
 // if localStorage.whichPlayer _also_ doesn't exists, get it from defaults according to default player
-var bodyHeightNum = (localStorage.height==undefined?(localStorage.whichPlayer==undefined?defaults.height[defaults.player]:defaults.width[localStorage.whichPlayer]):localStorage.height);
+// var bodyHeightNum = (localStorage.height==undefined?(localStorage.whichPlayer==undefined?defaults.height[defaults.player]:defaults.width[localStorage.whichPlayer]):localStorage.height);
+
+var background = get_browser().extension.getBackgroundPage();
 
 if (localStorage.themeInfo == undefined) {
-    localStorage.themeInfo = JSON.stringify({
-        'background': '#3a3a3a',
-        'font-family': 'Verdana, Arial, sans-serif',
-        'font-size': '12px',
-        'text-color': '#FFFFFF',
-        'inverse-color': '#000000',
-        'accent-color': '#00f782',
-        'accent-color-darker': '#00ae5c',
-        'tabSize': '20px',
-        'warning-bgcolor': '#ff3722',
-        'warning-color': '#FFFFFF',
-        'album-bg': '#86aaae',
-        'button-color': '#ffffff',
-        'active-button-color': '#ffa700',
-        'album-color': '#000000'
-    });
+    localStorage.themeInfo = JSON.stringify(defaults.theme);
 }
 
 function secureWarning() {
@@ -92,8 +96,8 @@ function initBodySize() {
     if (localStorage.forceSecure === undefined) {
         localStorage.forceSecure = true;
     }
-    document.documentElement.style.setProperty('--height', localStorage.bodyHeight +'px');
-    document.documentElement.style.setProperty('--width', localStorage.bodyWidth+'px');
+    document.documentElement.style.setProperty("--height", localStorage.bodyHeight +"px");
+    document.documentElement.style.setProperty("--width", localStorage.bodyWidth + "px");
 
     if (!forceSecure) {
         return; // alright that's enough
@@ -101,15 +105,22 @@ function initBodySize() {
     bodyWidth.value = localStorage.bodyWidth;
     bodyHeight.value = localStorage.bodyHeight;
     historyNum.value = localStorage.historyNum;
-    if (localStorage.whichPlayer == 'new') {
-        document.getElementById('preview').style.opacity = 1;
-        document.getElementById('preview2').style.opacity = 0;
+
+    load_player_details();
+
+    if (localStorage.whichPlayer == "new") {
+        document.getElementById("preview").style.opacity = 1;
+        document.getElementById("preview2").style.opacity = 0;
     } else {
-        document.getElementById('preview').style.opacity = 0;
-        document.getElementById('preview2').style.opacity = 1;
+        document.getElementById("preview").style.opacity = 0;
+        document.getElementById("preview2").style.opacity = 1;
     }
+
+    // document.getElementById("new-coverArt").style.minWidth = 
+    // document.getElementById("old-coverArt").style.minWidth = Math.min(document.body.style.height * 0.75, document.body.style.width * 0.1);
+
     style.value = localStorage.whichPlayer;
-    document.getElementById('theming').addEventListener('click', (e) => {
+    document.getElementById("theming").addEventListener("click", (e) => {
         e.preventDefault();
         window.location = "theming.htm";
         return false;
@@ -120,12 +131,23 @@ function initBodySize() {
 }
 
 function initHotkeys() {
-    
-    get_browser().commands.getAll().then(commands => {
+    function commands_function(commands) {
         commands.forEach(command => {
-            playPauseHotkey = document.getElementById("playPauseHotkey");
-            skipSongHotkey = document.getElementById("skipSongHotkey");
-            
+            let playPauseHotkey = document.getElementById("playPauseHotkey");
+            let skipSongHotkey = document.getElementById("skipSongHotkey");
+
+            //editing hotkeys doesn't work in chrome apparently.
+            if (is_chrome()) {
+                if (playPauseHotkey) {
+                    playPauseHotkey.disabled = "disabled";
+                    playPauseHotkey.title = "This cannot be changed in Chrome";
+                }
+                if (skipSongHotkey) {
+                    skipSongHotkey.disabled = "disabled";
+                    skipSongHotkey.title = "This cannot be changed in Chrome";
+                }
+            }
+
             if (playPauseHotkey && command.name === "pause_play") {
                 playPauseHotkey.value = command.shortcut;
             }
@@ -133,28 +155,58 @@ function initHotkeys() {
                 skipSongHotkey.value = command.shortcut;
             }
         });
-    });
+    }
+
+    //This is infuriating. Both browsers implement the "browser.commands.getAll()" function
+    // but firefox utilizes a promise and chrome an older-style callback function
+    // Chrome: https://developer.chrome.com/extensions/commands
+    // Firefox: https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/commands/getAll
+    if (is_chrome()) {
+        get_browser().commands.getAll(commands_function);
+    } else {
+        get_browser().commands.getAll().then(commands_function);
+    }
 }
 
 function updateHotkeys() {
-    playPauseHotkey = document.getElementById("playPauseHotkey");
-    skipSongHotkey = document.getElementById("skipSongHotkey");
+    let playPauseHotkey = document.getElementById("playPauseHotkey");
+    let skipSongHotkey = document.getElementById("skipSongHotkey");
 
-    playPauseDetails = {
-        name: "pause_play",
-        shortcut: playPauseHotkey.value
-    };
-    get_browser().commands.update(playPauseDetails).catch(() => {
-        alert("The Play/Pause hotkey entered is invalid!")
-    });
+    // once again a fairly major difference between the browsers with commands
+    if (is_chrome()) {
+        return;
+    } else {
+        let playPauseDetails = {
+            name: "pause_play",
+            shortcut: playPauseHotkey.value
+        };
+        get_browser().commands.update(playPauseDetails).catch(() => {
+            alert("The Play/Pause hotkey entered is invalid!");
+        });
 
-    skipSongDetails = {
-        name: "skip_song",
-        shortcut: skipSongHotkey.value
-    };
-    get_browser().commands.update(skipSongDetails).catch(() => {
-        alert("The Skip Song hotkey entered is invalid!")
-    });;
+        let skipSongDetails = {
+            name: "skip_song",
+            shortcut: skipSongHotkey.value
+        };
+        get_browser().commands.update(skipSongDetails).catch(() => {
+            alert("The Skip Song hotkey entered is invalid!");
+        });
+    }
+}
+
+function load_player_details() {
+    if (!background.currentSong) {
+        return;
+    }
+
+    document.getElementById("new-coverArt").src = background.currentSong.albumArtUrl;
+    document.getElementById("old-coverArt").src = background.currentSong.albumArtUrl;
+
+    document.getElementById("new-artistLink").textContent = background.currentSong.artistName;
+    document.getElementById("old-artistLink").textContent = background.currentSong.artistName;
+
+    document.getElementById("new-titleLink").textContent = background.currentSong.songName;
+    document.getElementById("old-titleLink").textContent = background.currentSong.songName;
 }
 
 document.addEventListener("DOMContentLoaded", function() {
@@ -181,20 +233,22 @@ document.addEventListener("DOMContentLoaded", function() {
     }
     
     if (bodyWidth) {
-        bodyWidth.addEventListener('input', heightStuff);
+        bodyWidth.addEventListener("input", heightStuff);
     }
     if (bodyHeight) {
-        bodyHeight.addEventListener('input', heightStuff);
+        bodyHeight.addEventListener("input", heightStuff);
     }
     if (style) {
-        style.addEventListener('change', () => {
-            if (style.value != 'new' && style.value != 'old') return;
-            if (style.value == 'new') {
-                document.getElementById('preview').style.opacity = 1;
-                document.getElementById('preview2').style.opacity = 0;
+        style.addEventListener("change", () => {
+            if (style.value != "new" && style.value != "old") {
+                return;
+            }
+            if (style.value == "new") {
+                document.getElementById("preview").style.opacity = 1;
+                document.getElementById("preview2").style.opacity = 0;
             } else {
-                document.getElementById('preview').style.opacity = 0;
-                document.getElementById('preview2').style.opacity = 1;
+                document.getElementById("preview").style.opacity = 0;
+                document.getElementById("preview2").style.opacity = 1;
             }
             bodyHeight.value = defaults.height[style.value];
             bodyWidth.value = defaults.width[style.value];
@@ -202,8 +256,9 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
     
-    form = document.querySelector('form');
+    form = document.querySelector("form");
     let putBackTimeout;
+
     function heightStuff() {
         if (form) {
             if (putBackTimeout) {
@@ -217,7 +272,7 @@ document.addEventListener("DOMContentLoaded", function() {
             if (bodyWidth.value < minimums.width[style.value]) {
                 effWidth = minimums.width[style.value];
             }
-            console.log('Got to this point');
+            // console.log("Got to this point");
             var posx = form.getBoundingClientRect().x,
                 posy = form.getBoundingClientRect().y;
             document.body.style.minHeight = getComputedStyle(document.body).height;
@@ -225,23 +280,23 @@ document.addEventListener("DOMContentLoaded", function() {
             form.style.zIndex = 2;
             form.style.top = posy + window.pageYOffset + "px";
             form.style.left = posx + window.pageXOffset + "px";    
-            document.documentElement.style.setProperty('--height', effHeight +'px');
-            document.documentElement.style.setProperty('--width', effWidth+'px');
-            function putBack() {
+            document.documentElement.style.setProperty("--height", effHeight +"px");
+            document.documentElement.style.setProperty("--width", effWidth + "px");
+
+            setTimeout(function() {
                 form.style.position = "",
                 form.style.zIndex = "",
                 form.style.top = "",
                 form.style.left = "",
                 document.body.style.height = "";
-            }
-            putBackTimeout = setTimeout(putBack, 100);
+            }, 100);
 
-        }            
+        }
     }
-    
+
     forceSecure.addEventListener("change", secureWarning);
     refresh_button.addEventListener("click", function () {
-        get_browser().extension.getBackgroundPage().getStationList();
+        background.getStationList();
     });
     default_button.addEventListener("click", function () {
         // for convenience,
@@ -250,9 +305,9 @@ document.addEventListener("DOMContentLoaded", function() {
         localStorage.bodyHeight = defaults.height[whichPlayer];
         localStorage.historyNum = defaults.history[whichPlayer];
         localStorage.forceSecure = true;
-        
-           document.documentElement.style.setProperty('--height', defaults.height[whichPlayer] +'px');
-        document.documentElement.style.setProperty('--width', defaults.width[whichPlayer]+'px');
+
+        document.documentElement.style.setProperty("--height", defaults.height[whichPlayer] +"px");
+        document.documentElement.style.setProperty("--width", defaults.width[whichPlayer] + "px");
 
         bodyWidth.value = localStorage.bodyWidth;
         bodyHeight.value = localStorage.bodyHeight;
@@ -265,7 +320,6 @@ document.addEventListener("DOMContentLoaded", function() {
         localStorage.lastStation = "";
     });
 
-
     save_button.addEventListener("click", function (e) {
         var msg = "";
 
@@ -275,15 +329,15 @@ document.addEventListener("DOMContentLoaded", function() {
             alert("How did you even get here?");
             e.preventDefault(e);
             return false;
-        }        
+        }
         // I keep writing this, but _for convenience_,
         var player = style.value;
         var min_width = minimums.width[player];
         var min_height = minimums.height[player];
         var min_history = minimums.history[player];
-        
+
         if (bodyWidth.value < min_width) {
-            localStorage.bodyWidth = min_width; 
+            localStorage.bodyWidth = min_width;
             msg += ("Player width must be greater than or equal to " + min_width + ".\n");
             bodyWidth.value = min_width;
         } else {
@@ -306,11 +360,10 @@ document.addEventListener("DOMContentLoaded", function() {
         if (msg) {
             alert(msg);
         }
-        
+
         updateHotkeys();
 
         localStorage.forceSecure = forceSecure.checked;
-        
         // prevent page refresh on save - either should do but I'm doing both
         e.preventDefault(e); 
         return false;

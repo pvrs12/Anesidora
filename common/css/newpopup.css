@@ -80,7 +80,7 @@ a {
 a:hover {
   text-decoration: underline;
 }
-.hoverImg:not([src="images/New/liked.svg"]):hover {
+.hoverImg:not([src="images/new/liked.svg"]):hover {
     filter: blur(0.3px);
     cursor: pointer;
 }
@@ -274,10 +274,10 @@ a:hover {
     right: 0;
 }
 #prevTab > span {
-    background-image: url("/images/New/leftarrow.svg");
+    background-image: url("/images/new/leftarrow.svg");
 }
 #nextTab > span {
-    background-image: url("/images/New/rightarrow.svg");
+    background-image: url("/images/new/rightarrow.svg");
 }
 
 .labeled-input {
@@ -579,72 +579,72 @@ span, a, #nowPlayingContainerCell, #nowPlayingContainer, #nowPlaying {
     display: block;
     width: var(--icon-size);
     height: var(--icon-size);
-    background-image: url("/images/New/default_album.svg");
+    background-image: url("/images/new/default_album.svg");
     background-size: 100%;
     background-position: -100% 0;
     filter: drop-shadow(var(--icon-size) 0px var(--button-color));
 }
 
 #coverArt > span {
-    background-image: url("/images/New/default_album.svg");
+    background-image: url("/images/new/default_album.svg");
 }
 #playButton > span {
-    background-image: url("/images/New/play.svg");
+    background-image: url("/images/new/play.svg");
 }
 #pauseButton > span {
-    background-image: url("/images/New/pause.svg");
+    background-image: url("/images/new/pause.svg");
 }
 #skipButton > span {
-    background-image: url("/images/New/forward.svg");
+    background-image: url("/images/new/forward.svg");
 }
 #tUpButton > span {
-    background-image: url("/images/New/like.svg");
+    background-image: url("/images/new/like.svg");
 }
 #tDownButton > span {
-    background-image: url("/images/New/dislike.svg");
+    background-image: url("/images/new/dislike.svg");
 }
 #sleepButton > span {
-    background-image: url("/images/New/hourglass.svg");
+    background-image: url("/images/new/hourglass.svg");
 }
 #downloadButton > span {
-    background-image: url("/images/New/download.svg");
+    background-image: url("/images/new/download.svg");
 }
 #moreInfoButton > span {
-    background-image: url("/images/New/settings.svg");
+    background-image: url("/images/new/settings.svg");
 }
 #volIcon > span {
-    background-image: url("/images/New/volume.svg");
+    background-image: url("/images/new/volume.svg");
 }
 #stationRefreshButton > span {
-    background-image: url("/images/New/refreshStationList.svg");
+    background-image: url("/images/new/refreshStationList.svg");
     --icon-size: calc(36px - 14px) !important;
     margin-left: -230%;
     background-position: -100% 0;
     filter: drop-shadow(calc(calc(var(--icon-size) * 2) + 2px) -1px var(--button-color));
 }
 .stationPlay > span {
-    background-image: url("/images/New/player.svg");
+    background-image: url("/images/new/player.svg");
     filter: drop-shadow(calc(var(--icon-size) + 2px) 0px var(--button-color));
 }
 .historyCover > span {
-    background-image: url("/images/New/default_album.svg");
+    background-image: url("/images/new/default_album.svg");
     filter: drop-shadow(var(--icon-size) 0px var(--album-color));
 }
 .like > span {
-    background-image: url("/images/New/like.svg");
+    background-image: url("/images/new/like.svg");
 }
 .liked > span {
-    background-image: url("/images/New/liked.svg");
+    background-image: url("/images/new/liked.svg");
     filter: drop-shadow(var(--icon-size) 0px var(--active-button-color));
 }
 .download > span {
-    background-image: url("/images/New/download.svg");
+    background-image: url("/images/new/download.svg");
 }
 .dislike > span {
-    background-image: url("/images/New/dislike.svg");
+    background-image: url("/images/new/dislike.svg");
 }
 .disliked > span {
-    background-image: url("/images/New/disliked.svg");
+    background-image: url("/images/new/disliked.svg");
     filter: drop-shadow(var(--icon-size) 0px var(--active-button-color));
 }
 #coverArt > span {

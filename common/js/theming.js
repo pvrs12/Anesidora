@@ -1,28 +1,19 @@
 var previewLoaded = false; // see setVar
 var preview = document.getElementById('preview'); 
 // preview iframe - https://developer.mozilla.org/en-US/docs/Web/HTML/Element/iframe
-var localStorage = get_browser().extension.getBackgroundPage().localStorage; // just in case
 
-var themeInfo = (localStorage.themeInfo!==undefined?JSON.parse(localStorage.themeInfo):undefined);
-if (themeInfo == undefined) {
-    themeInfo = {
-        'background': '#3a3a3a',
-        'font-family': 'Verdana, Arial, sans-serif',
-        'font-size': '12px',
-        'text-color': '#FFFFFF',
-        'inverse-color': '#000000',
-        'accent-color': '#00f782',
-        'accent-color-darker': '#00ae5c',
-        'tabSize': '20px',
-        'warning-bgcolor': '#ff3722',
-        'warning-color': '#FFFFFF',
-        'album-bg': '#86aaae',
-        'button-color': '#ffffff',
-        'active-button-color': '#ffa700',
-        'album-color': '#000000'
-    }
-    localStorage.themeInfo = JSON.stringify(themeInfo); // stringify it so that it can be put in localstorage
+/*globals defaults*/
+
+var previewLoaded = false;
+var preview = document.getElementById("preview");
+// var localStorage = get_browser().extension.getBackgroundPage().localStorage;
+
+var themeInfo = (localStorage.themeInfo !== undefined ? JSON.parse(localStorage.themeInfo) : undefined);
+if (themeInfo === undefined) {
+    themeInfo = defaults.theme;
+    localStorage.themeInfo = JSON.stringify(themeInfo);
 }
+
 function initPreview() {
     "use strict";
     if (localStorage.bodyWidth === undefined || localStorage.bodyWidth === 0) {
@@ -37,7 +28,7 @@ function initPreview() {
     // set it so that the preview iframe is scaled to always be at 80% of the window width
     
     preview.src = "new.htm";
-    preview.addEventListener('load', () => {
+    preview.addEventListener("load", () => {
         preview.style.opacity = 1;
         previewLoaded = true;
         setTimeout(() => {
@@ -97,39 +88,22 @@ function initControls() {
         a.desc = document.createElement('span');   // I'm going to stop commenting this part, you can see what's going on
         a.desc.innerText = themeItems[i].desc;
         a.elem.appendChild(a.desc);
-        a.input = document.createElement('input');
+        a.input = document.createElement("input");
         a.elem.appendChild(a.input);
-        if (themeItems[i].type && themeItems[i].type!=='') {
-            a.input.setAttribute('type', themeItems[i].type);
+        if (themeItems[i].type && themeItems[i].type !== "") {
+            a.input.setAttribute("type", themeItems[i].type);
         }
         let currItem = themeItems[i];
         a.input.value = themeInfo[themeItems[i].property];
-        a.input.addEventListener('input', () => {
+        a.input.addEventListener("input", () => {
             setVar(currItem.property, currItem.func(a.input.value));
             themeInfo[currItem.property] = a.input.value;
         });
         a.item = themeItems[i];
         controls[a.item.property] = a;
     }
-    
-    document.getElementById('default').addEventListener('click', () => {
-        // this should be obvious
-        themeInfo = {
-        'background': '#3a3a3a',
-        'font-family': 'Verdana, Arial, sans-serif',
-        'font-size': '12px',
-        'text-color': '#FFFFFF',
-        'inverse-color': '#000000',
-        'accent-color': '#00f782',
-        'accent-color-darker': '#00ae5c',
-        'tabSize': '20px',
-        'warning-bgcolor': '#ff3722',
-        'warning-color': '#FFFFFF',
-        'album-bg': '#86aaae',
-        'button-color': '#ffffff',
-        'active-button-color': '#ffa700',
-        'album-color': '#000000'
-        }
+    document.getElementById("default").addEventListener("click", () => {
+        themeInfo = defaults.theme;
         for (let key in themeInfo) {
             setVar(key, themeInfo[key]);
             if (controls[key]) {
@@ -139,10 +113,12 @@ function initControls() {
             }
         }
     });
-    document.getElementById('save').addEventListener('click', () => {
+
+    document.getElementById("save").addEventListener("click", () => {
         localStorage.themeInfo = JSON.stringify(themeInfo);
     });
 }
+
 function setVar(cssVar, value) {
     if (!previewLoaded) { // don't try to access the preview's inner DOM if it doesn't exist yet 
         return;
@@ -150,106 +126,106 @@ function setVar(cssVar, value) {
     preview.contentDocument.documentElement.style.setProperty('--'+cssVar, value); // set the appropriate CSS variable
 }
 var themeItems = [ // all of the relevant controls.
+
     {
-        'name': 'Background',
-        'desc': 'The background of the player.',
-        'property': 'background',
-        'type': 'color',
-        'func': function(a) {
-                return a;
-        }
+        "name": "Background",
+        "desc": "The background of the player.",
+        "property": "background",
+        "type": "color",
+        "func": function(a) { return a; }
     },
     {
-        'name': 'Font',
-        'desc': 'What font will be used through the player.',
-        'property': 'font-family',
-        'func': function(a) { return a.trim(); }
+        "name": "Font",
+        "desc": "What font will be used through the player.",
+        "property": "font-family",
+        "func": function(a) { return a.trim(); }
     },
     {
-        'name':'Font Size',
-        'desc': 'The size of the font used in the player.',
-        'property': 'font-size',
-        'func': function(a) {
-                    return a;
-                }
+        "name":"Font Size",
+        "desc": "The size of the font used in the player.",
+        "property": "font-size",
+        "func": function(a) { return a; }
     },
     {
-        'name': 'Text Color',
-        'desc': 'The color of the text in the player.',
-        'type': 'color',
-        'property': 'text-color',
-        'func': function(a) { return a; }
+        "name": "Text Color",
+        "desc": "The color of the text in the player.",
+        "type": "color",
+        "property": "text-color",
+        "func": function(a) { return a; }
     },
     {
-        'name': 'Secondary Text Color',
-        'desc': 'The color of the text used in low-contrast areas.',
-        'type': 'color',
-        'property': 'inverse-color',
-        'func': function(a) { return a; }
+        "name": "Secondary Text Color",
+        "desc": "The color of the text used in low-contrast areas.",
+        "type": "color",
+        "property": "inverse-color",
+        "func": function(a) { return a; }
     },
     {
-        'name': 'Accent Color',
-        'desc': 'The color used in accents in the player.',
-        'type': 'color',
-        'property': 'accent-color',
-        'func': function(a) { return a; }
+        "name": "Accent Color",
+        "desc": "The color used in accents in the player.",
+        "type": "color",
+        "property": "accent-color",
+        "func": function(a) { return a; }
     },
     {
-        'name': 'Focused Input Accent Color',
-        'desc': 'The color of borders of focused inputs.',
-        'type': 'color',
-        'property': 'accent-color-darker',
-        'func': function(a) { return a; }
+        "name": "Focused Input Accent Color",
+        "desc": "The color of borders of focused inputs.",
+        "type": "color",
+        "property": "accent-color-darker",
+        "func": function(a) { return a; }
     },
     {
-        'name': 'Tab Size',
-        'desc': 'The width of the buttons used to switch which panel you\'re on.',
-        'property': 'tabSize',
-        'func': function(a) {
-                    return a;
-                }
+        "name": "Tab Size",
+        "desc": "The width of the buttons used to switch which panel you\"re on.",
+        "property": "tabSize",
+        "func": function(a) { return a; }
     },
     {
-        'name': 'Warning Background',
-        'desc': 'The background used for warnings in the player.',
-        'type': 'color',
-        'property': 'warning-bgcolor',
-        'func': function(a) {
-            return a;
-        }
+        "name": "Warning Color",
+        "desc": "The color of the text used for warnings in the player.",
+        "type": "color",
+        "property": "warning-color",
+        "func": function(a) { return a; }
     },
     {
-        'name': 'Album Background',
-        'desc': 'The background for albums that use the default cover image.',
-        'type': 'color',
-        'property': 'album-bg',
-        'func': function(a) {return a;}
+        "name": "Warning Background",
+        "desc": "The background used for warnings in the player.",
+        "type": "color",
+        "property": "warning-bgcolor",
+        "func": function(a) { return a; }
     },
     {
-        'name': 'Button Color',
-        'desc': 'The color of the buttons on the player.',
-        'type': 'color',
-        'property': 'button-color',
-        'func': function(a) { return a; }
+        "name": "Album Background",
+        "desc": "The background for albums that use the default cover image.",
+        "type": "color",
+        "property": "album-bg",
+        "func": function(a) { return a; }
     },
     {
-        'name': 'Active Button Color',
-        'desc': 'The color of active buttons - for example, if a song is liked, the like button will be this color.',
-        'type': 'color',
-        'property': 'active-button-color',
-        'func': function(a) { return a; }
+        "name": "Button Color",
+        "desc": "The color of the buttons on the player.",
+        "type": "color",
+        "property": "button-color",
+        "func": function(a) { return a; }
     },
     {
-        'name': 'Default Album Color',
-        'desc': 'The color of the default album cover.',
-        'type': 'color',
-        'property': 'album-color',
-        'func': function(a) { return a; }
+        "name": "Active Button Color",
+        "desc": "The color of active buttons - for example, if a song is liked, the like button will be this color.",
+        "type": "color",
+        "property": "active-button-color",
+        "func": function(a) { return a; }
+    },
+    {
+        "name": "Default Album Color",
+        "desc": "The color of the default album cover.",
+        "type": "color",
+        "property": "album-color",
+        "func": function(a) { return a; }
     }
-]
+];
 
 function export2json() {
-    // I believe something similar like this is done in the popups' js
+    // I believe something similar like this is done in the popups' js to download songs
     
     
     let data = JSON.parse(JSON.stringify(themeInfo)) // dereference
@@ -264,13 +240,13 @@ function export2json() {
     a.click();
     document.body.removeChild(a); // clean up after yourself
 }
-document.getElementById('inport').addEventListener('change', handleFileSelect, false);
-document.getElementById('export').addEventListener('click', export2json);
+document.getElementById("import").addEventListener("change", handleFileSelect, false);
+document.getElementById("export").addEventListener("click", export2json);
 
 function handleFileSelect(event){
     const reader = new FileReader() // honestly I have no clue what's going on here
     reader.onload = handleFileLoad;
-    reader.readAsText(event.target.files[0])
+    reader.readAsText(event.target.files[0]);
 }
 function f(url) {
     return new Promise((resolve) => {
@@ -285,21 +261,22 @@ function handleFileLoad(event, oh){
     try {
         JSON.parse(res);
     } catch(e) {
-        alert('Invalid file: '+e);
+        alert("Invalid file: " + e);
         return;
     }
     let resParsed = JSON.parse(res);
     for (let key in themeInfo) {
-        if (!resParsed.hasOwnProperty(key)) {
-            alert('File is missing property: '+key);
+        if (!Object.prototype.hasOwnProperty.call(resParsed, key)) {
+            alert("File is missing property: " + key);
             return;
         }
         if (themeInfo[key].type && themeInfo[key].type == "color" && !(/^#([0-9A-F]{3}){1,2}$/i.test(resParsed[key]))) {
-            alert(`${key}: Please use hex color codes, not '${resParsed[key]}'`);
+            alert(`${key}: Please use hex color codes, not "${resParsed[key]}"`);
             return;
         }
     }
-    // do stuff
+
+    // update the page inputs and the CSS variables
     for (let key in themeInfo) {
         setVar(key, resParsed[key]);
         if (controls[key]) {
@@ -308,6 +285,7 @@ function handleFileLoad(event, oh){
     }
     themeInfo = resParsed;
 }
+
 initPreview();
 initControls();
 initList();

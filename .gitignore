@@ -4,3 +4,4 @@ common/js/jquery/*
 *.crx
 *.pem
 *.zip
+chrome_build/

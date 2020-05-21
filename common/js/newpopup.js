@@ -9,8 +9,6 @@ function zeroPad(num, places) {
     return String(Math.pow(10, places) + Math.floor(num)).substring(1);
 }
 
-var currentPanel = null;
-
 var background = get_browser().extension.getBackgroundPage();
 
 function initBodySize() {
@@ -29,6 +27,7 @@ const panels = ["historyPanel", "leftPanel", "midPanel", "rightPanel"]; // panel
 const panelHolder = document.getElementById('anesidora');
 var tabsInit = false; // see goToPanel
 var panelOn = 0;
+
 function goToPanel(which) {
     "use strict";
     if (!tabsInit) return; // don't do anything if it's not been initialized yet
@@ -43,7 +42,7 @@ function goToPanel(which) {
 }
 
 function initTabs() {
-    "use strict"
+    "use strict";
     for (let i = 0; i < panels.length; i++) {
         document.getElementById(panels[i]).style.left = "calc(var(--width) * "+i+")"; 
     }
@@ -69,6 +68,7 @@ function goToPlayer() {
 
 function clearHistory() {
     "use strict";
+    const historyDiv = document.getElementById("historyDiv");
     while (historyDiv.hasChildNodes()) {
         historyDiv.removeChild(historyDiv.firstChild);
     }
@@ -89,9 +89,8 @@ function downloadSong(url, title) {
 function updateHistory() {
     "use strict";
     clearHistory();
-    const historyDiv = document.getElementById('historyDiv');
+    const historyDiv = document.getElementById("historyDiv");
     background.prevSongs.reverse().forEach(function (song, i) {
-
         /*
          * Generate history item.
          * Structure:
@@ -140,15 +139,15 @@ function updateHistory() {
         if (song.albumArtUrl) {
             cover.style.background = `url("${song.albumArtUrl}")`;
         } else {
-            cover.style.background = '';
-            cover.appendChild(document.createElement('span'));
+            cover.style.background = "";
+            cover.appendChild(document.createElement("span"));
         }
         holder.appendChild(cover);
         holder.appendChild(overlay);
         overlay.appendChild(actions);
         actions.appendChild(likeAction);
         likeAction.appendChild(document.createElement('span')); // we'll never interact with this span again, so why keep a reference?
-        
+
         let likeStatus = "like";
         if (song.songRating == -1) {
             likeStatus = "disliked";
@@ -157,9 +156,11 @@ function updateHistory() {
         } else if (song.songRating == 1) {
             likeStatus = "liked";
         }
-        likeAction.classList.add((likeStatus=="liked"?"liked":"like")); // (statement?(statment is true):(statement is false)). inline if statement
+        likeAction.classList.add((likeStatus=="liked"?"liked":"like")); 
+      // inline if statement: (statement?(statment is true):(statement is false))
+
         actions.appendChild(downloadAction);
-        downloadAction.appendChild(document.createElement('span'));
+        downloadAction.appendChild(document.createElement("span"));
         actions.appendChild(dislikeAction);
         dislikeAction.appendChild(document.createElement('span'));
         dislikeAction.classList.add((likeStatus=="disliked"?"disliked":"dislike"));
@@ -172,8 +173,9 @@ function updateHistory() {
                 'url': thisSong.songDetailUrl // I'm not sure why you can't just make an anchor tag but sure, whatever
             });
         });
-        likeAction.addEventListener('click', (e) => {
-            if (likeStatus == 'liked') {
+
+        likeAction.addEventListener("click", (e) => {
+            if (likeStatus == "liked") {
                 return;
             }
             background.addFeedback(historyNum, 1);
@@ -185,19 +187,21 @@ function updateHistory() {
             likeStatus = "liked";
             e.preventDefault(e);
         });
-        downloadAction.addEventListener('click', (e) => {
+
+        downloadAction.addEventListener("click", (e) => {
             downloadSong(song.audioUrlMap.highQuality.audioUrl, song.songName);
             e.preventDefault(e);
         });
-        dislikeAction.addEventListener('click', (e) => {
-            if (likeStatus == 'disliked') {
+
+        dislikeAction.addEventListener("click", (e) => {
+            if (likeStatus == "disliked") {
                 return;
             }
             background.addFeedback(historyNum, -1);
-            likeAction.classList.remove('liked');
-            likeAction.classList.add('like');
-            dislikeAction.classList.remove('dislike');
-            dislikeAction.classList.add('disliked');
+            likeAction.classList.remove("liked");
+            likeAction.classList.add("like");
+            dislikeAction.classList.remove("dislike");
+            dislikeAction.classList.add("disliked");
             likeStatus = "disliked";
             e.preventDefault(e);
         });
@@ -230,7 +234,7 @@ function updateStationCovers() {
 function addStations() {
     "use strict";
     let filter = document.getElementById("stationFilterInput").value;
-    
+
     background.stationList.sort((a, b) => {
         return a.stationName.localeCompare(b.stationName) // sort alphabetically
     });
@@ -244,7 +248,7 @@ function addStations() {
         return station.stationName.toLowerCase().includes(filter.toLowerCase());
     }).forEach(function (station) { // for each filtered station, run function
         if (!background.stationImgs[station.stationId]) {
-            background.stationImgs[station.stationId] = "/images/New/default_album.svg";
+            background.stationImgs[station.stationId] = "/images/new/default_album.svg";
         }
         /*
          * Generate station.
@@ -276,51 +280,61 @@ function addStations() {
         playAction.classList.add('icon');
         let nameSpan = document.createElement('span');
         
-        document.getElementById('stationListDiv').appendChild(elem);
-        elem.appendChild(holder);
+        document.getElementById("stationListDiv").appendChild(stationElem);
+        stationElem.appendChild(holder);
         cover.style.background = `url("${background.stationImgs[station.stationId]}")`;
         holder.appendChild(cover);
-        if (background.stationImgs[station.stationId] == "/images/New/default_album.svg") {
-            cover.classList.add('icon');
-            cover.appendChild(document.createElement('span'));
-            cover.style.background = '';
+        if (background.stationImgs[station.stationId] == "/images/new/default_album.svg") {
+            cover.classList.add("icon");
+            cover.appendChild(document.createElement("span"));
+            cover.style.background = "";
         }
         holder.appendChild(overlay);
         overlay.appendChild(actions);
         actions.appendChild(playAction);
-        playAction.appendChild(document.createElement('span'));
-        elem.appendChild(nameSpan);
-        nameSpan.innerText = station.stationName;
+        playAction.appendChild(document.createElement("span"));
+        stationElem.appendChild(nameSpan);
+
+        nameSpan.textContent = station.stationName;
         let thisStation = station;
+
         if (station.stationDetailUrl != "") {
-            cover.addEventListener('click', () => {
+            cover.addEventListener("click", () => {
                 get_browser().tabs.create({
-                    'url': station.stationDetailUrl
+                    "url": station.stationDetailUrl
                 });
             });
         }
-        playAction.addEventListener('click', () => {
-            background.play(thisStation.stationToken);
-            elem.classList.add('activeStation');
+
+        playAction.addEventListener("click", () => {
+            background.nextSongStation(thisStation.stationToken);
+            stationElem.classList.add("activeStation");
             if (lastActiveStation) {
-                lastActiveStation.classList.remove('activeStation');
+                lastActiveStation.classList.remove("activeStation");
             }
-            lastActiveStation = elem;
+            lastActiveStation = stationElem;
+
+            // This is due to a bug where switching stations doesn"t start the correct next song...
+            //yee haw lazy fixes!
+            // background.nextSong();
             goToPanel(1);
             handleSwitch();
         });
+
+        //place station images or default image
+        // if default, theme it with `icon`
         stationCallbacks.push(() => {
-            if (background.stationImgs[station.stationId] == "/images/New/default_album.svg") {
-                cover.classList.add('icon');
-            cover.style.background = ``;
+            if (background.stationImgs[station.stationId] == "/images/new/default_album.svg") {
+                cover.classList.add("icon");
+                cover.style.background = "";
             } else {
-                cover.classList.remove('icon');
-            cover.style.background = `url("${background.stationImgs[thisStation.stationId]}")`;
+                cover.classList.remove("icon");
+                cover.style.background = `url("${background.stationImgs[thisStation.stationId]}")`;
             }
         });
     });
 }
-var lastActiveStation = '';
+var lastActiveStation = "";
 
 function updatePlayer() {
     "use strict";
@@ -329,11 +343,11 @@ function updatePlayer() {
             get_browser().tabs.create({
                 "url": background.currentSong.albumDetailUrl
             });
-        })
-        if (background.currentSong.albumArtUrl != '') {
-            document.getElementById('coverArt').style.backgroundImage = 'url("'+background.currentSong.albumArtUrl+'")'
+        });
+        if (background.currentSong.albumArtUrl != "") {
+            document.getElementById("coverArt").style.backgroundImage = "url(\""+background.currentSong.albumArtUrl+"\")";
         } else {
-            document.getElementById('coverArt').style.background = '';
+            document.getElementById("coverArt").style.background = "";
         }
         $("#artistLink").unbind().text(background.currentSong.artistName);
         $("#titleLink").unbind().text(background.currentSong.songName);
@@ -350,14 +364,14 @@ function updatePlayer() {
         $("#dash").text(" - ");
         if (background.currentSong.songRating) {
             $("#tUpButton").unbind("click");
-            document.getElementById('tUpButton').classList.add('liked');
-            document.getElementById('tUpButton').classList.remove('like');
+            document.getElementById("tUpButton").classList.add("liked");
+            document.getElementById("tUpButton").classList.remove("like");
         } else {
-            document.getElementById('tUpButton').classList.add('like');
-            document.getElementById('tUpButton').classList.remove('liked');
+            document.getElementById("tUpButton").classList.add("like");
+            document.getElementById("tUpButton").classList.remove("liked");
             $("#tUpButton").click(function () {
                 background.addFeedback(-1, true);
-            document.getElementById('tUpButton').classList.add('liked');
+                document.getElementById("tUpButton").classList.add("liked");
                 $("#tUpButton").unbind("click");
             });
         }
@@ -396,13 +410,14 @@ function drawPlayer() { // Update scrubber.
     }).attr("title", curMinutes + ":" + curSeconds + "/" + totalMinutes + ":" + totalSeconds);
 }
 
-document.documentElement.style.setProperty('--height', localStorage.bodyHeight +'px');
-document.documentElement.style.setProperty('--width', localStorage.bodyWidth+'px');
-if (localStorage.themeInfo&&localStorage.themeInfo!=="") {
+document.documentElement.style.setProperty("--height", localStorage.bodyHeight +"px");
+document.documentElement.style.setProperty("--width", localStorage.bodyWidth+"px");
+if (localStorage.themeInfo && localStorage.themeInfo !== "") {
     for (let key in JSON.parse(localStorage.themeInfo)) {
-        document.documentElement.style.setProperty('--'+key, JSON.parse(localStorage.themeInfo)[key]);
+        document.documentElement.style.setProperty("--" + key, JSON.parse(localStorage.themeInfo)[key]);
     }
 }
+
 $(document).ready(function () {
     "use strict";
     $("body").bind("click", function (e) {
@@ -411,7 +426,6 @@ $(document).ready(function () {
         }
     });
     initBodySize();
-    
     document.documentElement.style.setProperty('--height', localStorage.bodyHeight +'px');
     document.documentElement.style.setProperty('--width', localStorage.bodyWidth+'px');
     // _So much_ CSS depends on those variables being set.
@@ -420,8 +434,8 @@ $(document).ready(function () {
     
 //    var scrollerWidth = $("body").width() * 0.6;
 //    $(".scrollerContainer").width(scrollerWidth
+
     initTabs();
-    
 
     if (background.mp3Player.paused) {
         $("pauseButton").hide();
@@ -469,7 +483,7 @@ $(document).ready(function () {
     $("#tUpButton").bind("click", function () {
         background.addFeedback(-1, true);
         if (background.currentSong.songRating === true) {
-            $("#tUpButton").unbind("click").attr("src", "images/New/liked.svg");
+            $("#tUpButton").unbind("click").attr("src", "images/new/liked.svg");
         }
     });
     $("#tDownButton").bind("click", function () {
@@ -498,8 +512,8 @@ $(document).ready(function () {
         localStorage.password = $("#password").val();
         background.partnerLogin();
         if (background.userAuthToken === "") {
-            document.getElementById("li1").classList.add('warning');
-            document.getElementById("li2").classList.add('warning');
+            document.getElementById("li1").classList.add("warning");
+            document.getElementById("li2").classList.add("warning");
             return false;
         } else {
             addStations();
@@ -517,11 +531,11 @@ $(document).ready(function () {
         // ooo animation
         if (!lockRotate) { // don't try to animate this while it's still animating
             document.getElementById('stationRefreshButton').style.animation = "rotate 500ms ease-in-out";
+
             lockRotate = true;
         }
         refreshStations();
         setTimeout(() => {
-            document.getElementById('stationRefreshButton').style.animation = "";
             lockRotate = false; // animation done; can start another
         }, 500);
     });
@@ -554,13 +568,14 @@ $(document).ready(function () {
     const scrollerText = document.getElementsByClassName('scrollerText')[0];
     scrollerText.addEventListener('mouseover', () => {
         if ($('.scrollerText').width() - $('#nowPlayingContainerCell').width() > 0) {
+
             $(".scrollerText").css({
-                transition: 'left '+ (($('.scrollerText').width() - $('#nowPlayingContainerCell').width())*30) + 'ms linear',
-                left: $('#nowPlayingContainerCell').width() - $('.scrollerText').width()
+                transition: "left "+ (($(".scrollerText").width() - $("#nowPlayingContainerCell").width())*30) + "ms linear",
+                left: $("#nowPlayingContainerCell").width() - $(".scrollerText").width()
             });
         } else {
-            $('.scrollerText').css({
-                left: '0px'
+            $(".scrollerText").css({
+                left: "0px"
             });
         }
     });
@@ -580,39 +595,40 @@ $(document).ready(function () {
         updatePlayer();
     }
     handleSwitch();
-    document.querySelector('#prevTab > span').addEventListener('click', () => {
+    document.querySelector("#prevTab > span").addEventListener("click", () => {
         if (panelOn > 0) {
             goToPanel(panelOn-1);
         }
     });
-    document.querySelector('#nextTab > span').addEventListener('click', () => {
+    document.querySelector("#nextTab > span").addEventListener("click", () => {
         if (panelOn < 2) {
             goToPanel(panelOn+1);
         }
     });
     updateHistory();
 });
+
 function handleSwitch() {
     // in a nutshell: make it so you can't go out of bounds with the tab buttons
     if (panelOn <= 0) {
-        document.querySelector('#prevTab > span').style.opacity = "0";
-        document.querySelector('#prevTab > span').style.pointerEvents = 'none';
+        document.querySelector("#prevTab > span").style.opacity = "0";
+        document.querySelector("#prevTab > span").style.pointerEvents = "none";
     } else {
-        document.querySelector('#prevTab > span').style.opacity = "";
-        document.querySelector('#prevTab > span').style.pointerEvents = "";
+        document.querySelector("#prevTab > span").style.opacity = "";
+        document.querySelector("#prevTab > span").style.pointerEvents = "";
     }
     if (panelOn >= 2) {
-        document.querySelector('#nextTab > span').style.opacity = "0";
-        document.querySelector('#nextTab > span').style.pointerEvents = 'none';
+        document.querySelector("#nextTab > span").style.opacity = "0";
+        document.querySelector("#nextTab > span").style.pointerEvents = "none";
     } else {
-        document.querySelector('#nextTab > span').style.opacity = "";
-        document.querySelector('#nextTab > span').style.pointerEvents = "";
+        document.querySelector("#nextTab > span").style.opacity = "";
+        document.querySelector("#nextTab > span").style.pointerEvents = "";
     }
     if (panelOn == 3) { // login screen
-        document.querySelector('#nextTab > span').style.opacity = "0";
-        document.querySelector('#nextTab > span').style.pointerEvents = "none";
-        document.querySelector('#prevTab > span').style.opacity = "0";
-        document.querySelector('#prevTab > span').style.pointerEvents = "none";
+        document.querySelector("#nextTab > span").style.opacity = "0";
+        document.querySelector("#nextTab > span").style.pointerEvents = "none";
+        document.querySelector("#prevTab > span").style.opacity = "0";
+        document.querySelector("#prevTab > span").style.pointerEvents = "none";
     }
 }
 
