@@ -119,7 +119,7 @@ function updateHistory() {
         holder.classList.add('holder');
         let actions = document.createElement('div');
         actions.classList.add('actions');
-        
+
         // All of what used to be imgs have to now be divs holding spans in order to be themable.
         
         let likeAction = document.createElement('div');
@@ -280,8 +280,8 @@ function addStations() {
         playAction.classList.add('icon');
         let nameSpan = document.createElement('span');
         
-        document.getElementById("stationListDiv").appendChild(stationElem);
-        stationElem.appendChild(holder);
+        document.getElementById("stationListDiv").appendChild(elem);
+        elem.appendChild(holder);
         cover.style.background = `url("${background.stationImgs[station.stationId]}")`;
         holder.appendChild(cover);
         if (background.stationImgs[station.stationId] == "/images/new/default_album.svg") {
@@ -293,7 +293,7 @@ function addStations() {
         overlay.appendChild(actions);
         actions.appendChild(playAction);
         playAction.appendChild(document.createElement("span"));
-        stationElem.appendChild(nameSpan);
+        elem.appendChild(nameSpan);
 
         nameSpan.textContent = station.stationName;
         let thisStation = station;
@@ -308,11 +308,11 @@ function addStations() {
 
         playAction.addEventListener("click", () => {
             background.nextSongStation(thisStation.stationToken);
-            stationElem.classList.add("activeStation");
+            elem.classList.add("activeStation");
             if (lastActiveStation) {
                 lastActiveStation.classList.remove("activeStation");
             }
-            lastActiveStation = stationElem;
+            lastActiveStation = elem;
 
             // This is due to a bug where switching stations doesn"t start the correct next song...
             //yee haw lazy fixes!
