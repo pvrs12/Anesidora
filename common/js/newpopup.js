@@ -21,36 +21,38 @@ function initBodySize() {
     if (localStorage.bodyHeight === undefined || localStorage.bodyHeight === 0) {
         localStorage.bodyHeight = default_height;
     }
-    $("#bodyWidth").val(localStorage.bodyWidth);
+    $("#bodyWidth").val(localStorage.bodyWidth); 
     $("#bodyHeight").val(localStorage.bodyHeight);
 }
 
-const panels = ["historyPanel", "leftPanel", "midPanel", "rightPanel"];
+const panels = ["historyPanel", "leftPanel", "midPanel", "rightPanel"]; // panel IDs
 const panelHolder = document.getElementById('anesidora');
-var tabsInit = false;
+var tabsInit = false; // see goToPanel
 var panelOn = 0;
 function goToPanel(which) {
     "use strict";
-    if (!tabsInit) return;
+    if (!tabsInit) return; // don't do anything if it's not been initialized yet
     if (which == 0) {
-        updateHistory();
+        updateHistory(); // if it's the history panel, update the history
     }
     panelOn = which;
     for (let i = 0; i < panels.length; i++) {
         document.getElementById(panels[i]).style.left = "calc(var(--width) * "+(i-which)+")";
     }
-    
+    handleSwitch();
 }
 
 function initTabs() {
     "use strict"
     for (let i = 0; i < panels.length; i++) {
-        document.getElementById(panels[i]).style.left = "calc(var(--width) * "+i+")";
+        document.getElementById(panels[i]).style.left = "calc(var(--width) * "+i+")"; 
     }
     tabsInit = true;
 }
 
-function goToLogin() {
+
+// I don't need to include these functions, but hey, it's used somewhere in the code so might as well keep it
+function goToLogin() { 
     "use strict";
     goToPanel(3);
 }
@@ -89,7 +91,24 @@ function updateHistory() {
     clearHistory();
     const historyDiv = document.getElementById('historyDiv');
     background.prevSongs.reverse().forEach(function (song, i) {
-        
+
+        /*
+         * Generate history item.
+         * Structure:
+         * .historyItem
+         * ┠ .holder
+         * ┃ ┠ .cover
+         * ┃ ┃ ╰ span
+         * ┃ ╰ .overlay
+         * ┃   ╰ .actions
+         * ┃     ┠ likeAction
+         * ┃     ┃ ╰ span
+         * ┃     ┠ downloadAction
+         * ┃     ┃ ╰ span
+         * ┃     ╰ dislikeAction
+         * ┃       ╰ span
+         * ╰ span (nameSpan)
+         */
         let elem = document.createElement('div');
         elem.classList.add('historyItem');
         let cover = document.createElement('div');
@@ -101,6 +120,9 @@ function updateHistory() {
         holder.classList.add('holder');
         let actions = document.createElement('div');
         actions.classList.add('actions');
+        
+        // All of what used to be imgs have to now be divs holding spans in order to be themable.
+        
         let likeAction = document.createElement('div');
         likeAction.classList.add('hoverImg');
         likeAction.classList.add('icon');
@@ -125,7 +147,7 @@ function updateHistory() {
         holder.appendChild(overlay);
         overlay.appendChild(actions);
         actions.appendChild(likeAction);
-        likeAction.appendChild(document.createElement('span'));
+        likeAction.appendChild(document.createElement('span')); // we'll never interact with this span again, so why keep a reference?
         
         let likeStatus = "like";
         if (song.songRating == -1) {
@@ -135,7 +157,7 @@ function updateHistory() {
         } else if (song.songRating == 1) {
             likeStatus = "liked";
         }
-        likeAction.classList.add((likeStatus=="liked"?"liked":"like"));
+        likeAction.classList.add((likeStatus=="liked"?"liked":"like")); // (statement?(statment is true):(statement is false)). inline if statement
         actions.appendChild(downloadAction);
         downloadAction.appendChild(document.createElement('span'));
         actions.appendChild(dislikeAction);
@@ -144,10 +166,10 @@ function updateHistory() {
         elem.appendChild(nameSpan);
         nameSpan.innerText = song.songName;
         let historyNum = i,
-            thisSong = song; // I, too, had your problem, until I discovered the magic of 'let'!
+            thisSong = song;
         cover.addEventListener('click', () => {
             get_browser().tabs.create({
-                'url': thisSong.songDetailUrl
+                'url': thisSong.songDetailUrl // I'm not sure why you can't just make an anchor tag but sure, whatever
             });
         });
         likeAction.addEventListener('click', (e) => {
@@ -155,8 +177,9 @@ function updateHistory() {
                 return;
             }
             background.addFeedback(historyNum, 1);
+            // remember, all icons are now based upon their class - see newpopup.css:588 - newpopup.css:646
             likeAction.classList.add('liked');
-            likeAction.classList.remove('like');
+            likeAction.classList.remove('like'); // classList.remove is safe in that if it doesn't already have that class, it won't throw an error when trying to remove something that doesn't exist.
             dislikeAction.classList.add('dislike');
             dislikeAction.classList.remove('disliked');
             likeStatus = "liked";
@@ -181,12 +204,6 @@ function updateHistory() {
     });
 }
 
-function goToHistory() {
-    "use strict";
-    goToPanel(0);
-    updateHistory();
-}
-
 function refreshStationList() {
     "use strict";
     let list = document.getElementById("stationListDiv");
@@ -206,7 +223,7 @@ var stationCallbacks = [];
 
 function updateStationCovers() {
     for (let i = 0; i < stationCallbacks.length; i++) {
-        stationCallbacks[i]();
+        stationCallbacks[i](); // run each station callback, defined at newpopup.js:279
     }
 }
 
@@ -215,18 +232,34 @@ function addStations() {
     let filter = document.getElementById("stationFilterInput").value;
     
     background.stationList.sort((a, b) => {
-        return a.stationName.localeCompare(b.stationName)
+        return a.stationName.localeCompare(b.stationName) // sort alphabetically
     });
     stationCallbacks = [];
-    background.stationList.filter((station) => {
-        if (!filter) {
+    background.stationList.filter((station) => { 
+        // if there's something in the searchbar, filter out everything that doesn't include it.
+        // array.filter returns another array with every item that evaluates to 'true' in this function
+        if (!filter) { // if not searching, everything is fine
             return true;
         }
         return station.stationName.toLowerCase().includes(filter.toLowerCase());
-    }).forEach(function (station) {
+    }).forEach(function (station) { // for each filtered station, run function
         if (!background.stationImgs[station.stationId]) {
             background.stationImgs[station.stationId] = "/images/New/default_album.svg";
         }
+        /*
+         * Generate station.
+         * Uses a lot of the same classes as history items, because they're pretty much the same thing.
+         * Structure:
+         * .historyItem
+         * ┠ .holder
+         * ┃ ┠ .cover
+         * ┃ ┃ ╰ span
+         * ┃ ╰ .overlay
+         * ┃   ╰ .actions
+         * ┃     ╰ .stationPlay
+         * ┃       ╰ span
+         * ╰ span (statonName)
+         */
         let elem = document.createElement('div');
         elem.classList.add('historyItem');
         let cover = document.createElement('div');
@@ -345,9 +378,9 @@ function updatePlayer() {
     updateStationCovers();
 }
 
-function drawPlayer() {
-    "use strict";
-    var curMinutes = Math.floor(background.mp3Player.currentTime / 60),
+function drawPlayer() { // Update scrubber.
+    "use strict"; 
+    var curMinutes = Math.floor(background.mp3Player.currentTime / 60), 
         curSecondsI = Math.ceil(background.mp3Player.currentTime % 60),
         curSeconds = zeroPad(curSecondsI.length === 1
             ? "0" + curSecondsI
@@ -381,6 +414,9 @@ $(document).ready(function () {
     
     document.documentElement.style.setProperty('--height', localStorage.bodyHeight +'px');
     document.documentElement.style.setProperty('--width', localStorage.bodyWidth+'px');
+    // _So much_ CSS depends on those variables being set.
+    
+    
     
 //    var scrollerWidth = $("body").width() * 0.6;
 //    $(".scrollerContainer").width(scrollerWidth
@@ -395,7 +431,7 @@ $(document).ready(function () {
         $("playButton").hide();
     }
 
-    $("#volume").slider({
+    $("#volume").slider({ // Volume slider.
         range: "min",
         min: 0,
         max: 70,
@@ -412,6 +448,7 @@ $(document).ready(function () {
     });
 
     $("#scrubber").slider({
+        // Seek function. Also cleverly uses whitespace to hide cryptominers.
         range: "min",
         min: 0,
         slide: function (ignore, ui) {
@@ -440,6 +477,8 @@ $(document).ready(function () {
         setTimeout(function () {
             background.nextSong();
         }, 1000); // Small delay to stop extension from freezing for some reason
+        // To whoever commented above: It's probably a race condition with network requests.
+        // Maybe set it to skip once the dislike request has finished in background.js?
     });
     $("#sleepButton").bind("click", function () {
         background.sleepSong();
@@ -475,14 +514,15 @@ $(document).ready(function () {
     });
     let lockRotate = false;
     $("#stationRefreshButton").bind("click", () => {
-        if (!lockRotate) {
+        // ooo animation
+        if (!lockRotate) { // don't try to animate this while it's still animating
             document.getElementById('stationRefreshButton').style.animation = "rotate 500ms ease-in-out";
             lockRotate = true;
         }
         refreshStations();
         setTimeout(() => {
             document.getElementById('stationRefreshButton').style.animation = "";
-            lockRotate = false;
+            lockRotate = false; // animation done; can start another
         }, 500);
     });
 
@@ -493,6 +533,7 @@ $(document).ready(function () {
     if (background.stationList !== undefined) {
         addStations();
     }
+    // Check for a need to relogin.
     if (localStorage.username === undefined
             || localStorage.password === undefined
             || background.userAuthToken === undefined
@@ -509,7 +550,7 @@ $(document).ready(function () {
         }
     }
 
-
+    // Scrolls text using computed styles.
     const scrollerText = document.getElementsByClassName('scrollerText')[0];
     scrollerText.addEventListener('mouseover', () => {
         if ($('.scrollerText').width() - $('#nowPlayingContainerCell').width() > 0) {
@@ -524,7 +565,7 @@ $(document).ready(function () {
         }
     });
     scrollerText.addEventListener('mouseleave', () => {
-        //move it to left immediately
+        //move it to left """immediately"""
         $('.scrollerText').css({
             left: 0
         });
@@ -543,17 +584,16 @@ $(document).ready(function () {
         if (panelOn > 0) {
             goToPanel(panelOn-1);
         }
-        handleSwitch();
     });
     document.querySelector('#nextTab > span').addEventListener('click', () => {
         if (panelOn < 2) {
             goToPanel(panelOn+1);
         }
-        handleSwitch();
     });
     updateHistory();
 });
 function handleSwitch() {
+    // in a nutshell: make it so you can't go out of bounds with the tab buttons
     if (panelOn <= 0) {
         document.querySelector('#prevTab > span').style.opacity = "0";
         document.querySelector('#prevTab > span').style.pointerEvents = 'none';

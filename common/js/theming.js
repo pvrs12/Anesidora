@@ -1,6 +1,7 @@
-var previewLoaded = false;
-var preview = document.getElementById('preview');
-var localStorage = get_browser().extension.getBackgroundPage().localStorage;
+var previewLoaded = false; // see setVar
+var preview = document.getElementById('preview'); 
+// preview iframe - https://developer.mozilla.org/en-US/docs/Web/HTML/Element/iframe
+var localStorage = get_browser().extension.getBackgroundPage().localStorage; // just in case
 
 var themeInfo = (localStorage.themeInfo!==undefined?JSON.parse(localStorage.themeInfo):undefined);
 if (themeInfo == undefined) {
@@ -20,7 +21,7 @@ if (themeInfo == undefined) {
         'active-button-color': '#ffa700',
         'album-color': '#000000'
     }
-    localStorage.themeInfo = JSON.stringify(themeInfo);
+    localStorage.themeInfo = JSON.stringify(themeInfo); // stringify it so that it can be put in localstorage
 }
 function initPreview() {
     "use strict";
@@ -30,9 +31,10 @@ function initPreview() {
     if (localStorage.bodyHeight === undefined || localStorage.bodyHeight === 0) {
         localStorage.bodyHeight = defaults.height[localStorage.player || defaults.player];
     }
-    preview.style.width = localStorage.bodyWidth*4 + "px";
+    preview.style.width = localStorage.bodyWidth*4 + "px"; // show all the panels, so *4
     preview.style.height = localStorage.bodyHeight + "px";
     preview.style.transform = "scale("+ (window.innerWidth * 0.8)/(localStorage.bodyWidth * 4) + ")";
+    // set it so that the preview iframe is scaled to always be at 80% of the window width
     
     preview.src = "new.htm";
     preview.addEventListener('load', () => {
@@ -41,20 +43,58 @@ function initPreview() {
         setTimeout(() => {
             preview.contentWindow.goToPanel(0);
         }, 0);
+        // goToPanel is in a nextTick wrapper to prevent bugs
     });
     
 }
+
+function initList() {
+    f('https://raw.githubusercontent.com/pvrs12/AnesidoraThemes/master/ThemeList.md').then((d) => {
+        var x = d.match(/#### (.+\n)*/g);
+        x.forEach((e) => {
+            var themeName = e.match(/#### .*/g)[0].substring(5);
+            let themeURL = 'https://pvrs12.github.io/AnesidoraThemes/' + e.match(/"[A-z \--`]*"/g)[0].substring(1).substring(0,e.match(/"[A-z \--`]*"/g)[0].substring(1).length-1);
+            var previewURL = 'https://pvrs12.github.io/AnesidoraThemes/' + e.match(/<img src=".*"/g)[0].substring(10).substring(0,e.match(/<img src=".*"/g)[0].substring(10).length-1);
+            
+            
+            var elem = document.createElement('a');
+            elem.classList.add('theme');
+            document.getElementById('themes').appendChild(elem);
+            elem.setAttribute('href','#');
+            
+            var name1 = document.createElement('div');
+            var name2 = document.createElement('span');
+            elem.appendChild(name1);
+            name1.appendChild(name2);
+            name2.innerText = themeName;
+            var img = document.createElement('img');
+            img.src = previewURL;
+            elem.appendChild(img);
+            
+            elem.addEventListener('click', () => {
+                f(themeURL).then((e) => {
+                    handleFileLoad('',e);
+                });
+            });
+            
+    });
+})
+}
+
 var controls = {};
 function initControls() {
     for (let i = 0; i < themeItems.length; i++) {
-        let a = {};
-        a.elem = document.createElement('div');
-        a.elem.classList.add('themeControl');
-        document.getElementById('themeControlsHolder').appendChild(a.elem);
-        a.label = document.createElement('label');
-        a.elem.appendChild(a.label);
-        a.label.innerText = themeItems[i].name;
-        a.desc = document.createElement('span');
+        // for each item in themeItems, generate a controller box based on the entry.
+        
+        let a = {}; // putting everything in one object because I'm lazy
+        a.elem = document.createElement('div'); // create a div element
+        a.elem.classList.add('themeControl');   // give it the themeControl class
+        document.getElementById('themeControlsHolder').appendChild(a.elem); 
+        // stick it as a child of #themeControlsHolder
+        a.label = document.createElement('label'); // make a label for the control
+        a.elem.appendChild(a.label);               // append it to the main div
+        a.label.innerText = themeItems[i].name;    // I would think this would be obvious
+        a.desc = document.createElement('span');   // I'm going to stop commenting this part, you can see what's going on
         a.desc.innerText = themeItems[i].desc;
         a.elem.appendChild(a.desc);
         a.input = document.createElement('input');
@@ -73,22 +113,30 @@ function initControls() {
     }
     
     document.getElementById('default').addEventListener('click', () => {
+        // this should be obvious
         themeInfo = {
-            'background': '#3a3a3a',
-            'font-family': 'Verdana, Arial, sans-serif',
-            'font-size': '12px',
-            'text-color': '#FFFFFF',
-            'inverse-color': '#000000',
-            'accent-color': '#00f782',
-            'accent-color-darker': '#00ae5c',
-            'tabSize': '20px',
-            'warning-bgcolor': '#ff3722',
-            'warning-color': '#FFFFFF',
-            'album-bg': '#6a6c26'
+        'background': '#3a3a3a',
+        'font-family': 'Verdana, Arial, sans-serif',
+        'font-size': '12px',
+        'text-color': '#FFFFFF',
+        'inverse-color': '#000000',
+        'accent-color': '#00f782',
+        'accent-color-darker': '#00ae5c',
+        'tabSize': '20px',
+        'warning-bgcolor': '#ff3722',
+        'warning-color': '#FFFFFF',
+        'album-bg': '#86aaae',
+        'button-color': '#ffffff',
+        'active-button-color': '#ffa700',
+        'album-color': '#000000'
         }
         for (let key in themeInfo) {
             setVar(key, themeInfo[key]);
-            controls[key].input.value = themeInfo[key];
+            if (controls[key]) {
+                controls[key].input.value = themeInfo[key];
+            } else {
+                console.log(key);
+            }
         }
     });
     document.getElementById('save').addEventListener('click', () => {
@@ -96,12 +144,12 @@ function initControls() {
     });
 }
 function setVar(cssVar, value) {
-    if (!previewLoaded) {
+    if (!previewLoaded) { // don't try to access the preview's inner DOM if it doesn't exist yet 
         return;
     }
-    preview.contentDocument.documentElement.style.setProperty('--'+cssVar, value);
+    preview.contentDocument.documentElement.style.setProperty('--'+cssVar, value); // set the appropriate CSS variable
 }
-var themeItems = [
+var themeItems = [ // all of the relevant controls.
     {
         'name': 'Background',
         'desc': 'The background of the player.',
@@ -201,28 +249,39 @@ var themeItems = [
 ]
 
 function export2json() {
+    // I believe something similar like this is done in the popups' js
+    
+    
     let data = JSON.parse(JSON.stringify(themeInfo)) // dereference
-    data["A comment to power-users"] = "You can set backgrounds to an image by setting 'background' or 'album-bg' to \"url('/path-to-image')\".";    
+    data["A comment to power-users"] = "You can set backgrounds to an image by setting 'background' or 'album-bg' to \"url('/path-to-image')\". This is just a list of CSS variables.";
+    // for those smart bois who directly edit the JSON ☞(˚▽˚)☞
     const a = document.createElement("a");
     a.href = URL.createObjectURL(new Blob([JSON.stringify(data, null, 2)], {
         type: "application/json"
     }));
-    a.setAttribute("download", "theme.json");
+    a.setAttribute("download", "theme.json"); 
     document.body.appendChild(a);
     a.click();
-    document.body.removeChild(a);
+    document.body.removeChild(a); // clean up after yourself
 }
 document.getElementById('inport').addEventListener('change', handleFileSelect, false);
 document.getElementById('export').addEventListener('click', export2json);
 
 function handleFileSelect(event){
-    const reader = new FileReader()
+    const reader = new FileReader() // honestly I have no clue what's going on here
     reader.onload = handleFileLoad;
     reader.readAsText(event.target.files[0])
 }
-function handleFileLoad(event){
+function f(url) {
+    return new Promise((resolve) => {
+        fetch(url).then((e) => {
+            e.text().then(resolve);
+        });
+    });
+}
+function handleFileLoad(event, oh){
     //verify file
-    let res = event.target.result;
+    let res = oh || event.target.result;
     try {
         JSON.parse(res);
     } catch(e) {
@@ -243,9 +302,12 @@ function handleFileLoad(event){
     // do stuff
     for (let key in themeInfo) {
         setVar(key, resParsed[key]);
-        controls[key].input.value = resParsed[key];
+        if (controls[key]) {
+            controls[key].input.value = resParsed[key];
+        }
     }
     themeInfo = resParsed;
 }
 initPreview();
 initControls();
+initList();

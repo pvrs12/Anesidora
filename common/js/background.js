@@ -5,9 +5,7 @@ var callback;
 var currentSong;
 var comingSong;
 var prevSongs = [];
-var stationImgs = (localStorage.stationImgs && JSON.parse(localStorage.stationImgs)) || {
-
-}
+var stationImgs = (localStorage.stationImgs && JSON.parse(localStorage.stationImgs)) || {}
 
 function setCallbacks(updatePlayer,drawPlayer,downloadSong){
     callback = {

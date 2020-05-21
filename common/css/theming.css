@@ -148,7 +148,7 @@ button#save:enabled:hover {
 }
 
 
-#content {
+.content {
     width: 80vw;
     padding: 20px;
     box-sizing: border-box;
@@ -228,7 +228,36 @@ input[type="color"] {
     opacity: 0;
 }
 
+.theme {
+    position: relative;
+    display: block;
+}
 
+.theme div {
+    position: absolute;
+    width: 100%;
+    text-align: center;
+    background: radial-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.1));
+    height: 100%;
+    display: flex;
+    align-items: center;
+    transition: opacity 250ms;
+    opacity: 0;
+}
+.theme div:hover {
+    opacity: 1;
+}
+
+.theme span {
+    width: 100%;
+    font-size: 3vw;
+    font-weight: bolder;
+    color: white;
+}
+
+.theme img {
+    width: 100%;
+}
 
 
 

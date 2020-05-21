@@ -311,7 +311,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
         localStorage.forceSecure = forceSecure.checked;
         
-        // prevent page refresh on save - each should do but I'm doing both
+        // prevent page refresh on save - either should do but I'm doing both
         e.preventDefault(e); 
         return false;
     });
