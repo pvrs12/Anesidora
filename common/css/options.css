@@ -4,12 +4,14 @@
     font-size: 12px; 
     font-weight:normal;
     scrollbar-color: rgba(249,249,250,.4) rgba(20,20,25,.3);
+    transition: color 250ms, background 250ms, border 250ms, box-shadow 250ms;
 }
 
 @media (prefers-color-scheme: dark) {
     :root {
         --bg-color: #202023;
         --color: white;
+        --border: rgba(249,249,250,0.2);
     }
 }
 
@@ -17,6 +19,7 @@
     :root {
         --bg-color: white;
         --color: black;
+        --border: rgba(0, 0, 0, 0.2);
     }
 }
 
@@ -46,8 +49,6 @@ form {
     margin-bottom: 2em;
     transition: all 100ms;
 }
-/* Maybe sometime later I'll make this look like the actual player instead of just a placeholder? */
-/* Later Hugh here - I DID */
 label {
     display: block;
     width: 50%;
@@ -62,17 +63,10 @@ input[type="number"], input[type="text"], select {
     padding: 5px 8px;
     margin: 2px 4px;
     -moz-appearance: none;
-    border: 1px solid rgba(249,249,250,0.2);
+    border: 1px solid var(--border);
     border-radius: 2px;
-    color: inherit;
-    background-color:  #202023;
     flex-grow: 1;
-}
-input:hover {
-    border-color: rgba(249,249,250,0.3) !important;
-}
-input:enabled:not(:focus):hover {
-    border-color: rgba(249,249,250,0.3)
+    transition: all 250ms;
 }
 input:focus {
     border-color: #0a84ff;
@@ -92,22 +86,16 @@ input:focus {
     transition: opacity 100ms;
 }
 
-input[type="checkbox"]:checked {
-    background-image: url("chrome://global/skin/icons/check.svg");
-    -moz-context-properties: fill;
-    fill: #2292d0;
-}
 
 input[type="checkbox"] {
     -moz-appearance: none;
     width: 20px;
     height: 20px;
     padding: 1px;
-    border: 1px solid rgba(249,249,250,0.2); 
+    border: 1px solid var(--border); 
     border-radius: 2px;
     margin: 0;
     margin-inline-end: 10px;
-    background-color: #202023;
     background-position: center;
     background-repeat: no-repeat;
     vertical-align: middle;
@@ -121,10 +109,7 @@ input[type="checkbox"]:not(:disabled):hover {
 button:focus,
 input[type="checkbox"]:focus {
   outline: 2px solid #0a84ff !important;
-  /* offset outline to align with 1px border-width set for buttons/menulists above. */
   outline-offset: -1px !important;
-  /* Make outline-radius slightly bigger than the border-radius set above,
-   * to make the thicker outline corners look smooth */
   -moz-outline-radius: 3px !important;
   box-shadow: 0 0 0 4px rgba(249,249,250,0.3) !important;
 }
@@ -134,10 +119,7 @@ button {
     margin-inline: 4px;
     -moz-appearance: none;
     min-height: 32px;
-    color: inherit !important;
-    border: 1px solid transparent;
     border-radius: 2px;
-    background-color: rgba(249,249,250,0.1);
     font-weight: 400;
     padding: 0 10px;
     text-decoration: none;
@@ -148,23 +130,12 @@ button {
     text-align: center;
 }
 
-button:enabled:hover, a:hover {
-    background-color: rgba(249,249,250,0.15);
-}
-
-button#save {
-    background-color: #0060df;
-    color: #FFF;
-}
-
-button#save:enabled:hover {
-    background-color: #003eaa;
-}
 
 #playerStyle {
     -moz-appearance: menulist;
     width: 37%;
 }
+
 form > div {
     display: flex;
     align-items: center;

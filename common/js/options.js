@@ -222,12 +222,6 @@ document.addEventListener("DOMContentLoaded", function() {
     bodyHeight = document.getElementById("bodyHeight");
     historyNum = document.getElementById("historyNum");
 
-    if(is_chrome()) {
-        // Update CSS on chrome because it doesn't play nice with dark mode
-        save_button.style.color = "auto";
-        document.documentElement.style.setProperty("--color", "auto");
-    }
-
     initHotkeys();
     initBodySize();
 
