@@ -137,6 +137,8 @@ button#save:enabled:hover {
 
 
 #preview{
+    padding-top:30px;
+
     overflow:hidden;
     background:none;
     position: relative;
