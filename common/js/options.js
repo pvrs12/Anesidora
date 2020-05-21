@@ -14,6 +14,7 @@ var minimums = {
         "old": 1
     }
 };
+
 var defaults = {
     player: "new",
     width: {
@@ -27,6 +28,22 @@ var defaults = {
     history: {
         "new": 20,
         "old": 10
+    },
+    theme: {
+        "background": "#3a3a3a",
+        "font-family": "Verdana, Arial, sans-serif",
+        "font-size": "12px",
+        "text-color": "#FFFFFF",
+        "inverse-color": "#000000",
+        "accent-color": "#00f782",
+        "accent-color-darker": "#00ae5c",
+        "tabSize": "20px",
+        "warning-bgcolor": "#ff3722",
+        "warning-color": "#FFFFFF",
+        "album-bg": "#86aaae",
+        "button-color": "#ffffff",
+        "active-button-color": "#ffa700",
+        "album-color": "#000000"
     }
 };
 
@@ -49,22 +66,7 @@ var historyNum;
 var background = get_browser().extension.getBackgroundPage();
 
 if (localStorage.themeInfo == undefined) {
-    localStorage.themeInfo = JSON.stringify({
-        "background": "#3a3a3a",
-        "font-family": "Verdana, Arial, sans-serif",
-        "font-size": "12px",
-        "text-color": "#FFFFFF",
-        "inverse-color": "#000000",
-        "accent-color": "#00f782",
-        "accent-color-darker": "#00ae5c",
-        "tabSize": "20px",
-        "warning-bgcolor": "#ff3722",
-        "warning-color": "#FFFFFF",
-        "album-bg": "#86aaae",
-        "button-color": "#ffffff",
-        "active-button-color": "#ffa700",
-        "album-color": "#000000"
-    });
+    localStorage.themeInfo = JSON.stringify(defaults.theme);
 }
 
 function secureWarning() {

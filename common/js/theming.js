@@ -6,22 +6,7 @@ var preview = document.getElementById("preview");
 
 var themeInfo = (localStorage.themeInfo !== undefined ? JSON.parse(localStorage.themeInfo) : undefined);
 if (themeInfo === undefined) {
-    themeInfo = {
-        "background": "#3a3a3a",
-        "font-family": "Verdana, Arial, sans-serif",
-        "font-size": "12px",
-        "text-color": "#FFFFFF",
-        "inverse-color": "#000000",
-        "accent-color": "#00f782",
-        "accent-color-darker": "#00ae5c",
-        "tabSize": "20px",
-        "warning-bgcolor": "#ff3722",
-        "warning-color": "#FFFFFF",
-        "album-bg": "#86aaae",
-        "button-color": "#ffffff",
-        "active-button-color": "#ffa700",
-        "album-color": "#000000"
-    };
+    themeInfo = defaults.theme;
     localStorage.themeInfo = JSON.stringify(themeInfo);
 }
 
@@ -77,22 +62,7 @@ function initControls() {
     }
 
     document.getElementById("default").addEventListener("click", () => {
-        themeInfo = {
-            "background": "#3a3a3a",
-            "font-family": "Verdana, Arial, sans-serif",
-            "font-size": "12px",
-            "text-color": "#FFFFFF",
-            "inverse-color": "#000000",
-            "accent-color": "#00f782",
-            "accent-color-darker": "#00ae5c",
-            "tabSize": "20px",
-            "warning-bgcolor": "#ff3722",
-            "warning-color": "#FFFFFF",
-            "album-bg": "#86aaae",
-            "button-color": "#ffffff",
-            "active-button-color": "#ffa700",
-            "album-color": "#000000"
-        };
+        themeInfo = defaults.theme;
         for (let key in themeInfo) {
             setVar(key, themeInfo[key]);
             controls[key].input.value = themeInfo[key];
@@ -163,6 +133,13 @@ var themeItems = [
         "name": "Tab Size",
         "desc": "The width of the buttons used to switch which panel you\"re on.",
         "property": "tabSize",
+        "func": function(a) { return a; }
+    },
+    {
+        "name": "Warning Color",
+        "desc": "The color of the text used for warnings in the player.",
+        "type": "color",
+        "property": "warning-color",
         "func": function(a) { return a; }
     },
     {
@@ -243,7 +220,8 @@ function handleFileLoad(event){
             return;
         }
     }
-    // do stuff
+
+    // update the page inputs and the CSS variables
     for (let key in themeInfo) {
         setVar(key, resParsed[key]);
         controls[key].input.value = resParsed[key];
