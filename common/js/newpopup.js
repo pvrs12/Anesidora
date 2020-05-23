@@ -256,15 +256,7 @@ function addStations() {
         nameSpan.textContent = station.stationName;
         let thisStation = station;
 
-        if (station.stationDetailUrl != "") {
-            cover.addEventListener("click", () => {
-                get_browser().tabs.create({
-                    "url": station.stationDetailUrl
-                });
-            });
-        }
-
-        playAction.addEventListener("click", () => {
+        function start_station() {
             background.nextSongStation(thisStation.stationToken);
             stationElem.classList.add("activeStation");
             if (lastActiveStation) {
@@ -272,12 +264,14 @@ function addStations() {
             }
             lastActiveStation = stationElem;
 
-            // This is due to a bug where switching stations doesn"t start the correct next song...
-            //yee haw lazy fixes!
-            // background.nextSong();
             goToPanel(1);
             handleSwitch();
-        });
+        }
+
+        //this used to open the "station detail URL". that never seemed to work
+        //and was confusing since it was expected to play the station.
+        cover.addEventListener("click", start_station);
+        playAction.addEventListener("click", start_station);
 
         //place station images or default image
         // if default, theme it with `icon`
