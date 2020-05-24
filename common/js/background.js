@@ -5,6 +5,9 @@ var callback;
 var currentSong;
 var comingSong;
 var prevSongs = [];
+var stationImgs = (localStorage.stationImgs && JSON.parse(localStorage.stationImgs)) || {
+
+};
 
 function setCallbacks(updatePlayer,drawPlayer,downloadSong){
     callback = {
@@ -18,8 +21,10 @@ function play(stationToken) {
     if (stationToken !== localStorage.lastStation) {
         currentSong = undefined;
         getPlaylist(stationToken);
+        //adding this so album covers get on the right location
+        let prev_station = localStorage.lastStation;
         localStorage.lastStation = stationToken;
-        nextSong();
+        nextSong(1, prev_station);
     } else {
         if (currentSong === undefined) {
             getPlaylist(localStorage.lastStation);
@@ -33,17 +38,39 @@ function play(stationToken) {
 }
 
 function nextSongStation(station) {
+    //adding this so album covers get on the right location
+    let prev_station = localStorage.lastStation;
     localStorage.lastStation = station;
     getPlaylist(localStorage.lastStation);
     comingSong = undefined;
-    nextSong();
+    //adding this so album covers get on the right location
+    nextSong(1, prev_station);
 }
 
-function nextSong(depth=1) {
+function nextSong(depth=1, prev_station=undefined) {
     if (depth > 4){
-        // console.log("What? We recursed down 4 times?");
         return;
     }
+    if (!prev_station) {
+        //if the "prev_station" does not have a definition
+        //then we didn't swap, use the existing one
+        prev_station = localStorage.lastStation;
+    }
+
+    /* I (hucario) put this over here so that history and station art works for every song change. */
+    if (currentSong) {
+        stationImgs[prev_station] = (currentSong.albumArtUrl || stationImgs[prev_station]) || "/images/new/default_album.svg"; 
+        // try for a new cover; if that doesn't work, keep the old; if there is no old, go for a default one
+        localStorage.stationImgs = JSON.stringify(stationImgs);
+        if (currentSong != prevSongs[prevSongs.length-1]) {
+            prevSongs.push(currentSong);
+            while(prevSongs.length > localStorage.historyNum){
+                prevSongs.shift();
+            }
+        }
+    }
+    /* /paste */
+
     if (currentPlaylist === undefined || currentPlaylist.length === 0) {
         getPlaylist(localStorage.lastStation);
     }
@@ -77,6 +104,7 @@ function nextSong(depth=1) {
             //purge the current list, then run this function again
             nextSong(depth + 1);
         }
+
         if (localStorage.notifications === "true") {
             var options = {
                 type: "list",
@@ -88,7 +116,7 @@ function nextSong(depth=1) {
                     { title: "", message: comingSong.artistName + " - " + comingSong.songName }
                 ]
             };
-    
+
             var xhr2 = new XMLHttpRequest();
             xhr2.open("GET", currentSong.albumArtUrl);
             xhr2.responseType = "blob";
@@ -105,12 +133,8 @@ function nextSong(depth=1) {
 function downloadSong() {
     var url = "";
     if (currentSong.additionalAudioUrl != null) {
-        // console.log("Downloading alternate url");
-        // console.log(currentSong);
         url = currentSong.additionalAudioUrl;
     } else {
-        // console.log("Downloading normal url");
-        // console.log(currentSong);
         url = currentSong.audioUrlMap.highQuality.audioUrl;
     }
     callback.downloadSong(url, currentSong.songName);
@@ -159,13 +183,6 @@ $(document).ready(function () {
             return;
         }
     }).bind("ended", function () {
-        if (currentSong.songRating != "1") {
-            prevSongs.push(currentSong);
-            //console.log("History Num = "+localStorage.historyNum);
-            while(prevSongs.length > localStorage.historyNum){
-                prevSongs.shift();
-            }
-        }
         nextSong();
     }).bind("timeupdate", function () {
         try {
@@ -177,10 +194,5 @@ $(document).ready(function () {
             return;
         }
     }).bind("error", function () {
-        //console.log(err);
-        //if (errorCount > 3) {
-        //  alert("There seems to be an issue with Anesidora. To prevent Pandora account lockout Anesidora has been stopped.");
-        //  return;
-        //}
     });
 });

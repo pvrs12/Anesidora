@@ -61,7 +61,7 @@ function getSyncTime(syncTime) {
     return parseInt(syncTime) + (now - clientStartTime);
 }
 
-function sendRequest(secure, encrypted, method, request, handler) {
+async function sendRequest(secure, encrypted, method, request, handler) {
     "use strict";
     var failed = false;
     var url, parameters;
@@ -98,9 +98,7 @@ function sendRequest(secure, encrypted, method, request, handler) {
                     partnerLogin();
                     break;
                 default:
-                    console.log(parameters);
-                    console.log(request);
-                    console.log(response);
+                    console.log("sendRequest failed: ",parameters, request, response);
                 }
                 if (method == "station.getPlaylist" && failed == false) {
                     getPlaylist(sessionStorage.currentStation);
@@ -236,12 +234,29 @@ function addFeedback(songNum, rating) {
     if (currentSong.songRating && rating) {  // Bug fix for addFeedback being executed by bind()
         return;
     }
+    if (!songNum || isNaN(songNum)) { // just in case
+        return;
+    }
+    
     let song;
     if (songNum === -1) {
         song = currentSong;
     } else {
         song = prevSongs[songNum];
     }
+    if (rating == song.songRating) {
+        return;
+    }
+    if (rating === true || rating === false) {
+    
+    } else if (rating < 0) {
+        rating = false;
+    } else if (rating == 0) {
+        return;
+    } else if (rating > 0) {
+        rating = true;
+    }
+
     let request = JSON.stringify({
         "trackToken": song.trackToken,
         "isPositive": rating,
@@ -267,8 +282,6 @@ function sleepSong() {
 
 function setQuickMix(mixStations) {
     "use strict";
-    // TODO: Test this XXX
-    // var mixStations_str = mixStations.toString().replace(/,/g, "','");
 
     let request = JSON.stringify({
         "quickMixStationIds": mixStations,
@@ -285,7 +298,6 @@ function handleSearch(response) {
 
 function search(searchString) {
     "use strict";
-    //searchString = searchString.replace("&", "&amp").replace("'", "&apos").replace("\"", "&quot").replace("<", "&lt").replace(">", "&gt");
 
     let request = JSON.stringify({
         "searchText": searchString,

@@ -29,3 +29,4 @@ rm ../anesidora_$1_chrome.zip
 jar -cMf ../anesidora_$1_chrome.zip *
 cd ..
 rm -rf chrome_build
+

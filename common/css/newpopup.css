@@ -1,0 +1,662 @@
+::-webkit-scrollbar {
+    width: 10px;
+}
+::-webkit-scrollbar-button:start:decrement, ::-webkit-scrollbar-button:end:increment {
+    visibility: hidden;
+}
+::-webkit-scrollbar-track-piece {
+    background-color: transparent;
+}
+::-webkit-scrollbar-thumb:vertical {
+    background-color: #8397aa;
+    border-radius: 5px;
+    -webkit-border-radius: 5px;
+    border: 2px solid white;
+    background-clip: padding-pox;
+    -webkit-background-clip: padding-box;
+}
+:root {
+    --width: 0px;
+    --height: 0px;
+    --transitiontime: 350ms;
+    --size: calc(var(--width) / 4);
+    --background: #3a3a3a;
+    --font-family: Verdana, Arial, sans-serif;
+    --font-size: 12px;
+    --text-color: white;
+    --inverse-color: black;
+    --accent-color: #00F782;
+    --accent-color-darker: #00AE5C;
+    --tabSize: 20px;
+    --warning-bgcolor: #ff3722;
+    --warning-color: white;
+    --album-bg: #6a6c26;
+    --button-color: white;
+    --active-button-color: #ffa700;
+    --album-color: red;
+}
+.container {
+    flex-grow: 1;
+    height: 100%;
+    background: var(--background);
+}
+.switch {
+    width: min-content;
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    z-index: 99;
+    pointer-events: none;
+}
+* {
+    outline: none;
+    box-sizing: content-box;
+}
+html {
+    padding: 0;
+    margin: 0;
+}
+body {
+    overflow:hidden;
+    padding: 0;
+    margin: 0;
+    overflow:hidden;
+    background:none;
+    font-family: var(--font-family);
+    font-size: var(--font-size);
+    text-decoration: none;
+    color: var(--text-color);
+    width: var(--width);
+    height: var(--height);
+}
+a {
+    font-family: var(--font-family);
+    font-size: var(--font-size);
+    text-decoration: none;
+    color: var(--text-color);
+    font-weight: bold;
+}
+a:hover {
+  text-decoration: underline;
+}
+.hoverImg:not([src="images/new/liked.svg"]):hover {
+    filter: blur(0.3px);
+    cursor: pointer;
+}
+.deadLink {
+    text-decoration: none;
+}
+#coverArt {
+    width: var(--width);
+    height: var(--width);
+}
+#anesidora{
+    position:absolute;
+    float:left;
+    width: var(--width);
+    height: var(--height);
+    /*! overflow: hidden; */
+    background: var(--background);
+}
+.scrollerContainer
+{
+    width: 200px;
+    position: absolute;
+    display: block;
+    overflow: hidden;
+    height: 2em;
+    font-size: calc(var(--font-size) + 5px);
+}
+.scrollerText
+{
+    left: 0px;
+    position: absolute;
+    white-space: nowrap;
+}
+.panel {
+    position: absolute;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: var(--width);
+    height: var(--height);
+    transition: left var(--transitiontime);
+}
+
+#historyDiv {
+    float: left;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+#stationHeaderDiv {
+    height: 30px;
+    width: 100%;
+}
+
+#stationFilterInput {
+    height: 36px;
+    vertical-align: middle;
+    box-sizing: border-box;
+    width: calc(100% - 51px) !important !important;
+}
+
+#stationRefreshButton {
+    vertical-align: middle;
+    border: solid 1px var(--accent-color);
+    padding: 7px;
+    height: 5%;
+    box-sizing: border-box;
+    height: 36px;
+    border-radius: 100%;
+    width: 36px;
+    margin-left: 1rem;
+}
+
+#stationListDiv {
+    height: calc(100% - 55px);
+    margin: 0;
+    overflow: auto;
+    
+}
+#stationList {
+    width: 100%;
+    height: 100%;
+}
+.innerInnerContainer > *{
+    display: inline-block;
+}
+#nowPlayingContainerCell {
+    width: 90%;
+    height: min-content;
+    margin-top: 0.6rem;
+    margin-bottom: -14px;
+}
+.scrollerContainer {
+    width: 100%;
+    position: relative;
+}
+.scrollerText {
+    transition: left 3s;
+    min-width: 100%;
+    text-align: center;
+}
+#scrubberCell {
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+}
+#coverLink {
+    padding: 0;
+    margin: 0;
+}
+#coverArt {
+    min-width: var(--width);
+    transition: width 350ms;
+    background-size: 100%;
+    background-repeat: no-repeat;
+}
+.slight-margin {
+    margin-left: 4%;
+    margin-right: 3%;
+}
+
+.innerContainer {
+    position: absolute;
+    width: 100%;
+    bottom: 0;
+    height: calc(100% - var(--width));
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+
+#coverLinkCell {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    margin: 0;
+}
+#scrubber {
+    border-radius: 0;
+    border: 0;
+}
+.ui-slider-handle {
+    opacity: 0;
+}
+.ui-slider-horizontal .ui-slider-range {
+    border: 0;
+    border-radius: 0;
+    background: var(--accent-color);
+}
+
+.hoverImg {
+    width: calc(var(--width)/8);
+    fill: white;
+}
+.switch > * {
+    pointer-events: auto;
+}
+#prevTab, #nextTab {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    pointer-events: none;
+    background: none;
+}
+#prevTab > span, #nextTab > span {
+    opacity: 0.5;
+    display: inline-block;
+    width: var(--tabSize);
+    height: var(--tabSize);
+    background: transparent no-repeat center center;
+    background-size: 100% 100%;
+    pointer-events: all;
+        transition: opacity 250ms;
+        z-index:99;
+        filter: drop-shadow(0px 0px 2px black) drop-shadow(0px 0px 2px black);
+}
+#prevTab > span:hover, #nextTab > span:hover {
+    opacity: 0.9;
+}
+
+#prevTab {
+    left: 0;
+}
+#nextTab {
+    right: 0;
+}
+#prevTab > span {
+    background-image: url("/images/new/leftarrow.svg");
+}
+#nextTab > span {
+    background-image: url("/images/new/rightarrow.svg");
+}
+
+.labeled-input {
+    width: min-content;
+    position: relative;
+    padding-top: 1em;
+}
+.labeled-input > label {
+    position: absolute;
+    top: 5px;
+    left: 0.7rem;
+    color: var(--color);
+    text-transform: uppercase;
+    font-family: sans-serif;
+    font-size: 0.7rem;
+    background: var(--background);
+    padding: 0.1em;
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+    user-select: none;
+}
+.labeled-input > input, #save {
+    background: none;
+    border: solid 1px var(--accent-color);
+    height: 1.2em;
+    font-size: larger;
+    padding: 7px;
+    box-sizing: content-box;
+    border-radius: 13px;
+    color: var(--text-color);
+    width: auto !important;
+    transition: all 250ms;
+}
+
+#rightPanel > .container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+#save {
+    margin-top: 1em;
+    padding: 5px 15px !important;
+    font-weight: bold;
+    transition: all 250ms;
+}
+#login {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    width: 100%;
+}
+#save:hover {
+    background: var(--accent-color);
+    color: var(--inverse-color);
+}
+#save:focus {
+    filter: drop-shadow(0px 0px 5px var(--accent-color));
+}
+#pwWarning, #unWarning {
+    position: absolute;
+    top: 50%;
+    left: -20px;
+}
+#save:active {
+    filter: drop-shadow(0px 0px 5px var(--accent-color));
+}
+#login a {
+    margin-top: 1em;
+}
+.labeled-input {
+}
+#login:before {
+    content: "Log into Pandora";
+    font-size: 24px;
+}
+.labeled-input > input:focus {
+    border: solid 1px var(--accent-color-darker);
+}
+.labeled-input.warning::before {
+    opacity: 1;
+}
+.labeled-input::before {
+    position: absolute;
+    left: -1.5em;
+    z-index: 100;
+    top: 50%;
+    background: var(--warning-bgcolor);
+    color: var(--warning-color);
+    content: "!";
+    width: 13px;
+    height: 13px;
+    border-radius: 100%;
+    text-align: center;
+    font-weight: bolder;
+    opacity: 0;
+    transition: opacity 250ms;
+}
+
+
+.historyCover {
+    width: var(--size) !important;
+    height: var(--size) !important;
+    background-size: 100% !important;
+    background-color: var(--album-bg) !important;
+    display: inline-block;
+}
+.historyOverlay {
+    width: 100%;
+    height: 100%;
+    background: none;
+    transition: all 250ms;
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    opacity: 0;
+    z-index: 14;
+    position: absolute;
+    top: 0;
+}
+.actions > div {
+    width: var(--imgsize);
+    height: var(--imgsize);
+    /*! background: white; */
+    margin: calc(var(--imgsize)/10);
+    pointer-events: all;
+    cursor: pointer;
+    --imgsize: calc(var(--size) / 4);
+}
+.actions > div > span {
+    --icon-size: calc(var(--size) / 4) !important;
+}
+.actions {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    height: 100%;
+}
+
+
+.historyItem {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    width: var(--size);
+    padding: 3%;
+    cursor: default;
+    user-select: none;
+    flex: 0;
+    height: min-content;
+    border: 0;
+    margin: 0;
+}
+.historyItem > span {
+    font-weight: bolder;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 0px 0px 4px 4px;
+    width: 100%;
+    text-align: center;
+    user-select: text;
+    padding: 4px 0px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+* {
+    user-select: none;
+}
+span, a, #nowPlayingContainerCell, #nowPlayingContainer, #nowPlaying {
+    user-select: text;
+}
+
+.holder {
+    position: relative;
+    width: var(--size);
+    height: var(--size);
+}
+.holder:hover .historyOverlay {
+    opacity: 1;
+    background: radial-gradient(rgba(0,0,0,0.8),rgba(0,0,0,0.1));
+}
+
+
+#stationHeaderdiv {
+    width: 90%;
+    overflow: hidden;
+    height: 26px;
+    padding: 13px;
+    margin-bottom: 0px;
+    display: flex;
+}
+
+@keyframes rotate {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+#stationHeaderdiv > label {
+    left: 25px;
+}
+
+.flex-2 {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+
+
+/* Make it default onto the player controls */
+#historyPanel {
+    left: calc(var(--width) * -1);
+}
+#leftPanel {
+    left: 0;
+}
+#midPanel {
+    left: calc(var(--width) * 1);
+}
+#rightPanel {
+    left: calc(var(--width) * 2);
+}
+
+/* Make an empty history panel look less janky */
+
+#historyDiv:empty:before {
+    content: "History is empty";
+    width: 100%;
+    text-align: center;
+    display: block;
+    font-size: calc(var(--width) / 7);
+    color: rgba(255,255,255,0.3);
+    animation: fadeIn 500ms ease-in-out;
+}
+#historyDiv:empty {
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+}
+
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+/* Volume */
+
+#volumeCell > img {
+    width: calc(var(--width) / 10);
+    pointer-events: none;
+}
+#volume {
+    width: calc(var(--width)/2);
+    border: 0;
+}
+#volumeCell {
+    display: flex;
+    align-items: center;
+    padding: 0;
+    margin: 0;
+    margin-top: -8px;
+}
+#volume .ui-slider-handle {
+    opacity: 1;
+    background: white;
+    border: 0;
+    height: 10px;
+    width: 10px;
+    top: -3px;
+    border-radius: 100%;
+}
+
+.activeStation {
+    filter: drop-shadow(0px 0px 7px var(--accent-color));
+    transition: filter 250ms;
+}
+
+/* Icons */
+.icon, .icon > span {
+    --icon-size: calc(var(--width) / 8);
+}
+.icon {
+    width: var(--icon-size);
+    height: var(--icon-size);
+    overflow: hidden;
+}
+
+.icon > span {
+    margin-left: -100%;
+    display: block;
+    width: var(--icon-size);
+    height: var(--icon-size);
+    background-image: url("/images/new/default_album.svg");
+    background-size: 100%;
+    background-position: -100% 0;
+    filter: drop-shadow(var(--icon-size) 0px var(--button-color));
+}
+
+#coverArt > span {
+    background-image: url("/images/new/default_album.svg");
+}
+#playButton > span {
+    background-image: url("/images/new/play.svg");
+}
+#pauseButton > span {
+    background-image: url("/images/new/pause.svg");
+}
+#skipButton > span {
+    background-image: url("/images/new/forward.svg");
+}
+#tUpButton > span {
+    background-image: url("/images/new/like.svg");
+}
+#tDownButton > span {
+    background-image: url("/images/new/dislike.svg");
+}
+#sleepButton > span {
+    background-image: url("/images/new/hourglass.svg");
+}
+#downloadButton > span {
+    background-image: url("/images/new/download.svg");
+}
+#moreInfoButton > span {
+    background-image: url("/images/new/settings.svg");
+}
+#volIcon > span {
+    background-image: url("/images/new/volume.svg");
+}
+#stationRefreshButton > span {
+    background-image: url("/images/new/refreshStationList.svg");
+    --icon-size: calc(36px - 14px) !important;
+    margin-left: -230%;
+    background-position: -100% 0;
+    filter: drop-shadow(calc(calc(var(--icon-size) * 2) + 2px) -1px var(--button-color));
+}
+.stationPlay > span {
+    background-image: url("/images/new/player.svg");
+    filter: drop-shadow(calc(var(--icon-size) + 2px) 0px var(--button-color));
+}
+.historyCover > span {
+    background-image: url("/images/new/default_album.svg");
+    filter: drop-shadow(var(--icon-size) 0px var(--album-color));
+}
+.like > span {
+    background-image: url("/images/new/like.svg");
+}
+.liked > span {
+    background-image: url("/images/new/liked.svg");
+    filter: drop-shadow(var(--icon-size) 0px var(--active-button-color));
+}
+.download > span {
+    background-image: url("/images/new/download.svg");
+}
+.dislike > span {
+    background-image: url("/images/new/dislike.svg");
+}
+.disliked > span {
+    background-image: url("/images/new/disliked.svg");
+    filter: drop-shadow(var(--icon-size) 0px var(--active-button-color));
+}
+#coverArt > span {
+    --icon-size:  var(--width);
+    filter: drop-shadow(var(--icon-size) 0px var(--album-color));
+}
+.historyCover > span {
+    --icon-size: var(--size);
+}
+#coverArt[style*="background"] > span {
+    opacity: 0;
+}
+#coverArt:not([style*="background"]) {
+    background: var(--album-bg);
+}

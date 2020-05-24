@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="48"
+   height="48"
+   viewBox="0 0 48 48.000001"
+   id="svg6485"
+   version="1.1"
+   inkscape:version="0.92.4 (unknown)"
+   sodipodi:docname="play.svg">
+  <defs
+     id="defs6487">
+    <inkscape:path-effect
+       is_visible="true"
+       id="path-effect4239"
+       effect="spiro" />
+    <inkscape:path-effect
+       effect="spiro"
+       id="path-effect4223"
+       is_visible="true" />
+    <inkscape:path-effect
+       is_visible="true"
+       id="path-effect4217"
+       effect="spiro" />
+    <inkscape:path-effect
+       effect="spiro"
+       id="path-effect4213"
+       is_visible="true" />
+    <inkscape:path-effect
+       effect="spiro"
+       id="path-effect5296"
+       is_visible="true" />
+    <inkscape:path-effect
+       effect="spiro"
+       id="path-effect7060"
+       is_visible="true" />
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="9.3582079"
+     inkscape:cx="27.419558"
+     inkscape:cy="21.056228"
+     inkscape:document-units="px"
+     inkscape:current-layer="g7163"
+     showgrid="true"
+     units="px"
+     inkscape:window-width="1230"
+     inkscape:window-height="1000"
+     inkscape:window-x="50"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:snap-global="true"
+     showguides="true"
+     inkscape:guide-bbox="true">
+    <inkscape:grid
+       type="xygrid"
+       id="grid4157"
+       empspacing="6" />
+  </sodipodi:namedview>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,-1004.3622)">
+    <g
+       id="g7163">
+      <g
+         id="g7158"
+         style="paint-order:markers fill stroke;fill:#ffffff;fill-opacity:1;stroke:none;stroke-opacity:1">
+        <g
+           id="g7154"
+           style="paint-order:markers fill stroke;fill:#ffffff;fill-opacity:1;stroke:none;stroke-opacity:1">
+          <path
+             id="path4719"
+             d="m 32.519202,1030.8814 -7.712299,-2.0665 -7.712299,-2.0665 5.645795,-5.6458 5.645795,-5.6458 2.066504,7.7123 z"
+             inkscape:transform-center-y="0.0010783987"
+             inkscape:transform-center-x="-1.5266248"
+             style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1.34535563;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:markers fill stroke"
+             transform="matrix(0.25002577,-1.24201,-0.93394887,-0.33249629,973.62461,1401.2498)" />
+          <path
+             id="rect7519"
+             transform="translate(0,1004.3622)"
+             d="M 7 2 C 4.23 2 2 4.2299905 2 7 L 2 41 C 2 43.77001 4.23 46 7 46 L 41 46 C 43.77 46 46 43.77001 46 41 L 46 7 C 46 4.2299905 43.77 2 41 2 L 7 2 z M 10.207031 6.1503906 L 37.792969 6.1503906 C 40.040316 6.1503906 41.849609 7.9596766 41.849609 10.207031 L 41.849609 37.792969 C 41.849609 40.040323 40.040316 41.849609 37.792969 41.849609 L 10.207031 41.849609 C 7.9596843 41.849609 6.1503906 40.040323 6.1503906 37.792969 L 6.1503906 10.207031 C 6.1503906 7.9596766 7.9596843 6.1503906 10.207031 6.1503906 z "
+             style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:markers fill stroke" />
+        </g>
+      </g>
+    </g>
+  </g>
+  <metadata
+     id="metadata17">
+    <rdf:RDF>
+      <rdf:Description
+         about="https://iconscout.com/legal#licenses"
+         dc:title="music-media-stap-video-play"
+         dc:description="music-media-stap-video-play"
+         dc:publisher="Iconscout"
+         dc:date="2016-12-29"
+         dc:format="image/svg+xml"
+         dc:language="en">
+        <dc:creator>
+          <rdf:Bag>
+            <rdf:li>Devendra Karkar</rdf:li>
+          </rdf:Bag>
+        </dc:creator>
+      </rdf:Description>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+</svg>
