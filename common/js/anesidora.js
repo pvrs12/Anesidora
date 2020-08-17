@@ -244,9 +244,6 @@ function addFeedback(songNum, rating) {
     } else {
         song = prevSongs[songNum];
     }
-    if (rating == song.songRating) {
-        return;
-    }
     if (rating === true || rating === false) {
     
     } else if (rating < 0) {
@@ -257,6 +254,10 @@ function addFeedback(songNum, rating) {
         rating = true;
     }
 
+    if (rating && rating == song.songRating) {
+        return;
+    }
+    
     let request = JSON.stringify({
         "trackToken": song.trackToken,
         "isPositive": rating,
