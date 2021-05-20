@@ -61,7 +61,7 @@ function getSyncTime(syncTime) {
     return parseInt(syncTime) + (now - clientStartTime);
 }
 
-async function sendRequest(secure, encrypted, method, request, handler) {
+function sendRequest(secure, encrypted, method, request, handler) {
     "use strict";
     var failed = false;
     var url, parameters;
@@ -89,6 +89,9 @@ async function sendRequest(secure, encrypted, method, request, handler) {
         contentType: "text/plain",
         data: new_request,
         dataType: "json",
+        headers: {
+            "User-Agent": "libcurl" //https://github.com/pvrs12/Anesidora/issues/67
+        },
         success: function (response, status, xhr) {
             if (response.stat === "fail") {
                 switch (response.code) {
