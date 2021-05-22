@@ -1,6 +1,8 @@
 /*globals $, encrypt, decrypt, currentSong, play, prevSongs*/
 /*exported addFeedback, explainTrack, search, createStation, sleepSong, setQuickMix, deleteStation */
 
+let dontRetryPartnerLogin = false;
+
 //https://stackoverflow.com/questions/610406/javascript-equivalent-to-printf-string-format#4673436
 if (!String.prototype.format) {
     String.prototype.format = function() {
@@ -82,36 +84,34 @@ function sendRequest(secure, encrypted, method, request, handler) {
         parameters = "";
     }
     let new_request = encrypted ? encrypt(request) : request;
-    $.ajax({
-        async: false,
-        type: "POST",
-        url: url + method + parameters,
-        contentType: "text/plain",
-        data: new_request,
-        dataType: "json",
+    fetch(url + method + parameters, {
+        method: 'POST',
         headers: {
-            "User-Agent": "libcurl" //https://github.com/pvrs12/Anesidora/issues/67
+            "Content-Type": encrypted ? 'text/plain' : 'application/json'
         },
-        success: function (response, status, xhr) {
-            if (response.stat === "fail") {
-                switch (response.code) {
-                case 0:
-                    return;
-                case 1001:
+        body: new_request
+    }).then(b => b.json()).then(response => {
+        if (response.stat === "fail") {
+            switch (response.code) {
+            case 0:
+                return;
+            case 1001:
+                if (!dontRetryPartnerLogin) {
                     partnerLogin();
-                    break;
-                default:
-                    console.log("sendRequest failed: ",parameters, request, response);
+                    dontRetryPartnerLogin = true;
                 }
-                if (method == "station.getPlaylist" && failed == false) {
-                    getPlaylist(sessionStorage.currentStation);
-                    failed = true;
-                }
-            } else {
-                handler(response, status, xhr);
+                break;
+            default:
+                console.log("sendRequest failed: ",parameters, request, response);
             }
+            if (method == "station.getPlaylist" && failed == false) {
+                getPlaylist(sessionStorage.currentStation);
+                failed = true;
+            }
+        } else {
+            handler(response); 
         }
-    });
+    })
 }
 
 function handleGetStationList(response) {
