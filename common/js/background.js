@@ -1,6 +1,28 @@
 /*global $, partnerLogin, getPlaylist, mp3Player, currentPlaylist, platform_specific, get_browser, is_android*/
 /*exported setCallbacks, play, downloadSong, nextSongStation*/
 
+
+get_browser().webRequest.onBeforeSendHeaders.addListener(
+    function(details) {
+        const h = details.requestHeaders;
+        for (let header of h) {
+            if (header.name.toLowerCase() === "user-agent") {
+                header.value = "libcurl";
+            }
+        }
+        return {requestHeaders: h};
+    },
+    {
+        urls: [
+            "http://*.pandora.com/*",
+            "https://*.pandora.com/*",
+            "http://*.p-cdn.com/*",
+            "http://*.p-cdn.us/*"
+        ]
+    },
+    ['blocking', 'requestHeaders']
+);
+
 var callback;
 var currentSong;
 var comingSong;
