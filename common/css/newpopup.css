@@ -16,8 +16,8 @@
     -webkit-background-clip: padding-box;
 }
 :root {
-    --width: 0px;
-    --height: 0px;
+    --width: 0;
+    --height: 0;
     --transitiontime: 350ms;
     --size: calc(var(--width) / 4);
     --background: #3a3a3a;
@@ -75,14 +75,10 @@ a {
     font-size: var(--font-size);
     text-decoration: none;
     color: var(--text-color);
-    font-weight: bold;
+    font-weight: lighter;
 }
 a:hover {
   text-decoration: underline;
-}
-.hoverImg:not([src="images/new/liked.svg"]):hover {
-    filter: blur(0.3px);
-    cursor: pointer;
 }
 .deadLink {
     text-decoration: none;
@@ -90,10 +86,10 @@ a:hover {
 #coverArt {
     width: var(--width);
     height: var(--width);
+    display: block;
 }
 #anesidora{
     position:absolute;
-    float:left;
     width: var(--width);
     height: var(--height);
     /*! overflow: hidden; */
@@ -110,7 +106,7 @@ a:hover {
 }
 .scrollerText
 {
-    left: 0px;
+    left: 0;
     position: absolute;
     white-space: nowrap;
 }
@@ -125,7 +121,6 @@ a:hover {
 }
 
 #historyDiv {
-    float: left;
     overflow-x: hidden;
     overflow-y: auto;
 }
@@ -139,19 +134,19 @@ a:hover {
     height: 36px;
     vertical-align: middle;
     box-sizing: border-box;
-    width: calc(100% - 51px) !important !important;
+    width: 0;
+    flex-grow: 1;
 }
 
 #stationRefreshButton {
     vertical-align: middle;
     border: solid 1px var(--accent-color);
-    padding: 7px;
-    height: 5%;
     box-sizing: border-box;
     height: 36px;
     border-radius: 100%;
     width: 36px;
     margin-left: 1rem;
+    margin-right: 1rem;
 }
 
 #stationListDiv {
@@ -166,6 +161,7 @@ a:hover {
 }
 .innerInnerContainer > *{
     display: inline-block;
+    margin: calc(var(--size) / 20);
 }
 #nowPlayingContainerCell {
     width: 90%;
@@ -198,6 +194,7 @@ a:hover {
     transition: width 350ms;
     background-size: 100%;
     background-repeat: no-repeat;
+    display: block;
 }
 .slight-margin {
     margin-left: 4%;
@@ -235,8 +232,7 @@ a:hover {
 }
 
 .hoverImg {
-    width: calc(var(--width)/8);
-    fill: white;
+    color: var(--button-color);
 }
 .switch > * {
     pointer-events: auto;
@@ -261,7 +257,7 @@ a:hover {
     pointer-events: all;
         transition: opacity 250ms;
         z-index:99;
-        filter: drop-shadow(0px 0px 2px black) drop-shadow(0px 0px 2px black);
+        filter: drop-shadow(0 0 2px black) drop-shadow(0 0 2px black);
 }
 #prevTab > span:hover, #nextTab > span:hover {
     opacity: 0.9;
@@ -321,7 +317,7 @@ a:hover {
 #save {
     margin-top: 1em;
     padding: 5px 15px !important;
-    font-weight: bold;
+    font-weight: lighter;
     transition: all 250ms;
 }
 #login {
@@ -335,20 +331,19 @@ a:hover {
     color: var(--inverse-color);
 }
 #save:focus {
-    filter: drop-shadow(0px 0px 5px var(--accent-color));
+    filter: drop-shadow(0 0 5px var(--accent-color));
 }
 #pwWarning, #unWarning {
     position: absolute;
-    top: 50%;
-    left: -20px;
+    top: 35%;
+    left: -17%;
+    font-size: 2em;
 }
 #save:active {
-    filter: drop-shadow(0px 0px 5px var(--accent-color));
+    filter: drop-shadow(0 0 5px var(--accent-color));
 }
 #login a {
     margin-top: 1em;
-}
-.labeled-input {
 }
 #login:before {
     content: "Log into Pandora";
@@ -384,6 +379,11 @@ a:hover {
     background-size: 100% !important;
     background-color: var(--album-bg) !important;
     display: inline-block;
+    position: absolute;
+}
+.historyCover i {
+    position: absolute;
+    font-size: var(--size);
 }
 .historyOverlay {
     width: 100%;
@@ -398,15 +398,29 @@ a:hover {
     z-index: 14;
     position: absolute;
     top: 0;
+    background: radial-gradient(rgba(0,0,0,0.8),rgba(0,0,0,0.1));
 }
-.actions > div {
+.actions > div, .actions > a {
     width: var(--imgsize);
     height: var(--imgsize);
     /*! background: white; */
     margin: calc(var(--imgsize)/10);
     pointer-events: all;
     cursor: pointer;
-    --imgsize: calc(var(--size) / 4);
+    --imgsize: calc(var(--size) / 2);
+    font-size: var(--imgsize);
+}
+.bx-download:hover {
+    text-decoration: none;
+}
+.bxs-like, .bxs-dislike {
+    color: var(--active-button-color);
+}
+.hoverImg:not([class*="bxs"]):hover {
+    color: var(--accent-color);
+}
+.hoverImg {
+    transition: color 250ms;
 }
 .actions > div > span {
     --icon-size: calc(var(--size) / 4) !important;
@@ -417,7 +431,21 @@ a:hover {
     align-items: center;
     height: 100%;
 }
+.hoverImg {
+    cursor: pointer;
+}
 
+#historyDiv .actions > div, #historyDiv .actions > a {
+    --imgsize: calc(var(--size) / 4) !important;
+}
+
+button {
+    border: 0;
+    background: none;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
 .historyItem {
     display: inline-flex;
@@ -433,16 +461,17 @@ a:hover {
     margin: 0;
 }
 .historyItem > span {
-    font-weight: bolder;
+    font-weight: lighter;
     background: rgba(255, 255, 255, 0.1);
-    border-radius: 0px 0px 4px 4px;
+    border-radius: 0 0 4px 4px;
     width: 100%;
     text-align: center;
     user-select: text;
-    padding: 4px 0px;
+    padding: 4px 8px;
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
+    box-sizing: border-box;
 }
 * {
     user-select: none;
@@ -458,8 +487,8 @@ span, a, #nowPlayingContainerCell, #nowPlayingContainer, #nowPlaying {
 }
 .holder:hover .historyOverlay {
     opacity: 1;
-    background: radial-gradient(rgba(0,0,0,0.8),rgba(0,0,0,0.1));
 }
+
 
 
 #stationHeaderdiv {
@@ -467,7 +496,7 @@ span, a, #nowPlayingContainerCell, #nowPlayingContainer, #nowPlaying {
     overflow: hidden;
     height: 26px;
     padding: 13px;
-    margin-bottom: 0px;
+    margin-bottom: 0;
     display: flex;
 }
 
@@ -492,7 +521,7 @@ span, a, #nowPlayingContainerCell, #nowPlayingContainer, #nowPlaying {
 }
 
 
-/* Make it default onto the player controls */
+/* Make it default onto the player controls 
 #historyPanel {
     left: calc(var(--width) * -1);
 }
@@ -505,6 +534,7 @@ span, a, #nowPlayingContainerCell, #nowPlayingContainer, #nowPlaying {
 #rightPanel {
     left: calc(var(--width) * 2);
 }
+*/
 
 /* Make an empty history panel look less janky */
 
@@ -560,103 +590,10 @@ span, a, #nowPlayingContainerCell, #nowPlayingContainer, #nowPlaying {
 }
 
 .activeStation {
-    filter: drop-shadow(0px 0px 7px var(--accent-color));
+    filter: drop-shadow(0 0 7px var(--accent-color));
     transition: filter 250ms;
 }
 
-/* Icons */
-.icon, .icon > span {
-    --icon-size: calc(var(--width) / 8);
-}
-.icon {
-    width: var(--icon-size);
-    height: var(--icon-size);
-    overflow: hidden;
-}
-
-.icon > span {
-    margin-left: -100%;
-    display: block;
-    width: var(--icon-size);
-    height: var(--icon-size);
-    background-image: url("/images/new/default_album.svg");
-    background-size: 100%;
-    background-position: -100% 0;
-    filter: drop-shadow(var(--icon-size) 0px var(--button-color));
-}
-
-#coverArt > span {
-    background-image: url("/images/new/default_album.svg");
-}
-#playButton > span {
-    background-image: url("/images/new/play.svg");
-}
-#pauseButton > span {
-    background-image: url("/images/new/pause.svg");
-}
-#skipButton > span {
-    background-image: url("/images/new/forward.svg");
-}
-#tUpButton > span {
-    background-image: url("/images/new/like.svg");
-}
-#tDownButton > span {
-    background-image: url("/images/new/dislike.svg");
-}
-#sleepButton > span {
-    background-image: url("/images/new/hourglass.svg");
-}
-#downloadButton > span {
-    background-image: url("/images/new/download.svg");
-}
-#moreInfoButton > span {
-    background-image: url("/images/new/settings.svg");
-}
-#volIcon > span {
-    background-image: url("/images/new/volume.svg");
-}
-#stationRefreshButton > span {
-    background-image: url("/images/new/refreshStationList.svg");
-    --icon-size: calc(36px - 14px) !important;
-    margin-left: -230%;
-    background-position: -100% 0;
-    filter: drop-shadow(calc(calc(var(--icon-size) * 2) + 2px) -1px var(--button-color));
-}
-.stationPlay > span {
-    background-image: url("/images/new/player.svg");
-    filter: drop-shadow(calc(var(--icon-size) + 2px) 0px var(--button-color));
-}
-.historyCover > span {
-    background-image: url("/images/new/default_album.svg");
-    filter: drop-shadow(var(--icon-size) 0px var(--album-color));
-}
-.like > span {
-    background-image: url("/images/new/like.svg");
-}
-.liked > span {
-    background-image: url("/images/new/liked.svg");
-    filter: drop-shadow(var(--icon-size) 0px var(--active-button-color));
-}
-.download > span {
-    background-image: url("/images/new/download.svg");
-}
-.dislike > span {
-    background-image: url("/images/new/dislike.svg");
-}
-.disliked > span {
-    background-image: url("/images/new/disliked.svg");
-    filter: drop-shadow(var(--icon-size) 0px var(--active-button-color));
-}
-#coverArt > span {
-    --icon-size:  var(--width);
-    filter: drop-shadow(var(--icon-size) 0px var(--album-color));
-}
-.historyCover > span {
-    --icon-size: var(--size);
-}
-#coverArt[style*="background"] > span {
-    opacity: 0;
-}
-#coverArt:not([style*="background"]) {
-    background: var(--album-bg);
+.bx {
+    font-size: 2rem;
 }

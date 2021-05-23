@@ -2,6 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="utf-8">
+    <base target="_blank">
     <title>Anesidora</title>
     <script src="/js/jquery/jquery-3.3.1.min.js" type="text/javascript"></script>
     <script src="/js/jquery/jquery-ui.min.js" type="text/javascript"></script>
@@ -12,6 +13,7 @@
 
     <link href="css/newpopup.css" rel="stylesheet" type="text/css" />
     <link href="css/anesidora/jquery-ui-1.8.6.custom.css" rel="stylesheet" type="text/css" />
+    <link href='https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css' rel='stylesheet'>
 </head>
 <body style="resize:both">
     <div id="anesidora">
@@ -30,14 +32,14 @@
             <div class="popup container">
                 <div id="coverLinkCell" class="slight-margin"> 
                     <a id="coverLink" href="#">
-                        <div class="icon" title="Click to view album details" id="coverArt">
+                        <a class="icon" title="Click to view album details" id="coverArt" target="_blank">
                             <span></span>
-                        </div>
+                        </a>
                     </a> 
                 </div>
                 <div class="innerContainer">
                     <div class="grid-cell" id="scrubberCell">
-                        <div id="scrubber"></div>
+                        <input type="range" min="0" max="100" id="scrubber">
                     </div>
                     <div class="flex-2">
                         <div class="grid-cell" id="nowPlayingContainerCell">
@@ -51,49 +53,49 @@
                         </div>
                         <div class="innerInnerContainer">
                             <div class="playPauseButtonCell grid-cell">
-                                <div title="Play" id="playButton" class="hoverImg icon">
-                                    <span></span>
-                                </div>
-                                <div title="Pause" id="pauseButton" style="display:none" class="hoverImg icon">
-                                    <span></span>
-                                </div>
+                                <button title="Play" id="playButton" class="hoverImg icon">
+                                    <i class='bx bx-play' ></i>
+                                </button>
+                                <button title="Pause" id="pauseButton" style="display:none" class="hoverImg icon">
+                                    <i class='bx bx-pause' ></i>
+                                </button>
                             </div>
                             <div class="skipButtonCell grid-cell">
-                                <div title="Next song" id="skipButton" class="hoverImg icon" >
-                                    <span></span>
-                                </div>
+                                <button title="Next song" id="skipButton" class="hoverImg icon" >
+                                    <i class='bx bx-skip-next' ></i>
+                                </button>
                             </div>
                             <div class="tUpButtonCell grid-cell">
-                                <div title="Like this song" id="tUpButton" class="hoverImg icon" >
-                                    <span></span>
-                                </div>
+                                <button title="Like this song" id="tUpButton" class="hoverImg icon" >
+                                    <i class='bx bx-like' ></i>
+                                </button>
                             </div>
                             <div class="tDownButtonCell grid-cell">
-                                <div title="Dislike this song" id="tDownButton" class="hoverImg icon" >
-                                    <span></span>
-                                </div>
+                                <button title="Dislike this song" id="tDownButton" class="hoverImg icon" >
+                                    <i class='bx bx-dislike' ></i>
+                                </button>
                             </div>
                             <div class="sleepButtonCell grid-cell"> 
-                                <div title="I'm tired of this song" id="sleepButton" class="hoverImg icon">
-                                    <span></span>
-                                </div>
+                                <button title="I'm tired of this song" id="sleepButton" class="hoverImg icon">
+                                    <i class='bx bx-hourglass'></i>
+                                </button>
                             </div>
                             <div class="downloadButtonCell grid-cell">
-                                <div title="Download this song" id="downloadButton" class="hoverImg icon" >
-                                    <span></span>
-                                </div>
+                                <a title="Download this song" id="downloadButton" download class="hoverImg icon" >
+                                    <i class='bx bx-download'></i>
+                                </a>
                             </div>
                             <div class="moreInfoButtonCell grid-cell">
-                                <div title="Options" id="moreInfoButton" class="hoverImg icon" >
-                                    <span></span>
-                                </div>
+                                <a title="Options" id="moreInfoButton" class="hoverImg icon" href="./options.htm" target="_blank">
+                                    <i class='bx bx-cog' ></i>
+                                </a>
                             </div>
                         </div>
                         <div id="volumeCell"> 
-                            <div id="volIcon" class="hoverImg icon">
-                                <span></span>
+                            <div id="volIcon" class="icon">
+                                <i class='bx bx-volume-full' ></i>
                             </div>
-                            <div title="Volume" id="volume"></div> 
+                            <input type="range" min="0" max="100" title="Volume" id="volume">
                         </div>
                     </div>
                 </div>
@@ -104,9 +106,9 @@
                 <div id="stationHeaderdiv" class="labeled-input">
                     <label>Search</label>
                     <input type="text" id="stationFilterInput" />
-                    <div title="Refresh" id="stationRefreshButton" class="hoverImg icon">
-                        <span>
-                    </div>
+                    <button title="Refresh" id="stationRefreshButton" class="hoverImg icon">
+                        <i class='bx bx-refresh' ></i>
+                    </button>
                 </div>
                 <div id=stationListDiv>
                 </div>
@@ -118,12 +120,12 @@
                     <div class="labeled-input" id="li1">
                         <label>email</label>
                         <input id="username" tabindex="1"/>
-                        <div id="unWarning" class="ui-icon ui-icon-alert"></div>
+                        <i id="unWarning" class='bx bx-error-circle' ></i>
                     </div>
                     <div class="labeled-input" id="li2">
                         <label>password</label>
                         <input id="password" type="password" tabindex="2" />
-                        <div id="pwWarning" class="ui-icon ui-icon-alert"></div>
+                        <i id="pwWarning" class='bx bx-error-circle' ></i>
                     </div>
                         <input id="save" type="submit" value="Save" />
                         <a href="https://github.com/pvrs12/Anesidora/blob/master/login.md" target="_blank"> Concerned about security?</a>

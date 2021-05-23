@@ -1,34 +1,57 @@
+"use strict"
 /*globals $, get_browser, default_width, default_height*/
 
 //https://stackoverflow.com/questions/10073699/pad-a-number-with-leading-zeros-in-javascript#answer-10074204
 function zeroPad(num, places) {
-    "use strict";
     if (num.toString().length >= places) {
         return num;
     }
     return String(Math.pow(10, places) + Math.floor(num)).substring(1);
 }
+function gCS(item) {
+    return getComputedStyle(item);
+}
+function subN(str) {
+    return parseInt(str.substring(0, str.length-2));
+}
 
 var background = get_browser().extension.getBackgroundPage();
 
-function initBodySize() {
-    "use strict";
-    if (localStorage.bodyWidth === undefined || localStorage.bodyWidth === 0) {
-        localStorage.bodyWidth = default_width;
-    }
-    if (localStorage.bodyHeight === undefined || localStorage.bodyHeight === 0) {
-        localStorage.bodyHeight = default_height;
-    }
-    $("#bodyWidth").val(localStorage.bodyWidth);
-    $("#bodyHeight").val(localStorage.bodyHeight);
-}
 
 const panels = ["historyPanel", "leftPanel", "midPanel", "rightPanel"];
 var tabsInit = false;
 var panelOn = 0;
 
+//BOOKMARK
+
+const gEID = document.getElementById.bind(document);
+const qS = document.querySelector.bind(document);
+
+let pauseButton = gEID('pauseButton'),
+    playButton = gEID('playButton'),
+    scrollerText = qS('.scrollerText'),
+    nowPlayingContainerCell = gEID('nowPlayingContainerCell'),
+    prevTS = qS('#prevTab > span'),
+    nextTS = qS('#nextTab > span'),
+    downloadButton = gEID('downloadButton'),
+    artistLink = gEID('artistLink'),
+    stationRefreshButton = gEID('stationRefreshButton'),
+    skipButton = gEID('skipButton'),
+    tUpButton = gEID('tUpButton'),
+    tDownButton = gEID('tDownButton'),
+    stationFilterInput = gEID('stationFilterInput'),
+    unInput = gEID('username'),
+    pwInput = gEID('password'),
+    unWarning = gEID('unWarning'),
+    pwWarning = gEID('pwWarning'),
+    sleepButton = gEID('sleepButton'),
+    scrubber = gEID('scrubber'),
+    volume = gEID('volume'),
+    coverArt = gEID('coverArt'),
+    login = gEID('login')
+    
+
 function goToPanel(which) {
-    "use strict";
     if (!tabsInit) return;
     if (which == 0) {
         updateHistory();
@@ -40,7 +63,6 @@ function goToPanel(which) {
 }
 
 function initTabs() {
-    "use strict";
     for (let i = 0; i < panels.length; i++) {
         document.getElementById(panels[i]).style.left = "calc(var(--width) * "+i+")";
     }
@@ -48,22 +70,18 @@ function initTabs() {
 }
 
 function goToLogin() {
-    "use strict";
     goToPanel(3);
 }
 
 function goToStations() {
-    "use strict";
     goToPanel(2);
 }
 
 function goToPlayer() {
-    "use strict";
     goToPanel(1);
 }
 
 function clearHistory() {
-    "use strict";
     const historyDiv = document.getElementById("historyDiv");
     while (historyDiv.hasChildNodes()) {
         historyDiv.removeChild(historyDiv.firstChild);
@@ -71,25 +89,26 @@ function clearHistory() {
 }
 
 function downloadSong(url, title) {
-    "use strict";
     //making an anchor tag and clicking it allows the download dialog to work and save the file with the song"s name
 
     //trim the title of the song to 15 characters... not a perfect solution, but there were issues with it at full length
     title = title.substring(0, 15);
-    var a = $("<a href=\"" + url + "\" download=\"" + title + ".mp4\">HELLO</a>");
-    a.appendTo("body");
-    a[0].click();
-    a.remove();
+    let a = document.createElement('a');
+    a.href = url;
+    a.download = `${title.replace(/ /g, '_')}.mp4`
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
 }
 
 function updateHistory() {
-    "use strict";
     clearHistory();
     const historyDiv = document.getElementById("historyDiv");
     background.prevSongs.reverse().forEach(function (song, i) {
         let historyElem = document.createElement("div");
         historyElem.classList.add("historyItem");
-        let cover = document.createElement("div");
+        let cover = document.createElement("a");
+        cover.href = song.songDetailUrl;
         cover.classList.add("historyCover");
         cover.classList.add("icon");
         let overlay = document.createElement("div");
@@ -99,71 +118,58 @@ function updateHistory() {
         let actions = document.createElement("div");
         actions.classList.add("actions");
         let likeAction = document.createElement("div");
-        likeAction.classList.add("hoverImg");
-        likeAction.classList.add("icon");
-        let downloadAction = document.createElement("div");
-        downloadAction.classList.add("download");
-        downloadAction.classList.add("hoverImg");
-        downloadAction.classList.add("icon");
+        likeAction.classList.add("hoverImg", "icon", "bx", "bx-like");
+        let downloadAction = document.createElement("a");
+        downloadAction.classList.add("bx-download", "hoverImg", "icon", "bx");
+        downloadAction.href  = song.audioUrlMap.highQuality.audioUrl;
+        downloadAction.download = `${song.songName.replace(/ /g, '_')}.mp4`;
+
         let dislikeAction = document.createElement("div");
-        dislikeAction.classList.add("hoverImg");
-        dislikeAction.classList.add("icon");
+        dislikeAction.classList.add("hoverImg", "icon", "bx", "bx-dislike");
         let nameSpan = document.createElement("span");
 
         historyDiv.appendChild(historyElem);
         historyElem.appendChild(holder);
-        if (song.albumArtUrl) {
+        if (song.albumArtUrl && song.albumArtUrl !== '') {
             cover.style.background = `url("${song.albumArtUrl}")`;
         } else {
             cover.style.background = "";
-            cover.appendChild(document.createElement("span"));
+            let icon = document.createElement('i');
+            icon.classList.add('bx', 'bx-album');
+            cover.appendChild(icon);
         }
         holder.appendChild(cover);
         holder.appendChild(overlay);
         overlay.appendChild(actions);
         actions.appendChild(likeAction);
-        likeAction.appendChild(document.createElement("span"));
 
-        let likeStatus = "like";
-        if (song.songRating == -1) {
+        let likeStatus = "unrated";
+        if (song.songRating === -1) {
             likeStatus = "disliked";
-        } else if (song.songRating == 0) {
-            likeStatus = "like";
-        } else if (song.songRating == 1) {
+        } else if (song.songRating === 0) {
+            likeStatus = "unrated";
+        } else if (song.songRating === 1) {
             likeStatus = "liked";
         }
-        likeAction.classList.add((likeStatus == "liked" ? "liked" : "like"));
+        likeAction.classList.add((likeStatus == "liked" ? "bxs-like" : "bx-like"));
         actions.appendChild(downloadAction);
-        downloadAction.appendChild(document.createElement("span"));
         actions.appendChild(dislikeAction);
-        dislikeAction.appendChild(document.createElement("span"));
-        dislikeAction.classList.add((likeStatus == "disliked" ? "disliked" : "dislike"));
+        dislikeAction.classList.add((likeStatus == "disliked" ? "bxs-dislike" : "bx-dislike"));
         historyElem.appendChild(nameSpan);
         nameSpan.textContent = song.songName;
 
         let historyNum = i;
-        let thisSong = song; // I, too, had your problem, until I discovered the magic of "let"!
-        cover.addEventListener("click", () => {
-            get_browser().tabs.create({
-                "url": thisSong.songDetailUrl
-            });
-        });
 
         likeAction.addEventListener("click", (e) => {
             if (likeStatus == "liked") {
                 return;
             }
-            background.addFeedback(historyNum, 1);
-            likeAction.classList.add("liked");
-            likeAction.classList.remove("like");
-            dislikeAction.classList.add("dislike");
-            dislikeAction.classList.remove("disliked");
+            background.addFeedback(historyNum, true);
+            likeAction.classList.add("bxs-like");
+            likeAction.classList.remove("bx-like");
+            dislikeAction.classList.add("bx-dislike");
+            dislikeAction.classList.remove("bxs-disliked");
             likeStatus = "liked";
-            e.preventDefault(e);
-        });
-
-        downloadAction.addEventListener("click", (e) => {
-            downloadSong(song.audioUrlMap.highQuality.audioUrl, song.songName);
             e.preventDefault(e);
         });
 
@@ -171,7 +177,7 @@ function updateHistory() {
             if (likeStatus == "disliked") {
                 return;
             }
-            background.addFeedback(historyNum, -1);
+            background.addFeedback(historyNum, false);
             likeAction.classList.remove("liked");
             likeAction.classList.add("like");
             dislikeAction.classList.remove("dislike");
@@ -183,7 +189,6 @@ function updateHistory() {
 }
 
 function refreshStationList() {
-    "use strict";
     let list = document.getElementById("stationListDiv");
     while(list.lastChild) {
         list.removeChild(list.lastChild);
@@ -191,11 +196,8 @@ function refreshStationList() {
     addStations();
 }
 
-function refreshStations() {
-    "use strict";
-    background.getStationList();
-
-    setTimeout(refreshStationList, 1000);
+async function refreshStations() {
+    await background.getStationList(refreshStationList);
 }
 var stationCallbacks = [];
 
@@ -206,8 +208,7 @@ function updateStationCovers() {
 }
 
 function addStations() {
-    "use strict";
-    let filter = document.getElementById("stationFilterInput").value;
+    let filter = stationFilterInput.value;
 
     background.stationList.sort((a, b) => {
         return a.stationName.localeCompare(b.stationName);
@@ -219,9 +220,6 @@ function addStations() {
         }
         return station.stationName.toLowerCase().includes(filter.toLowerCase());
     }).forEach(function (station) {
-        if (!background.stationImgs[station.stationId]) {
-            background.stationImgs[station.stationId] = "/images/new/default_album.svg";
-        }
         let stationElem = document.createElement("div");
         stationElem.classList.add("historyItem");
         let cover = document.createElement("div");
@@ -233,30 +231,33 @@ function addStations() {
         let actions = document.createElement("div");
         actions.classList.add("actions");
         let playAction = document.createElement("div");
-        playAction.classList.add("hoverImg");
-        playAction.classList.add("stationPlay");
-        playAction.classList.add("icon");
+        playAction.classList.add("hoverImg", "stationPlay", "icon");
         let nameSpan = document.createElement("span");
         
         document.getElementById("stationListDiv").appendChild(stationElem);
         stationElem.appendChild(holder);
-        cover.style.background = `url("${background.stationImgs[station.stationId]}")`;
-        holder.appendChild(cover);
-        if (background.stationImgs[station.stationId] == "/images/new/default_album.svg") {
+        if (!background.stationImgs[station.stationId]) {
             cover.classList.add("icon");
-            cover.appendChild(document.createElement("span"));
+            let icon = document.createElement('i');
+            icon.classList.add('bx', 'bx-album', 'stationIcon');
+            cover.appendChild(icon);
             cover.style.background = "";
-        }
+        } else {
+	    cover.classList.remove("icon");
+	    cover.children[0] && cover.children[0].classList.remove('bx', 'bx-album', 'stationIcon');
+	    cover.style.background = "url('"+background.stationImgs[station.stationId]+"')";
+	}
         holder.appendChild(overlay);
+	holder.appendChild(cover);
         overlay.appendChild(actions);
         actions.appendChild(playAction);
-        playAction.appendChild(document.createElement("span"));
+	playAction.classList.add('bx', 'bx-play');
         stationElem.appendChild(nameSpan);
 
         nameSpan.textContent = station.stationName;
         let thisStation = station;
 
-        function start_station() {
+        const start_station = () => {
             background.nextSongStation(thisStation.stationToken);
             stationElem.classList.add("activeStation");
             if (lastActiveStation) {
@@ -276,11 +277,12 @@ function addStations() {
         //place station images or default image
         // if default, theme it with `icon`
         stationCallbacks.push(() => {
-            if (background.stationImgs[station.stationId] == "/images/new/default_album.svg") {
-                cover.classList.add("icon");
+            if (!background.stationImgs[station.stationId]) {
                 cover.style.background = "";
+                cover.children[0].classList.add('bx', 'bx-album');
             } else {
                 cover.classList.remove("icon");
+                cover.children[0] && cover.children[0].classList.remove('bx', 'bx-album');
                 cover.style.background = `url("${background.stationImgs[thisStation.stationId]}")`;
             }
         });
@@ -289,63 +291,48 @@ function addStations() {
 var lastActiveStation = "";
 
 function updatePlayer() {
-    "use strict";
     if (background.currentSong) {
-        $("#coverArt").unbind().bind("click", function () {
-            get_browser().tabs.create({
-                "url": background.currentSong.albumDetailUrl
-            });
-        });
+        coverArt.href = background.currentSong.albumDetailUrl;
         if (background.currentSong.albumArtUrl != "") {
-            document.getElementById("coverArt").style.backgroundImage = "url(\""+background.currentSong.albumArtUrl+"\")";
+            coverArt.style.backgroundImage = "url(\""+background.currentSong.albumArtUrl+"\")";
         } else {
-            document.getElementById("coverArt").style.background = "";
+            coverArt.style.background = "";
         }
-        $("#artistLink").unbind().text(background.currentSong.artistName);
-        $("#titleLink").unbind().text(background.currentSong.songName);
-        $("#artistLink").unbind().bind("click", function () {
-            get_browser().tabs.create({
-                "url": background.currentSong.artistDetailUrl
-            });
-        }).text(background.currentSong.artistName);
-        $("#titleLink").unbind().bind("click", function () {
-            get_browser().tabs.create({
-                "url": background.currentSong.songDetailUrl
-            });
-        }).text(background.currentSong.songName);
-        $("#dash").text(" - ");
-        if (background.currentSong.songRating) {
-            $("#tUpButton").unbind("click");
-            document.getElementById("tUpButton").classList.add("liked");
-            document.getElementById("tUpButton").classList.remove("like");
+
+        gEID('dash').innerText = ' - ';
+
+
+        titleLink.href = background.currentSong.songDetailUrl;
+        titleLink.innerText = background.currentSong.songName;
+        
+        artistLink.href = background.currentSong.artistDetailUrl
+        artistLink.innerText = background.currentSong.artistName;
+
+        if (background.currentSong.songRating === 1) {
+            tUpButton.children[0] && tUpButton.children[0].classList.add("bxs-like");
+            tUpButton.children[0] && tUpButton.children[0].classList.remove("bx-like");
         } else {
-            document.getElementById("tUpButton").classList.add("like");
-            document.getElementById("tUpButton").classList.remove("liked");
-            $("#tUpButton").click(function () {
-                background.addFeedback(-1, true);
-                document.getElementById("tUpButton").classList.add("liked");
-                $("#tUpButton").unbind("click");
-            });
+            tUpButton.children[0] && tUpButton.children[0].classList.add("bx-like");
+            tUpButton.children[0] && tUpButton.children[0].classList.remove("bxs-like");
         }
+        tDownButton.children[0] && tUpButton.children[0].classList.remove('bxs-dislike');
+        tDownButton.children[0] && tUpButton.children[0].classList.add('bx-like');
     }
 
     if (background.mp3Player.paused) {
-        $("#playButton").show();
-        $("#pauseButton").hide();
+            playButton.style.display = '';
+            pauseButton.style.display = 'none';
     } else {
-        $("#playButton").hide();
-        $("#pauseButton").show();
+            playButton.style.display = 'none';
+            pauseButton.style.display = '';
     }
 
     
-    $("#scrubber").slider({
-        value: 0
-    });
+    scrubber.value = 0;
     updateStationCovers();
 }
 
 function drawPlayer() {
-    "use strict";
     var curMinutes = Math.floor(background.mp3Player.currentTime / 60),
         curSecondsI = Math.ceil(background.mp3Player.currentTime % 60),
         curSeconds = zeroPad(curSecondsI.length === 1
@@ -357,9 +344,8 @@ function drawPlayer() {
             ? "0" + totalSecondsI
             : totalSecondsI, 2);
 
-    $("#scrubber").slider({
-        value: (background.mp3Player.currentTime / background.mp3Player.duration) * 100
-    }).attr("title", curMinutes + ":" + curSeconds + "/" + totalMinutes + ":" + totalSeconds);
+    scrubber.setAttribute('title', `${curMinutes}:${curSeconds}/${totalMinutes}:${totalSeconds}`);
+    scrubber.value = (background.mp3Player.currentTime / background.mp3Player.duration) * 100;
 }
 
 document.documentElement.style.setProperty("--height", localStorage.bodyHeight +"px");
@@ -370,128 +356,105 @@ if (localStorage.themeInfo && localStorage.themeInfo !== "") {
     }
 }
 
-$(document).ready(function () {
-    "use strict";
-    $("body").bind("click", function (e) {
-        if (e.target.id !== "artistLink" && e.target.id !== "titleLink") {
-            $(".details").hide();
-        }
-    });
-    initBodySize();
+document.addEventListener('DOMContentLoaded', async function () {
+    pauseButton = gEID('pauseButton');
+    playButton = gEID('playButton');
+    scrollerText = qS('.scrollerText');
+    nowPlayingContainerCell = gEID('nowPlayingContainerCell');
+    prevTS = qS('#prevTab > span');
+    nextTS = qS('#nextTab > span');
+    downloadButton = gEID('downloadButton');
+    artistLink = gEID('artistLink');
+    stationRefreshButton = gEID('stationRefreshButton');
+    skipButton = gEID('skipButton');
+    tUpButton = gEID('tUpButton');
+    tDownButton = gEID('tDownButton');
+    stationFilterInput = gEID('stationFilterInput');
+    unInput = gEID('username');
+    pwInput = gEID('password');
+    unWarning = gEID('unWarning');
+    pwWarning = gEID('pwWarning');
+    sleepButton = gEID('sleepButton');
+    scrubber = gEID('scrubber');
+    volume = gEID('volume');
+    coverArt = gEID('coverArt');
+    login = gEID('login');
 
     document.documentElement.style.setProperty("--height", localStorage.bodyHeight +"px");
     document.documentElement.style.setProperty("--width", localStorage.bodyWidth + "px");
 
-    //    var scrollerWidth = $("body").width() * 0.6;
-    //    $(".scrollerContainer").width(scrollerWidth
     initTabs();
 
     if (background.mp3Player.paused) {
-        $("pauseButton").hide();
-        $("playButton").show();
+        playButton.style.display = '';
+        pauseButton.style.display = 'none';
     } else {
-        $("pauseButton").show();
-        $("playButton").hide();
+        playButton.style.display = 'none';
+        pauseButton.style.display = '';
     }
 
-    $("#volume").slider({
-        range: "min",
-        min: 0,
-        max: 70,
-        value: (localStorage.volume)
-            ? localStorage.volume * 100
-            : 20,
-        slide: function (ignore, ui) {
-            background.mp3Player.volume = ui.value / 100;
-        },
-        stop: function (ignore, ui) {
-            $(ui.handle).removeClass("ui-state-focus");
-            localStorage.volume = ui.value / 100;
-        }
-    });
+    volume.value = (localStorage.volume ? localStorage.volume * 100 : 20);
+    volume.addEventListener('change', (e) => {
+        background.mp3Player.volume = e.target.value / 100;
+        localStorage.volume = e.target.value / 100;
+    })
 
-    $("#scrubber").slider({
-        range: "min",
-        min: 0,
-        slide: function (ignore, ui) {
-            background.mp3Player.currentTime = background.mp3Player.duration * (ui.value / 100);
-        },
-        change: function (ignore, ui) {
-            $(ui.handle).removeClass("ui-state-focus");
-        }
-    });
+    scrubber.addEventListener('input', (e) => {
+        background.mp3Player.currentTime = background.mp3Player.duration * (e.target.value / 100);
+    })
 
-    $("#playButton").bind("click", function () {
-        play_audio();
-    });
-    $("#pauseButton").bind("click", function () {
-        pause_audio();
-    });
-    $("#skipButton").bind("click", background.nextSong);
-    $("#tUpButton").bind("click", function () {
-        background.addFeedback(-1, true);
-        if (background.currentSong.songRating === true) {
-            $("#tUpButton").unbind("click").attr("src", "images/new/liked.svg");
+    playButton.addEventListener('click', play_audio);
+    pauseButton.addEventListener('click', pause_audio);
+
+    skipButton.addEventListener("click", background.nextSong);
+    tUpButton.addEventListener("click", function () {
+        if (background.currentSong.songRating !== 1) {
+            background.addFeedback(-1, true);
         }
     });
-    $("#tDownButton").bind("click", function () {
-        background.addFeedback(-1, false);
-        setTimeout(function () {
-            background.nextSong();
-        }, 1000); // Small delay to stop extension from freezing for some reason
-    });
-    $("#sleepButton").bind("click", function () {
-        background.sleepSong();
+    tDownButton.addEventListener("click", async function () {
+        await background.addFeedback(-1, false);
         background.nextSong();
     });
-    $("#downloadButton").bind("click", function () {
-        background.downloadSong();
-    });
-    $("#moreInfoButton").bind("click", function () {
-        window.open("options.htm", "_blank");
+    sleepButton.addEventListener("click", async function () {
+        await background.sleepSong();
+        background.nextSong();
     });
 
-    $("#unWarning").hide();
-    $("#pwWarning").hide();
-    $("#login").bind("submit", function () {
-        localStorage.username = $("#username").val();
-        localStorage.password = $("#password").val();
-        background.partnerLogin();
+    //BOOKMARK
+
+    unWarning.style.display = 'none';
+    pwWarning.style.display = 'none';
+
+    login.addEventListener("submit", async function () {
+        localStorage.username = unInput.value;
+        localStorage.password = pwInput.value;
+        await background.partnerLogin();
         if (background.userAuthToken === "") {
             document.getElementById("li1").classList.add("warning");
             document.getElementById("li2").classList.add("warning");
             return false;
         } else {
-            addStations();
+            await addStations();
             //move to mid panel
             goToStations();
             return false;
         }
     });
 
-    $("#stationFilterInput").bind("keypress change input paste", () => {
-        refreshStationList();
+    ['keypress', 'change', 'input', 'paste'].forEach(e => {
+        stationFilterInput.addEventListener(e, refreshStationList)
+    })
+    stationRefreshButton.addEventListener("click", async () => {
+        stationRefreshButton.children[0].classList.add('bx-spin');
+        await refreshStations();
+        stationRefreshButton.children[0].classList.remove('bx-spin');
     });
-    let lockRotate = false;
-    $("#stationRefreshButton").bind("click", () => {
-        if (!lockRotate) {
-            document.getElementById("stationRefreshButton").style.animation = "rotate 500ms ease-in-out";
-            lockRotate = true;
-        }
-        refreshStations();
-        setTimeout(() => {
-            document.getElementById("stationRefreshButton").style.animation = "";
-            lockRotate = false;
-        }, 500);
-    });
-
-    // document.getElementById("stationFilterInput").addEventListener("keypress", () => {
-    //     refreshStationList();
-    // });
 
     if (background.stationList !== undefined) {
         addStations();
     }
+
     if (localStorage.username === undefined
             || localStorage.password === undefined
             || background.userAuthToken === undefined
@@ -508,27 +471,21 @@ $(document).ready(function () {
         }
     }
 
-    const scrollerText = document.getElementsByClassName("scrollerText")[0];
     scrollerText.addEventListener("mouseover", () => {
-        if ($(".scrollerText").width() - $("#nowPlayingContainerCell").width() > 0) {
-            $(".scrollerText").css({
-                transition: "left "+ (($(".scrollerText").width() - $("#nowPlayingContainerCell").width())*30) + "ms linear",
-                left: $("#nowPlayingContainerCell").width() - $(".scrollerText").width()
-            });
+        if (subN(gCS(scrollerText).width) - subN(gCS(nowPlayingContainerCell).width) > 0) {
+            scrollerText.style.transition = `left ${(subN(gCS(scrollerText).width) - subN(gCS(nowPlayingContainerCell).width))*30}ms linear`,
+            scrollerText.style.left =  `${subN(gCS(nowPlayingContainerCell).width) - subN(gCS(scrollerText).width)}px`
         } else {
-            $(".scrollerText").css({
-                left: "0px"
-            });
+            scrollerText.style.left = 0;
         }
     });
     scrollerText.addEventListener("mouseleave", () => {
         //move it to left immediately
-        $(".scrollerText").css({
-            left: 0
-        });
+        scrollerText.style.left = 0;
     });
 
     if (background.mp3Player.src !== "") {
+        downloadButton.src = background.mp3Player.src;
         if (background.mp3Player.currentTime > 0) {
             updatePlayer();
             drawPlayer();
@@ -537,13 +494,13 @@ $(document).ready(function () {
         updatePlayer();
     }
     handleSwitch();
-    document.querySelector("#prevTab > span").addEventListener("click", () => {
+    prevTS.addEventListener("click", () => {
         if (panelOn > 0) {
             goToPanel(panelOn-1);
         }
         handleSwitch();
     });
-    document.querySelector("#nextTab > span").addEventListener("click", () => {
+    nextTS.addEventListener("click", () => {
         if (panelOn < 2) {
             goToPanel(panelOn+1);
         }
@@ -554,36 +511,41 @@ $(document).ready(function () {
 
 function handleSwitch() {
     if (panelOn <= 0) {
-        document.querySelector("#prevTab > span").style.opacity = "0";
-        document.querySelector("#prevTab > span").style.pointerEvents = "none";
+        prevTS.style.opacity = "0";
+        prevTS.style.pointerEvents = "none";
     } else {
-        document.querySelector("#prevTab > span").style.opacity = "";
-        document.querySelector("#prevTab > span").style.pointerEvents = "";
+        prevTS.style.opacity = "";
+        prevTS.style.pointerEvents = "";
     }
     if (panelOn >= 2) {
-        document.querySelector("#nextTab > span").style.opacity = "0";
-        document.querySelector("#nextTab > span").style.pointerEvents = "none";
+        nextTS.style.opacity = "0";
+        nextTS.style.pointerEvents = "none";
     } else {
-        document.querySelector("#nextTab > span").style.opacity = "";
-        document.querySelector("#nextTab > span").style.pointerEvents = "";
+        nextTS.style.opacity = "";
+        nextTS.style.pointerEvents = "";
     }
     if (panelOn == 3) { // login screen
-        document.querySelector("#nextTab > span").style.opacity = "0";
-        document.querySelector("#nextTab > span").style.pointerEvents = "none";
-        document.querySelector("#prevTab > span").style.opacity = "0";
-        document.querySelector("#prevTab > span").style.pointerEvents = "none";
+        nextTS.style.opacity = "0";
+        nextTS.style.pointerEvents = "none";
+        prevTS.style.opacity = "0";
+        prevTS.style.pointerEvents = "none";
     }
 }
 
 function pause_audio () {
     background.mp3Player.pause();
-    $("#pauseButton").hide();
-    $("#playButton").show();
+    pauseButton.style.display = "none";
+    playButton.style.dksplay = "block";
 }
 
 function play_audio () {
     background.play(localStorage.lastStation);
-    $("#playButton").hide();
+    pauseButton.style.display = "block";
+    playButton.style.display = "none";
 }
 
 background.setCallbacks(updatePlayer, drawPlayer, downloadSong);
+
+if (localStorage.username && localStorage.password && !background.userAuthToken) {
+    background.partnerLogin();
+}
