@@ -48,7 +48,9 @@ let pauseButton = gEID('pauseButton'),
     scrubber = gEID('scrubber'),
     volume = gEID('volume'),
     coverArt = gEID('coverArt'),
-    login = gEID('login')
+    login = gEID('login'),
+    scrubShow = gEID('scrubShow'),
+    volShow = gEID('volShow');
     
 
 function goToPanel(which) {
@@ -329,6 +331,8 @@ function updatePlayer() {
 
     
     scrubber.value = 0;
+    
+    scrubShow.style.width = '0%';
     updateStationCovers();
 }
 
@@ -346,6 +350,8 @@ function drawPlayer() {
 
     scrubber.setAttribute('title', `${curMinutes}:${curSeconds}/${totalMinutes}:${totalSeconds}`);
     scrubber.value = (background.mp3Player.currentTime / background.mp3Player.duration) * 100;
+    
+    scrubShow.style.width = (background.mp3Player.currentTime / background.mp3Player.duration) * 100 + '%';
 }
 
 document.documentElement.style.setProperty("--height", localStorage.bodyHeight +"px");
@@ -379,6 +385,8 @@ document.addEventListener('DOMContentLoaded', async function () {
     volume = gEID('volume');
     coverArt = gEID('coverArt');
     login = gEID('login');
+    scrubShow = gEID('scrubShow');
+    volShow = gEID('volShow');
 
     document.documentElement.style.setProperty("--height", localStorage.bodyHeight +"px");
     document.documentElement.style.setProperty("--width", localStorage.bodyWidth + "px");
@@ -394,19 +402,27 @@ document.addEventListener('DOMContentLoaded', async function () {
     }
 
     volume.value = (localStorage.volume ? localStorage.volume * 100 : 20);
-    volume.addEventListener('change', (e) => {
+    volShow.style.width = (localStorage.volume ? localStorage.volume * 100 : 20) + '%';
+    
+    volume.addEventListener('input', (e) => {
         background.mp3Player.volume = e.target.value / 100;
         localStorage.volume = e.target.value / 100;
+        volShow.style.width = e.target.value + '%';
     })
 
     scrubber.addEventListener('input', (e) => {
         background.mp3Player.currentTime = background.mp3Player.duration * (e.target.value / 100);
+        scrubShow.style.width = e.target.value + '%';
     })
 
     playButton.addEventListener('click', play_audio);
     pauseButton.addEventListener('click', pause_audio);
 
-    skipButton.addEventListener("click", background.nextSong);
+    skipButton.addEventListener("click", () => {
+        scrubber.value = 0;
+        scrubShow.style.width = '0%';
+        background.nextSong()
+    });
     tUpButton.addEventListener("click", function () {
         if (background.currentSong.songRating !== 1) {
             background.addFeedback(-1, true);
