@@ -151,6 +151,8 @@ async function nextSong(depth=1, prev_station=undefined) {
             };
             xhr2.send(null);
         }
+        
+        callbacks.updatePlayer.forEach(e => { try{e && e()}catch(b){}});
     };
     xhr.send();
 }
@@ -172,6 +174,8 @@ function setup_commands() {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
+    mp3Player = document.getElementById('mp3Player');
+    
     if (localStorage.volume) {
         mp3Player.volume = localStorage.volume;
     } else {
@@ -188,7 +192,7 @@ document.addEventListener('DOMContentLoaded', function () {
         try {
             //check if the window exists
             document.getElementById('mp3Player').yep = 'thisexists'
-            callbacks.updatePlayer.forEach(e => { e && e()});
+            callbacks.updatePlayer.forEach(e => { try{e && e()}catch(b){}});
             currentSong.startTime = Math.round(new Date().getTime() / 1000);
         } catch (e) {
             //if it doesn"t exist, don"t draw here

@@ -313,3 +313,7 @@ async function explainTrack() {
     });
     return await sendRequest(false, true, "track.explainTrack", request);
 }
+
+if (localStorage.username !== '' && localStorage.password !== '') {
+    partnerLogin();
+}

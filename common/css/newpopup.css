@@ -84,11 +84,6 @@ a:hover {
 .deadLink {
     text-decoration: none;
 }
-#coverArt {
-    width: var(--width);
-    height: var(--width);
-    display: block;
-}
 #anesidora{
     position:absolute;
     width: var(--width);
@@ -196,6 +191,10 @@ a:hover {
     background-size: 100%;
     background-repeat: no-repeat;
     display: block;
+    
+    width: var(--width);
+    height: var(--width);
+    background-color: var(--album-bg);
 }
 .slight-margin {
     margin-left: 4%;
@@ -649,4 +648,12 @@ input[type=range]::-webkit-slider-thumb {
 #volRan {
     border-radius: 5px;
     overflow: hidden;
+}
+
+#coverArt i {
+    font-size: var(--width);
+}
+
+.bx-album {
+    color: var(--album-color);
 }

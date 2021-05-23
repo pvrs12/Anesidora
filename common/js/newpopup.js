@@ -14,6 +14,9 @@ function gCS(item) {
 function subN(str) {
     return parseInt(str.substring(0, str.length-2));
 }
+function wipeTrackers(str) {
+    return str.split('?')[0];
+}
 
 var background = get_browser().extension.getBackgroundPage();
 
@@ -21,8 +24,6 @@ var background = get_browser().extension.getBackgroundPage();
 const panels = ["historyPanel", "leftPanel", "midPanel", "rightPanel"];
 var tabsInit = false;
 var panelOn = 0;
-
-//BOOKMARK
 
 const gEID = document.getElementById.bind(document);
 const qS = document.querySelector.bind(document);
@@ -297,18 +298,23 @@ function updatePlayer() {
         coverArt.href = background.currentSong.albumDetailUrl;
         if (background.currentSong.albumArtUrl != "") {
             coverArt.style.backgroundImage = "url(\""+background.currentSong.albumArtUrl+"\")";
+            coverArt.children[0] && (coverArt.children[0].style.display = "none");
         } else {
             coverArt.style.background = "";
+            coverArt.children[0] && (coverArt.children[0].style.display = "inline-block");
         }
 
         gEID('dash').innerText = ' - ';
 
 
-        titleLink.href = background.currentSong.songDetailUrl;
+        titleLink.href = wipeTrackers(background.currentSong.songDetailUrl);
         titleLink.innerText = background.currentSong.songName;
         
-        artistLink.href = background.currentSong.artistDetailUrl
+        artistLink.href = wipeTrackers(background.currentSong.artistDetailUrl);
         artistLink.innerText = background.currentSong.artistName;
+
+        downloadButton.href = background.currentSong.audioUrlMap.highQuality.audioUrl;
+        downloadButton.download = background.currentSong.songName.replace(/ /g, '_') + '.mp4';
 
         if (background.currentSong.songRating === 1) {
             tUpButton.children[0] && tUpButton.children[0].classList.add("bxs-like");
@@ -437,7 +443,6 @@ document.addEventListener('DOMContentLoaded', async function () {
         background.nextSong();
     });
 
-    //BOOKMARK
 
     unWarning.style.display = 'none';
     pwWarning.style.display = 'none';
