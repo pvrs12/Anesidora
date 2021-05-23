@@ -107,7 +107,6 @@ async function sendRequest(secure, encrypted, method, request) {
             getPlaylist(sessionStorage.currentStation);
             failed = true;
         }
-        throw new Error("yep that's an error in sendRequest alright");
     }
     return response;
 }
@@ -161,6 +160,9 @@ async function userLogin(response) {
 
     // var parameters = "auth.userLogin&auth_token={0}&partner_id={1}".format(encodeURIComponent(response.result.partnerAuthToken), response.result.partnerId);
     let res = await sendRequest(true, true, parameters, request);
+    if (res.stat == "fail") {
+        return "uncool credentials";
+    }
     
     userAuthToken = res.result.userAuthToken;
     userId = res.result.userId;
@@ -188,7 +190,7 @@ async function partnerLogin() {
         }
         syncTime = parseInt(s);
         clientStartTime = parseInt((new Date().getTime() + "").substr(0, 10));
-        await userLogin(response);
+        return await userLogin(response);
     }
 }
 
@@ -251,7 +253,7 @@ async function addFeedback(songNum, liked) {
         "syncTime": getSyncTime(syncTime)
     });
     song.songRating = (liked?1:-1);
-    await sendRequest(false, true, "station.addFeedback", request); // don't need await because... doesn't need to wait
+    await sendRequest(false, true, "station.addFeedback", request);
 }
 
 async function sleepSong() {
