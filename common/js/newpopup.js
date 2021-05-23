@@ -556,7 +556,7 @@ function handleSwitch() {
 function pause_audio () {
     background.mp3Player.pause();
     pauseButton.style.display = "none";
-    playButton.style.dksplay = "block";
+    playButton.style.display = "block";
 }
 
 function play_audio () {
