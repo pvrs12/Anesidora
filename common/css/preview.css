@@ -44,7 +44,6 @@
     overflow: hidden;
     background: #3a3a3a;
     transition: opacity 250ms;
-    opacity: 0;
 }
 
 #preview .scrollerContainer
