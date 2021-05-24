@@ -152,9 +152,9 @@ function refreshStationList() {
     addStations();
 }
 
-function refreshStations() {
+async function refreshStations() {
     "use strict";
-    background.getStationList();
+    await background.getStationList();
 
     setTimeout(refreshStationList, 1000);
 }
@@ -198,7 +198,7 @@ function updatePlayer() {
             });
         }).text(background.currentSong.songName);
         $("#dash").text(" - ");
-        if (background.currentSong.songRating) {
+        if (background.currentSong.songRating === 1) {
             $("#tUpButton").unbind("click").attr("src", "images/thumbUpCheck.png");
         } else {
             $("#tUpButton").attr("src", "images/thumbup.png");
@@ -255,7 +255,7 @@ function drawPlayer() {
     }).attr("title", curMinutes + ":" + curSeconds + "/" + totalMinutes + ":" + totalSeconds);
 }
 
-$(document).ready(function () {
+$(document).ready(async function () {
     "use strict";
     $("body").bind("click", function (e) {
         if (e.target.id !== "artistLink" && e.target.id !== "titleLink") {
@@ -312,7 +312,7 @@ $(document).ready(function () {
     $("#skipButton").bind("click", background.nextSong);
     $("#tUpButton").bind("click", function () {
         background.addFeedback(-1, true);
-        if (background.currentSong.songRating === true) {
+        if (background.currentSong.songRating === 1) {
             $("#tUpButton").unbind("click").attr("src", "images/thumbUpCheck.png");
         }
     });
@@ -358,10 +358,10 @@ $(document).ready(function () {
     });
     $("#unWarning").hide();
     $("#pwWarning").hide();
-    $("#login").bind("submit", function () {
+    $("#login").bind("submit", async function () {
         localStorage.username = $("#username").val();
         localStorage.password = $("#password").val();
-        background.partnerLogin();
+        await background.partnerLogin();
         if (background.userAuthToken === "") {
             $("#unWarning").show();
             $("#pwWarning").show();
@@ -386,8 +386,8 @@ $(document).ready(function () {
         refreshStationList();
     });
 
-    $("#stationRefreshButton").bind("click", () => {
-        refreshStations();
+    $("#stationRefreshButton").bind("click", async () => {
+        await refreshStations();
     });
 
     // document.getElementById("stationFilterInput").addEventListener("keypress", () => {

@@ -1,7 +1,35 @@
-/*global $, partnerLogin, getPlaylist, mp3Player, currentPlaylist, platform_specific, get_browser, is_android*/
-/*exported setCallbacks, play, downloadSong, nextSongStation*/
+"use strict"
+/*global partnerLogin, getPlaylist, currentPlaylist, platform_specific, get_browser, is_android*/
+/*exported setCallbacks, play, downloadSong, nextSongStation, mp3Player*/
 
-var callback;
+let mp3Player = document.getElementById('mp3Player');
+
+get_browser().webRequest.onBeforeSendHeaders.addListener(
+    function(details) {
+        const h = details.requestHeaders;
+        for (let header of h) {
+            if (header.name.toLowerCase() === "user-agent") {
+                header.value = "libcurl";
+            }
+        }
+        return {requestHeaders: h};
+    },
+    {
+        urls: [
+            "http://*.pandora.com/*",
+            "https://*.pandora.com/*",
+            "http://*.p-cdn.com/*",
+            "http://*.p-cdn.us/*"
+        ]
+    },
+    ['blocking', 'requestHeaders']
+);
+
+var callbacks = {
+    updatePlayer: [],
+    drawPlayer: [],
+    downloadSong: []
+};
 var currentSong;
 var comingSong;
 var prevSongs = [];
@@ -10,44 +38,42 @@ var stationImgs = (localStorage.stationImgs && JSON.parse(localStorage.stationIm
 };
 
 function setCallbacks(updatePlayer,drawPlayer,downloadSong){
-    callback = {
-        "updatePlayer": updatePlayer,
-        "drawPlayer": drawPlayer,
-        "downloadSong": downloadSong
-    };
+    callbacks.updatePlayer.push(updatePlayer);
+    callbacks.drawPlayer.push(drawPlayer);
+    callbacks.downloadSong.push(downloadSong);
 }
 
-function play(stationToken) {
+async function play(stationToken) {
     if (stationToken !== localStorage.lastStation) {
         currentSong = undefined;
-        getPlaylist(stationToken);
+        await getPlaylist(stationToken);
         //adding this so album covers get on the right location
         let prev_station = localStorage.lastStation;
         localStorage.lastStation = stationToken;
-        nextSong(1, prev_station);
+        await nextSong(1, prev_station);
     } else {
         if (currentSong === undefined) {
-            getPlaylist(localStorage.lastStation);
+            await getPlaylist(localStorage.lastStation);
         }
-        if (document.getElementById("mp3Player").currentTime > 0) {
+        if (mp3Player.currentTime > 0) {
             mp3Player.play();
         } else {
-            nextSong();
+            await nextSong();
         }
     }
 }
 
-function nextSongStation(station) {
+async function nextSongStation(station) {
     //adding this so album covers get on the right location
     let prev_station = localStorage.lastStation;
     localStorage.lastStation = station;
-    getPlaylist(localStorage.lastStation);
+    await getPlaylist(localStorage.lastStation);
     comingSong = undefined;
     //adding this so album covers get on the right location
     nextSong(1, prev_station);
 }
 
-function nextSong(depth=1, prev_station=undefined) {
+async function nextSong(depth=1, prev_station=undefined) {
     if (depth > 4){
         return;
     }
@@ -59,8 +85,7 @@ function nextSong(depth=1, prev_station=undefined) {
 
     /* I (hucario) put this over here so that history and station art works for every song change. */
     if (currentSong) {
-        stationImgs[prev_station] = (currentSong.albumArtUrl || stationImgs[prev_station]) || "/images/new/default_album.svg"; 
-        // try for a new cover; if that doesn't work, keep the old; if there is no old, go for a default one
+        stationImgs[prev_station] = (currentSong.albumArtUrl || stationImgs[prev_station]) || undefined; 
         localStorage.stationImgs = JSON.stringify(stationImgs);
         if (currentSong != prevSongs[prevSongs.length-1]) {
             prevSongs.push(currentSong);
@@ -69,19 +94,19 @@ function nextSong(depth=1, prev_station=undefined) {
             }
         }
     }
-    /* /paste */
 
-    if (currentPlaylist === undefined || currentPlaylist.length === 0) {
-        getPlaylist(localStorage.lastStation);
+    if (!currentPlaylist || currentPlaylist.length === 0) {
+        await getPlaylist(localStorage.lastStation);
     }
-    if (comingSong === undefined) {
+
+    if (comingSong === undefined && currentPlaylist.length > 0) {
         comingSong = currentPlaylist.shift();
     }
     currentSong = comingSong;
 
     //in case the most recent shift emptied the playlist
     if (currentPlaylist.length === 0) {
-        getPlaylist(localStorage.lastStation);
+        await getPlaylist(localStorage.lastStation);
     }
     comingSong = currentPlaylist.shift();
 
@@ -126,22 +151,10 @@ function nextSong(depth=1, prev_station=undefined) {
             };
             xhr2.send(null);
         }
+        
+        callbacks.updatePlayer.forEach(e => { try{e && e()}catch(b){}});
     };
     xhr.send();
-}
-
-function downloadSong() {
-    var url = "";
-    if (currentSong.additionalAudioUrl != null) {
-        url = currentSong.additionalAudioUrl;
-    } else {
-        url = currentSong.audioUrlMap.highQuality.audioUrl;
-    }
-    callback.downloadSong(url, currentSong.songName);
-}
-
-if (localStorage.username !== "" && localStorage.password !== "") {
-    partnerLogin();
 }
 
 function setup_commands() {
@@ -160,8 +173,9 @@ function setup_commands() {
     }
 }
 
-$(document).ready(function () {
-    "use strict";
+document.addEventListener('DOMContentLoaded', function () {
+    mp3Player = document.getElementById('mp3Player');
+    
     if (localStorage.volume) {
         mp3Player.volume = localStorage.volume;
     } else {
@@ -172,27 +186,32 @@ $(document).ready(function () {
 
     setup_commands();
 
-    $("#mp3Player").bind("play", function () {
+    mp3Player = document.getElementById('mp3Player');
+
+    mp3Player.addEventListener("play", function () {
         try {
             //check if the window exists
-            String($("#mp3Player"));
-            callback.updatePlayer();
+            document.getElementById('mp3Player').yep = 'thisexists'
+            callbacks.updatePlayer.forEach(e => { try{e && e()}catch(b){}});
             currentSong.startTime = Math.round(new Date().getTime() / 1000);
         } catch (e) {
             //if it doesn"t exist, don"t draw here
             return;
         }
-    }).bind("ended", function () {
+    })
+    mp3Player.addEventListener("ended", function () {
         nextSong();
-    }).bind("timeupdate", function () {
+    })
+    mp3Player.addEventListener("timeupdate", function () {
         try {
             //check if the window exists
-            String($("#mp3Player"));
-            callback.drawPlayer();
+            document.getElementById('mp3Player').yep = 'thisexists'
+            callbacks.drawPlayer.forEach(e => { e && e()});
         } catch(e){
             //if it doesn"t, don"t draw here
             return;
         }
-    }).bind("error", function () {
+    })
+    mp3Player.addEventListener("error", function () {
     });
 });

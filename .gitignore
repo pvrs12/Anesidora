@@ -5,3 +5,4 @@ common/js/jquery/*
 *.pem
 *.zip
 chrome_build/
+firefox_build/

@@ -21,6 +21,8 @@
     "homepage_url": "http://github.com/pvrs12/anesidora",
     "options_page": "options.htm",
     "permissions": [
+        "webRequest",
+        "webRequestBlocking",
         "http://*.pandora.com/*",
         "https://*.pandora.com/*",
         "http://*.p-cdn.com/*",

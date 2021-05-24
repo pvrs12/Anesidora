@@ -108,12 +108,8 @@ function initBodySize() {
 
     load_player_details();
 
-    if (localStorage.whichPlayer == "new") {
-        document.getElementById("preview").style.opacity = 1;
-        document.getElementById("preview2").style.opacity = 0;
-    } else {
-        document.getElementById("preview").style.opacity = 0;
-        document.getElementById("preview2").style.opacity = 1;
+    if (localStorage.whichPlayer) {
+        document.getElementById("preview").src = `./${localStorage.whichPlayer}.htm`
     }
 
     // document.getElementById("new-coverArt").style.minWidth = 
@@ -198,15 +194,6 @@ function load_player_details() {
     if (!background.currentSong) {
         return;
     }
-
-    document.getElementById("new-coverArt").src = background.currentSong.albumArtUrl;
-    document.getElementById("old-coverArt").src = background.currentSong.albumArtUrl;
-
-    document.getElementById("new-artistLink").textContent = background.currentSong.artistName;
-    document.getElementById("old-artistLink").textContent = background.currentSong.artistName;
-
-    document.getElementById("new-titleLink").textContent = background.currentSong.songName;
-    document.getElementById("old-titleLink").textContent = background.currentSong.songName;
 }
 
 document.addEventListener("DOMContentLoaded", function() {
@@ -243,16 +230,12 @@ document.addEventListener("DOMContentLoaded", function() {
             if (style.value != "new" && style.value != "old") {
                 return;
             }
-            if (style.value == "new") {
-                document.getElementById("preview").style.opacity = 1;
-                document.getElementById("preview2").style.opacity = 0;
-            } else {
-                document.getElementById("preview").style.opacity = 0;
-                document.getElementById("preview2").style.opacity = 1;
-            }
             bodyHeight.value = defaults.height[style.value];
             bodyWidth.value = defaults.width[style.value];
             heightStuff(); // change sizes to minimums, if needed
+            document.getElementById("preview").src = `./${style.value}.htm`
+            save_button.click();
+            window.location = '';
         });
     }
     
