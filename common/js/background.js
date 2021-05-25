@@ -199,7 +199,7 @@ function update_mediasession() {
     }
 
     // https://github.com/snaphat/pandora_media_session/blob/main/pandora_media_session.user.js#L45
-    // Populate metadata.
+    // Populate metadata
     var metadata = navigator.mediaSession.metadata;
     if (!metadata || (
         metadata.title != currentSong.songName ||
