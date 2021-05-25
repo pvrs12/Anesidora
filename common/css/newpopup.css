@@ -270,10 +270,10 @@ a:hover {
     right: 0;
 }
 #prevTab > span {
-    background-image: url("/images/new/leftarrow.svg");
+    background-image: url("/images/leftarrow.svg");
 }
 #nextTab > span {
-    background-image: url("/images/new/rightarrow.svg");
+    background-image: url("/images/rightarrow.svg");
 }
 
 .labeled-input {
