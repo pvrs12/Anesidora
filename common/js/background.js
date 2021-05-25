@@ -218,11 +218,6 @@ function update_mediasession() {
     } else {
         navigator.mediaSession.playbackState = "playing";
 
-        console.log({
-            duration: mp3Player.duration,
-            position: mp3Player.currentTime,
-            playbackRate: 1
-        });
         if (mp3Player.duration) {
             try {
                 navigator.mediaSession.setPositionState({
