@@ -151,8 +151,8 @@ async function nextSong(depth=1, prev_station=undefined) {
             };
             xhr2.send(null);
         }
-        
-        callbacks.updatePlayer.forEach(e => { try{e && e()}catch(b){}});
+
+        callbacks.updatePlayer.forEach(e => { try{e && e()}catch(b){throw b}});
     };
     xhr.send();
 }
@@ -163,6 +163,7 @@ function setup_commands() {
             if (command === "pause_play") {
                 if (!mp3Player.paused) {
                     mp3Player.pause();
+                    callbacks.updatePlayer.forEach(e => { try{e && e()}catch(b){throw b}});
                 } else {
                     play(localStorage.lastStation);
                 }
@@ -171,6 +172,62 @@ function setup_commands() {
             }
         });
     }
+}
+
+function setup_mediasession() {
+    navigator.mediaSession.setActionHandler("play", async function() {
+        if(mp3Player.paused) {
+            play(localStorage.lastStation);
+        }
+    });
+    navigator.mediaSession.setActionHandler("pause", async function() {
+        if(!mp3Player.paused) {
+            mp3Player.pause();
+        }
+    });
+    navigator.mediaSession.setActionHandler("nexttrack", async function() {
+        nextSong();
+    });
+}
+
+function update_mediasession() {
+        // https://github.com/snaphat/pandora_media_session/blob/main/pandora_media_session.user.js#L45
+        // Populate metadata.
+        var metadata = navigator.mediaSession.metadata;
+        if (!metadata || (
+            metadata.title != currentSong.songName ||
+            metadata.artist != currentSong.artistName ||
+            metadata.artwork[0].src != currentSong.albumArtUrl)
+         ) {
+            navigator.mediaSession.metadata = new MediaMetadata({
+                title: currentSong.songName,
+                artist: currentSong.artistName,
+                artwork: [{ src: currentSong.albumArtUrl, sizes: '500x500', type: 'image/jpeg' }]
+            });
+        }
+
+        if (mp3Player.paused) {
+            navigator.mediaSession.playbackState = "paused";
+        } else {
+            navigator.mediaSession.playbackState = "playing";
+
+            console.log({
+                duration: mp3Player.duration,
+                position: mp3Player.currentTime,
+                playbackRate: 1
+            });
+            if (mp3Player.duration) {
+                try {
+                    navigator.mediaSession.setPositionState({
+                        duration: mp3Player.duration,
+                        position: mp3Player.currentTime,
+                        playbackRate: 1
+                    });
+                } catch (e) {
+                    // duration is probably NaN
+                }
+            }
+        }
 }
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -186,6 +243,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
     setup_commands();
 
+    setup_mediasession();
+
     mp3Player = document.getElementById('mp3Player');
 
     mp3Player.addEventListener("play", function () {
@@ -194,15 +253,21 @@ document.addEventListener('DOMContentLoaded', function () {
             document.getElementById('mp3Player').yep = 'thisexists'
             callbacks.updatePlayer.forEach(e => { try{e && e()}catch(b){}});
             currentSong.startTime = Math.round(new Date().getTime() / 1000);
+            update_mediasession();
         } catch (e) {
             //if it doesn"t exist, don"t draw here
             return;
         }
-    })
+    });
+    mp3Player.addEventListener("pause", function () {
+        update_mediasession();
+    });
     mp3Player.addEventListener("ended", function () {
         nextSong();
-    })
+        update_mediasession();
+    });
     mp3Player.addEventListener("timeupdate", function () {
+        update_mediasession();
         try {
             //check if the window exists
             document.getElementById('mp3Player').yep = 'thisexists'
@@ -211,7 +276,7 @@ document.addEventListener('DOMContentLoaded', function () {
             //if it doesn"t, don"t draw here
             return;
         }
-    })
+    });
     mp3Player.addEventListener("error", function () {
     });
 });
