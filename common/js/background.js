@@ -191,6 +191,9 @@ function setup_mediasession() {
     navigator.mediaSession.setActionHandler("nexttrack", async function() {
         nextSong();
     });
+    navigator.mediaSession.setActionHandler("seekto", function(details) {
+        mp3Player.currentTime = details.seekTime;
+    });
 }
 
 function update_mediasession() {
