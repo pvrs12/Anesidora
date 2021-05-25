@@ -46,7 +46,7 @@
             "description": "Skip to the next song"
         }
     },
-    "version": "2.0.1",
+    "version": "2.1.1",
     "options_ui": {
         "page": "options.htm",
         "browser_style": true
