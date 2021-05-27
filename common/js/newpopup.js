@@ -447,20 +447,21 @@ document.addEventListener('DOMContentLoaded', async function () {
     unWarning.style.display = 'none';
     pwWarning.style.display = 'none';
 
-    login.addEventListener("submit", async function () {
-        localStorage.username = unInput.value;
-        localStorage.password = pwInput.value;
-        await background.partnerLogin();
-        if (background.userAuthToken === "") {
-            document.getElementById("li1").classList.add("warning");
-            document.getElementById("li2").classList.add("warning");
-            return false;
-        } else {
-            await addStations();
-            //move to mid panel
-            goToStations();
-            return false;
-        }
+    login.addEventListener("submit", function () {
+		(async() => {
+			localStorage.username = unInput.value;
+			localStorage.password = pwInput.value;
+			await background.partnerLogin();
+			if (background.userAuthToken === "") {
+				document.getElementById("li1").classList.add("warning");
+				document.getElementById("li2").classList.add("warning");
+			} else {
+				await addStations();
+				//move to mid panel
+				goToStations();
+			}
+		})();
+		return false;
     });
 
     ['keypress', 'change', 'input', 'paste'].forEach(e => {
