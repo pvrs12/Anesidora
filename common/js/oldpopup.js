@@ -358,7 +358,7 @@ $(document).ready(async function () {
     });
     $("#unWarning").hide();
     $("#pwWarning").hide();
-    $("#login").bind("submit", function () {
+    $("#login").bind("submit", function (e) {
 		(async() => {
 			localStorage.username = $("#username").val();
 			localStorage.password = $("#password").val();
@@ -380,6 +380,7 @@ $(document).ready(async function () {
 				goToStations();
 			}
 		})();
+		e.preventDefault();
 		return false;
     });
 

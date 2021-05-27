@@ -16,8 +16,8 @@ get_browser().webRequest.onBeforeSendHeaders.addListener(
     },
     {
         urls: [
-            "http://*.pandora.com/services/json/",
-            "https://*.pandora.com/services/json/",
+            "http://*.pandora.com/services/json/*",
+            "https://*.pandora.com/services/json/*",
         ]
     },
     ['blocking', 'requestHeaders']

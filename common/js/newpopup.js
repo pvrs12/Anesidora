@@ -447,7 +447,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     unWarning.style.display = 'none';
     pwWarning.style.display = 'none';
 
-    login.addEventListener("submit", function () {
+    login.addEventListener("submit", function (e) {
 		(async() => {
 			localStorage.username = unInput.value;
 			localStorage.password = pwInput.value;
@@ -461,6 +461,7 @@ document.addEventListener('DOMContentLoaded', async function () {
 				goToStations();
 			}
 		})();
+		e.preventDefault();
 		return false;
     });
 
