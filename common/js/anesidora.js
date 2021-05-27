@@ -164,6 +164,8 @@ async function userLogin(response) {
         return "uncool credentials";
     }
     
+	dontRetryPartnerLogin = false;
+
     userAuthToken = res.result.userAuthToken;
     userId = res.result.userId;
     if (stationList.length == 0) {
@@ -190,7 +192,6 @@ async function partnerLogin() {
         }
         syncTime = parseInt(s);
         clientStartTime = parseInt((new Date().getTime() + "").substr(0, 10));
-		dontRetryPartnerLogin = false;
         return await userLogin(response);
     }
 }
