@@ -150,7 +150,13 @@ async function nextSong(depth=1, prev_station=undefined) {
             xhr2.send(null);
         }
         
-        callbacks.updatePlayer.forEach(e => { try{e && e()}catch(b){}});
+		background.callbacks.updatePlayer.forEach((e) => {
+			try {
+				e();
+			} catch(b) {
+				background.callbacks.updatePlayer.splice(background.callbacks.updatePlayer.indexOf(e), 1);
+			}
+		});
     };
     xhr.send();
 }
@@ -189,8 +195,14 @@ document.addEventListener('DOMContentLoaded', function () {
     mp3Player.addEventListener("play", function () {
         try {
             //check if the window exists
-            document.getElementById('mp3Player').yep = 'thisexists'
-            callbacks.updatePlayer.forEach(e => { try{e && e()}catch(b){}});
+            document.getElementById('mp3Player').yep = 'thisexists'        
+			background.callbacks.updatePlayer.forEach((e) => {
+				try {
+					e();
+				} catch(b) {
+					background.callbacks.updatePlayer.splice(background.callbacks.updatePlayer.indexOf(e), 1);
+				}
+			});
             currentSong.startTime = Math.round(new Date().getTime() / 1000);
         } catch (e) {
             //if it doesn"t exist, don"t draw here
@@ -204,7 +216,13 @@ document.addEventListener('DOMContentLoaded', function () {
         try {
             //check if the window exists
             document.getElementById('mp3Player').yep = 'thisexists'
-            callbacks.drawPlayer.forEach(e => { e && e()});
+            background.callbacks.drawPlayer.forEach((e) => {
+				try {
+					e();
+				} catch(b) {
+					background.callbacks.drawPlayer.splice(background.callbacks.drawPlayer.indexOf(e), 1);
+				}
+			});
         } catch(e){
             //if it doesn"t, don"t draw here
             return;
