@@ -190,6 +190,7 @@ async function partnerLogin() {
         }
         syncTime = parseInt(s);
         clientStartTime = parseInt((new Date().getTime() + "").substr(0, 10));
+		dontRetryPartnerLogin = false;
         return await userLogin(response);
     }
 }
