@@ -358,28 +358,30 @@ $(document).ready(async function () {
     });
     $("#unWarning").hide();
     $("#pwWarning").hide();
-    $("#login").bind("submit", async function () {
-        localStorage.username = $("#username").val();
-        localStorage.password = $("#password").val();
-        await background.partnerLogin();
-        if (background.userAuthToken === "") {
-            $("#unWarning").show();
-            $("#pwWarning").show();
-            $("#username").css({
-                "padding-left": "16px",
-                "width": "216px"
-            });
-            $("#password").css({
-                "padding-left": "16px",
-                "width": "216px"
-            });
-            return false;
-        } else {
-            addStations();
-            //move to mid panel
-            goToStations();
-            return false;
-        }
+    $("#login").bind("submit", function (e) {
+		(async() => {
+			localStorage.username = $("#username").val();
+			localStorage.password = $("#password").val();
+			await background.partnerLogin();
+			if (background.userAuthToken === "") {
+				$("#unWarning").show();
+				$("#pwWarning").show();
+				$("#username").css({
+					"padding-left": "16px",
+					"width": "216px"
+				});
+				$("#password").css({
+					"padding-left": "16px",
+					"width": "216px"
+				});
+			} else {
+				addStations();
+				//move to mid panel
+				goToStations();
+			}
+		})();
+		e.preventDefault();
+		return false;
     });
 
     $("#stationFilterInput").bind("keypress change input paste", () => {

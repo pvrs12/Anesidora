@@ -164,6 +164,8 @@ async function userLogin(response) {
         return "uncool credentials";
     }
     
+	dontRetryPartnerLogin = false;
+
     userAuthToken = res.result.userAuthToken;
     userId = res.result.userId;
     if (stationList.length == 0) {
