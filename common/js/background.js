@@ -196,11 +196,11 @@ document.addEventListener('DOMContentLoaded', function () {
         try {
             //check if the window exists
             document.getElementById('mp3Player').yep = 'thisexists'        
-			background.callbacks.updatePlayer.forEach((e) => {
+			callbacks.updatePlayer.forEach((e) => {
 				try {
 					e();
 				} catch(b) {
-					background.callbacks.updatePlayer.splice(background.callbacks.updatePlayer.indexOf(e), 1);
+					callbacks.updatePlayer.splice(callbacks.updatePlayer.indexOf(e), 1);
 				}
 			});
             currentSong.startTime = Math.round(new Date().getTime() / 1000);
@@ -216,11 +216,11 @@ document.addEventListener('DOMContentLoaded', function () {
         try {
             //check if the window exists
             document.getElementById('mp3Player').yep = 'thisexists'
-            background.callbacks.drawPlayer.forEach((e) => {
+            callbacks.drawPlayer.forEach((e) => {
 				try {
 					e();
 				} catch(b) {
-					background.callbacks.drawPlayer.splice(background.callbacks.drawPlayer.indexOf(e), 1);
+					callbacks.drawPlayer.splice(callbacks.drawPlayer.indexOf(e), 1);
 				}
 			});
         } catch(e){
