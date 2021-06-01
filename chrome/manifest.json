@@ -30,21 +30,18 @@
     ],
     "commands": {
         "pause_play": {
-            "suggested_key": {
-                "default": "MediaPlayPause"
-            },
-            "description": "Play/Pause the current song",
-            "global": true
+            "description": "Play/Pause the current song"
         },
         "skip_song": {
+            "description": "Skip to the next song"
+        },
+        "_execute_browser_action": {
             "suggested_key": {
-                "default": "MediaNextTrack"
-            },
-            "description": "Skip to the next song",
-            "global": true
+                "default": "Ctrl+Space"
+            }
         }
     },
-    "version": "2.1.4",
+    "version": "2.2.0",
     "options_ui": {
         "page": "options.htm",
         "chrome_style": true

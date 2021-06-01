@@ -149,14 +149,14 @@ async function nextSong(depth=1, prev_station=undefined) {
             };
             xhr2.send(null);
         }
-        
-		background.callbacks.updatePlayer.forEach((e) => {
-			try {
-				e();
-			} catch(b) {
-				background.callbacks.updatePlayer.splice(background.callbacks.updatePlayer.indexOf(e), 1);
-			}
-		});
+
+        callbacks.updatePlayer.forEach((e) => {
+            try {
+                e();
+            } catch(b) {
+                callbacks.updatePlayer.splice(callbacks.updatePlayer.indexOf(e), 1);
+            }
+        });
     };
     xhr.send();
 }
@@ -177,6 +177,68 @@ function setup_commands() {
     }
 }
 
+function setup_mediasession() {
+    if (!('mediaSession' in navigator)) {
+        return;
+    }
+
+    navigator.mediaSession.setActionHandler("play", async function() {
+        if(mp3Player.paused) {
+            play(localStorage.lastStation);
+        }
+    });
+    navigator.mediaSession.setActionHandler("pause", async function() {
+        if(!mp3Player.paused) {
+            mp3Player.pause();
+        }
+    });
+    navigator.mediaSession.setActionHandler("nexttrack", async function() {
+        nextSong();
+    });
+    navigator.mediaSession.setActionHandler("seekto", function(details) {
+        mp3Player.currentTime = details.seekTime;
+    });
+}
+
+function update_mediasession() {
+    if (!('mediaSession' in navigator)) {
+        return;
+    }
+
+    // https://github.com/snaphat/pandora_media_session/blob/main/pandora_media_session.user.js#L45
+    // Populate metadata
+    var metadata = navigator.mediaSession.metadata;
+    if (!metadata || (
+        metadata.title != currentSong.songName ||
+        metadata.artist != currentSong.artistName ||
+        metadata.artwork[0].src != currentSong.albumArtUrl)
+        ) {
+        navigator.mediaSession.metadata = new MediaMetadata({
+            title: currentSong.songName,
+            artist: currentSong.artistName,
+            artwork: [{ src: currentSong.albumArtUrl, sizes: '500x500', type: 'image/jpeg' }]
+        });
+    }
+
+    if (mp3Player.paused) {
+        navigator.mediaSession.playbackState = "paused";
+    } else {
+        navigator.mediaSession.playbackState = "playing";
+
+        if (mp3Player.duration) {
+            try {
+                navigator.mediaSession.setPositionState({
+                    duration: mp3Player.duration,
+                    position: mp3Player.currentTime,
+                    playbackRate: 1
+                });
+            } catch (e) {
+                // duration is probably NaN
+            }
+        }
+    }
+}
+
 document.addEventListener('DOMContentLoaded', function () {
     mp3Player = document.getElementById('mp3Player');
     
@@ -190,44 +252,52 @@ document.addEventListener('DOMContentLoaded', function () {
 
     setup_commands();
 
+    setup_mediasession();
+
     mp3Player = document.getElementById('mp3Player');
 
     mp3Player.addEventListener("play", function () {
         try {
             //check if the window exists
             document.getElementById('mp3Player').yep = 'thisexists'        
-			callbacks.updatePlayer.forEach((e) => {
-				try {
-					e();
-				} catch(b) {
-					callbacks.updatePlayer.splice(callbacks.updatePlayer.indexOf(e), 1);
-				}
-			});
+            callbacks.updatePlayer.forEach((e) => {
+                try {
+                    e();
+                } catch(b) {
+                    callbacks.updatePlayer.splice(callbacks.updatePlayer.indexOf(e), 1);
+                }
+            });
             currentSong.startTime = Math.round(new Date().getTime() / 1000);
+            update_mediasession();
         } catch (e) {
             //if it doesn"t exist, don"t draw here
             return;
         }
-    })
+    });
+    mp3Player.addEventListener("pause", function () {
+        update_mediasession();
+    });
     mp3Player.addEventListener("ended", function () {
         nextSong();
-    })
+        update_mediasession();
+    });
     mp3Player.addEventListener("timeupdate", function () {
+        update_mediasession();
         try {
             //check if the window exists
             document.getElementById('mp3Player').yep = 'thisexists'
             callbacks.drawPlayer.forEach((e) => {
-				try {
-					e();
-				} catch(b) {
-					callbacks.drawPlayer.splice(callbacks.drawPlayer.indexOf(e), 1);
-				}
-			});
+                try {
+                    e();
+                } catch(b) {
+                    callbacks.drawPlayer.splice(callbacks.drawPlayer.indexOf(e), 1);
+                }
+            });
         } catch(e){
             //if it doesn"t, don"t draw here
             return;
         }
-    })
+    });
     mp3Player.addEventListener("error", function () {
     });
 });
