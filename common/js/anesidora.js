@@ -210,7 +210,12 @@ async function getPlaylist(stationToken) {
     let audioFormats = [
         "HTTP_128_MP3",
         "HTTP_64_AACPLUS_ADTS"
-    ]
+    ];
+    if (is_android()) {
+        audioFormats = [
+            "HTTP_128_MP3"
+        ];
+    }
 
     let request = JSON.stringify({
         "stationToken": stationToken,
@@ -316,6 +321,6 @@ async function explainTrack() {
     return await sendRequest(false, true, "track.explainTrack", request);
 }
 
-if (localStorage.username !== '' && localStorage.password !== '') {
+if (localStorage.username !== "" && localStorage.password !== "") {
     partnerLogin();
 }
