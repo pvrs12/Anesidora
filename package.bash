@@ -5,28 +5,43 @@ curl http://code.jquery.com/jquery-3.3.1.min.js > common/js/jquery/jquery-3.3.1.
 curl http://code.jquery.com/ui/1.12.1/jquery-ui.min.js > common/js/jquery/jquery-ui.min.js 2>/dev/null
 
 #make firefox
-mkdir firefox_build
-cp -rf common/* firefox_build
-cp -rf firefox/* firefox_build
-cd firefox_build
-if [[ $1 != "debug" ]]; then
-    sed -i 's/-debug-/-/g' manifest.json
-fi
-rm ../anesidora_$1_firefox.xpi
-jar -cMf ../anesidora_$1_firefox.xpi *
-cd ..
-rm -rf firefox_build
+function make_extension {
+    # $1 == platform
+    # $2 == extension
+    # $3 == debug
+    # $4 == keep files
 
-#make chrome
-mkdir chrome_build
-cp -rf common/* chrome_build
-cp -rf chrome/* chrome_build
-cd chrome_build
-if [[ $1 != "debug" ]]; then
-    sed -i 's/-debug-/-/g' manifest.json
-fi
-rm ../anesidora_$1_chrome.zip
-jar -cMf ../anesidora_$1_chrome.zip *
-cd ..
-rm -rf chrome_build
+    PLATFORM=$1
+    EXTENSION=$2
 
+    if [[ $3 == "debug" ]]; then
+        DEBUG=1
+    else
+        DEBUG=0
+    fi
+
+    if [[ $4 == "keep" ]]; then
+        KEEP=1
+    else
+        KEEP=0
+    fi
+
+    mkdir -p ${PLATFORM}_build
+    cp -rf common/* ${PLATFORM}_build
+    cp -rf ${PLATFORM}/* ${PLATFORM}_build
+    cd ${PLATFORM}_build
+    NAME=../anesidora_debug_${PLATFORM}.xpi
+    if [[ $DEBUG -eq 0 ]]; then
+        sed -i 's/-debug-/-/g' manifest.json
+        NAME=../anesidora_${PLATFORM}.${EXTENSION}
+    fi
+    rm $NAME
+    zip -r $NAME * >/dev/null
+    cd ..
+    if [[ $KEEP -eq 0 ]]; then
+        rm -rf ${PLATFORM}_build
+    fi
+}
+
+make_extension firefox xpi $1 $2
+make_extension chrome zip $1 $2
