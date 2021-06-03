@@ -1,4 +1,4 @@
-/*globals get_browser, is_chrome*/
+/*globals get_browser, is_chrome, is_android*/
 
 var minimums = {
     width: {
@@ -109,7 +109,7 @@ function initBodySize() {
     load_player_details();
 
     if (localStorage.whichPlayer) {
-        document.getElementById("preview").src = `./${localStorage.whichPlayer}.htm`
+        document.getElementById("preview").src = `./${localStorage.whichPlayer}.htm`;
     }
 
     // document.getElementById("new-coverArt").style.minWidth = 
@@ -153,6 +153,10 @@ function initHotkeys() {
         });
     }
 
+    if (is_android()) {
+        return;
+    }
+
     //This is infuriating. Both browsers implement the "browser.commands.getAll()" function
     // but firefox utilizes a promise and chrome an older-style callback function
     // Chrome: https://developer.chrome.com/extensions/commands
@@ -170,6 +174,8 @@ function updateHotkeys() {
 
     // once again a fairly major difference between the browsers with commands
     if (is_chrome()) {
+        return;
+    } else if(is_android()) {
         return;
     } else {
         let playPauseDetails = {
@@ -233,9 +239,9 @@ document.addEventListener("DOMContentLoaded", function() {
             bodyHeight.value = defaults.height[style.value];
             bodyWidth.value = defaults.width[style.value];
             heightStuff(); // change sizes to minimums, if needed
-            document.getElementById("preview").src = `./${style.value}.htm`
+            document.getElementById("preview").src = `./${style.value}.htm`;
             save_button.click();
-            window.location = '';
+            window.location = "";
         });
     }
     
