@@ -127,6 +127,10 @@ function initBodySize() {
 }
 
 function initHotkeys() {
+    if (is_android()) {
+        return;
+    }
+
     function commands_function(commands) {
         commands.forEach(command => {
             let playPauseHotkey = document.getElementById("playPauseHotkey");
@@ -153,18 +157,20 @@ function initHotkeys() {
         });
     }
 
-    if (is_android()) {
-        return;
-    }
-
     //This is infuriating. Both browsers implement the "browser.commands.getAll()" function
     // but firefox utilizes a promise and chrome an older-style callback function
     // Chrome: https://developer.chrome.com/extensions/commands
     // Firefox: https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/commands/getAll
+    // Firefox Android: Doesn't work at all.
     if (is_chrome()) {
         get_browser().commands.getAll(commands_function);
     } else {
-        get_browser().commands.getAll().then(commands_function);
+        try {
+            get_browser().commands.getAll().then(commands_function);
+        } catch(TypeError) {
+            //this is likely thrown due to this running on an android device
+            // for some reason `is_android` isn't failing it out
+        }
     }
 }
 
@@ -178,21 +184,25 @@ function updateHotkeys() {
     } else if(is_android()) {
         return;
     } else {
-        let playPauseDetails = {
-            name: "pause_play",
-            shortcut: playPauseHotkey.value
-        };
-        get_browser().commands.update(playPauseDetails).catch(() => {
-            alert("The Play/Pause hotkey entered is invalid!");
-        });
+        try {
+            let playPauseDetails = {
+                name: "pause_play",
+                shortcut: playPauseHotkey.value
+            };
+            get_browser().commands.update(playPauseDetails).catch(() => {
+                alert("The Play/Pause hotkey entered is invalid!");
+            });
 
-        let skipSongDetails = {
-            name: "skip_song",
-            shortcut: skipSongHotkey.value
-        };
-        get_browser().commands.update(skipSongDetails).catch(() => {
-            alert("The Skip Song hotkey entered is invalid!");
-        });
+            let skipSongDetails = {
+                name: "skip_song",
+                shortcut: skipSongHotkey.value
+            };
+            get_browser().commands.update(skipSongDetails).catch(() => {
+                alert("The Skip Song hotkey entered is invalid!");
+            });
+        } catch (TypeError) {
+            // Just in Case for Android
+        }
     }
 }
 
