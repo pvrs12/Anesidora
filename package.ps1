@@ -22,6 +22,7 @@ function New-Extension {
     $AddonName="..\anesidora_${platform}.${extension}"
     if (!($DebugBuild)) {
         (Get-Content "manifest.json").replace("-debug-", "-") | Set-Content "manifest.json"
+    } else {
         $AddonNameZip="..\anesidora_debug_${platform}.zip"
         $AddonName="..\anesidora_debug_${platform}.${extension}"
     }
