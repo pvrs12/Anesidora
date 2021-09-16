@@ -4,7 +4,7 @@ on:
   push:
 
 jobs:
-  firefox:
+  build:
     runs-on: ubuntu-latest
 
     steps:
@@ -21,27 +21,27 @@ jobs:
           mkdir firefox_build
           cp -rf common/* firefox_build
           cp -rf firefox/* firefox_build
-          cd firefox_build
-          zip -r anesidora_firefox.xpi *
-          cd ..
+          # cd firefox_build
+          # zip -r anesidora_firefox.xpi *
+          # cd ..
 
       - name: Build Chrome
         run: |
           mkdir chrome_build
           cp -rf common/* chrome_build
           cp -rf chrome/* chrome_build
-          cd chrome_build
-          zip -r anesidora_chrome.zip *
-          cd ..
+          # cd chrome_build
+          # zip -r anesidora_chrome.zip *
+          # cd ..
 
       - name: Upload Firefox
         uses: actions/upload-artifact@v2
         with:
           name: anesidora-firefox-debug
-          path: firefox_build/anesidora_firefox.xpi
+          path: firefox_build/
 
       - name: Upload Chrome
         uses: actions/upload-artifact@v2
         with:
           name: anesidora-chrome-debug
-          path: chrome_build/anesidora_chrome.zip
+          path: chrome_build/
