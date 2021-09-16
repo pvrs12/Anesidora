@@ -1,0 +1,47 @@
+name: Package
+
+on:
+  push:
+
+jobs:
+  firefox:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Get JQuery
+        run: |
+          mkdir -p common/js/jquery
+          curl http://code.jquery.com/jquery-3.3.1.min.js > common/js/jquery/jquery-3.3.1.min.js 2>/dev/null
+          curl http://code.jquery.com/ui/1.12.1/jquery-ui.min.js > common/js/jquery/jquery-ui.min.js 2>/dev/null
+
+      - name: Build Firefox
+        run: |
+          mkdir firefox_build
+          cp -rf common/* firefox_build
+          cp -rf firefox/* firefox_build
+          cd firefox_build
+          zip -r anesidora_firefox.xpi *
+          cd ..
+
+      - name: Build Chrome
+        run: |
+          mkdir chrome_build
+          cp -rf common/* chrome_build
+          cp -rf chrome/* chrome_build
+          cd chrome_build
+          zip -r anesidora_chrome.zip *
+          cd ..
+
+      - name: Upload Firefox
+        uses: actions/upload-artifact@v2
+        with:
+          name: anesidora-firefox-debug
+          path: firefox_build/anesidora_firefox.xpi
+
+      - name: Upload Chrome
+        uses: actions/upload-artifact@v2
+        with:
+          name: anesidora-chrome-debug
+          path: chrome_build/anesidora_chrome.zip
