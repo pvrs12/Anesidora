@@ -2,11 +2,8 @@
 /*globals get_browser */
 
 //https://stackoverflow.com/questions/10073699/pad-a-number-with-leading-zeros-in-javascript#answer-10074204
-function zeroPad(num, places) {
-    if (num.toString().length >= places) {
-        return num;
-    }
-    return String(Math.pow(10, places) + Math.floor(num)).substring(1);
+function zeroPad(num) {
+    return "0".repeat(Math.max(0, 2 - ((Math.floor(num) + "").length))) + Math.floor(num);
 }
 function wipeTrackers(str) {
     return str.split("?")[0];
@@ -345,24 +342,26 @@ let likeStatus = "unrated";
 
 
 function drawPlayer() {
-    var curMinutes = Math.floor(background.mp3Player.currentTime / 60),
-        curSecondsI = Math.ceil(background.mp3Player.currentTime % 60 === 60 ?
-            0 : 
-            (background.mp3Player.currentTime % 60)
+    var curMinutes = Math.floor((background.mp3Player.currentTime) / 60),
+        curSecondsI = (
+            (
+                (Math.floor(background.mp3Player.currentTime) % 60) === 60
+            ) ?
+                0 : 
+                (background.mp3Player.currentTime % 60)
         ),
-        curSeconds = zeroPad(curSecondsI.length === 1
-            ? "0" + curSecondsI
-            : curSecondsI, 2),
-        totalMinutes = Math.floor(background.mp3Player.duration / 60),
-        totalSecondsI = Math.ceil(background.mp3Player.duration % 60 === 60 ?
-            0 : 
-            (background.mp3Player.duration % 60)
+        curSeconds = zeroPad(curSecondsI),
+        totalMinutes = Math.floor((background.mp3Player.duration) / 60),
+        totalSecondsI = (
+            (
+                (Math.floor(background.mp3Player.duration) % 60) === 60
+            ) ?
+                0 : 
+                (background.mp3Player.duration % 60)
         ),
-        totalSeconds = zeroPad(totalSecondsI.length === 1
-            ? "0" + totalSecondsI
-            : totalSecondsI, 2);
+        totalSeconds = zeroPad(totalSecondsI);
 
-    if (isNaN(curSeconds) || isNaN(totalMinutes) || isNaN(totalSeconds) || isNaN(curMinutes)) {
+    if (isNaN(curSecondsI) || isNaN(totalMinutes) || isNaN(totalSecondsI) || isNaN(curMinutes)) {
         gEID("timestamp").innerText = "Buffering...";
         scrubber.value = 100;
         scrubShow.style.setProperty("--width", 1);
