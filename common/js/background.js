@@ -1,8 +1,8 @@
-"use strict"
-/*global partnerLogin, getPlaylist, currentPlaylist, platform_specific, get_browser, is_android*/
+"use strict";
+/*global getPlaylist, currentPlaylist, platform_specific, get_browser, is_android*/
 /*exported setCallbacks, play, downloadSong, nextSongStation, mp3Player*/
 
-let mp3Player = document.getElementById('mp3Player');
+let mp3Player = document.getElementById("mp3Player");
 
 get_browser().webRequest.onBeforeSendHeaders.addListener(
     function(details) {
@@ -20,7 +20,7 @@ get_browser().webRequest.onBeforeSendHeaders.addListener(
             "https://*.pandora.com/services/json/*",
         ]
     },
-    ['blocking', 'requestHeaders']
+    ["blocking", "requestHeaders"]
 );
 
 var callbacks = {
@@ -186,7 +186,7 @@ function setup_commands() {
 }
 
 function setup_mediasession() {
-    if (!('mediaSession' in navigator)) {
+    if (!("mediaSession" in navigator)) {
         return;
     }
 
@@ -209,7 +209,7 @@ function setup_mediasession() {
 }
 
 function update_mediasession() {
-    if (!('mediaSession' in navigator)) {
+    if (!("mediaSession" in navigator)) {
         return;
     }
 
@@ -220,11 +220,11 @@ function update_mediasession() {
         metadata.title != currentSong.songName ||
         metadata.artist != currentSong.artistName ||
         metadata.artwork[0].src != currentSong.albumArtUrl)
-        ) {
-        navigator.mediaSession.metadata = new MediaMetadata({
+    ) { 
+        navigator.mediaSession.metadata = new window.MediaMetadata({
             title: currentSong.songName,
             artist: currentSong.artistName,
-            artwork: [{ src: currentSong.albumArtUrl, sizes: '500x500', type: 'image/jpeg' }]
+            artwork: [{ src: currentSong.albumArtUrl, sizes: "500x500", type: "image/jpeg" }]
         });
     }
 
@@ -247,8 +247,8 @@ function update_mediasession() {
     }
 }
 
-document.addEventListener('DOMContentLoaded', function () {
-    mp3Player = document.getElementById('mp3Player');
+document.addEventListener("DOMContentLoaded", function () {
+    mp3Player = document.getElementById("mp3Player");
 
     if (localStorage.volume) {
         mp3Player.volume = localStorage.volume;
@@ -262,12 +262,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
     setup_mediasession();
 
-    mp3Player = document.getElementById('mp3Player');
+    mp3Player = document.getElementById("mp3Player");
 
     mp3Player.addEventListener("play", function () {
         try {
             //check if the window exists
-            document.getElementById('mp3Player').yep = 'thisexists'
+            document.getElementById("mp3Player").yep = "thisexists";
             callbacks.updatePlayer.forEach((e) => {
                 try {
                     e();
@@ -293,7 +293,7 @@ document.addEventListener('DOMContentLoaded', function () {
         update_mediasession();
         try {
             //check if the window exists
-            document.getElementById('mp3Player').yep = 'thisexists'
+            document.getElementById("mp3Player").yep = "thisexists";
             callbacks.drawPlayer.forEach((e) => {
                 try {
                     e();

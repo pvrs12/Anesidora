@@ -1,5 +1,5 @@
-"use strict"
-/*globals $, encrypt, decrypt, currentSong, play, prevSongs*/
+"use strict";
+/*globals is_android stationImgs, encrypt, decrypt, currentSong, play, prevSongs*/
 /*exported addFeedback, explainTrack, search, createStation, sleepSong, setQuickMix, deleteStation */
 
 let dontRetryPartnerLogin = false;
@@ -36,7 +36,7 @@ function stringToBytes(str) {
 }
 
 function formatParameters(parameterObject) {
-    let params = []
+    let params = [];
     for(let key in parameterObject) {
         let value = parameterObject[key];
         if (value.length > 0) {
@@ -75,21 +75,21 @@ async function sendRequest(secure, encrypted, method, request) {
             "auth_token": encodeURIComponent(userAuthToken),
             "partner_id": partnerId,
             "user_id": userId
-        }
-        parameters = "&{0}".format(formatParameters(parameterObject))
+        };
+        parameters = "&{0}".format(formatParameters(parameterObject));
         // parameters = "&auth_token={0}&partner_id={1}&user_id={2}".format(encodeURIComponent(userAuthToken), partnerId, userId);
     } else {
         parameters = "";
     }
     let new_request = encrypted ? encrypt(request) : request;
     let response = await fetch(url + method + parameters, {
-        method: 'POST',
+        method: "POST",
         headers: {
-            "Content-Type": encrypted ? 'text/plain' : 'application/json'
+            "Content-Type": encrypted ? "text/plain" : "application/json"
         },
         body: new_request
-    })
-    response = await response.json()
+    });
+    response = await response.json();
     if (response.stat === "fail") {
         switch (response.code) {
         case 0:
@@ -122,7 +122,7 @@ async function getStationList() {
     stationList = response.result.stations;
     stationList.forEach(e => {
         stationImgs[e.stationToken] = e.artUrl;
-    })
+    });
     localStorage.stationImgs = JSON.stringify(stationImgs);
 
     if (localStorage.userStation === undefined) {
@@ -155,7 +155,7 @@ async function userLogin(response) {
     let parameterObject = {
         "auth_token": encodeURIComponent(response.result.partnerAuthToken),
         "partner_id": response.result.partnerId
-    }
+    };
     let parameters = "auth.userLogin&{0}".format(formatParameters(parameterObject));
 
     // var parameters = "auth.userLogin&auth_token={0}&partner_id={1}".format(encodeURIComponent(response.result.partnerAuthToken), response.result.partnerId);
@@ -164,7 +164,7 @@ async function userLogin(response) {
         return "uncool credentials";
     }
     
-	dontRetryPartnerLogin = false;
+    dontRetryPartnerLogin = false;
 
     userAuthToken = res.result.userAuthToken;
     userId = res.result.userId;
@@ -199,7 +199,7 @@ async function partnerLogin() {
 //removes ads from fetched playlist. solves issue when player gets stuck on "undefined - undefined" [added by BukeMan]
 function removeAds(playList) {
     playList.forEach(function (value, index) {
-        if (value.hasOwnProperty("adToken")) {
+        if (Object.hasOwnProperty.call(value, "adToken")) {
             playList.splice(index, 1);
         }
     });
@@ -242,7 +242,7 @@ async function addFeedback(songNum, liked) {
         song = prevSongs[songNum];
     }
 
-    if (!songNum || typeof liked !== 'boolean') {
+    if (!songNum || typeof liked !== "boolean") {
         throw new Error("incorrect arguments passed to addFeedback");
     }
     if (!song) {

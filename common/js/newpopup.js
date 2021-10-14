@@ -1,5 +1,5 @@
-"use strict"
-/*globals $, get_browser, default_width, default_height*/
+"use strict";
+/*globals get_browser */
 
 //https://stackoverflow.com/questions/10073699/pad-a-number-with-leading-zeros-in-javascript#answer-10074204
 function zeroPad(num, places) {
@@ -8,80 +8,56 @@ function zeroPad(num, places) {
     }
     return String(Math.pow(10, places) + Math.floor(num)).substring(1);
 }
-function gCS(item) {
-    return getComputedStyle(item);
-}
-function subN(str) {
-    return parseInt(str.substring(0, str.length-2));
-}
 function wipeTrackers(str) {
-    return str.split('?')[0];
+    return str.split("?")[0];
 }
 
 var background = get_browser().extension.getBackgroundPage();
 
 
-const panels = ["historyPanel", "leftPanel", "midPanel", "rightPanel"];
-var tabsInit = false;
 var panelOn = 0;
 
 const gEID = document.getElementById.bind(document);
 const qS = document.querySelector.bind(document);
 
-let pauseButton = gEID('pauseButton'),
-    playButton = gEID('playButton'),
-    scrollerText = qS('.scrollerText'),
-    nowPlayingContainerCell = gEID('nowPlayingContainerCell'),
-    prevTS = qS('#prevTab > span'),
-    nextTS = qS('#nextTab > span'),
-    downloadButton = gEID('downloadButton'),
-    artistLink = gEID('artistLink'),
-    stationRefreshButton = gEID('stationRefreshButton'),
-    skipButton = gEID('skipButton'),
-    tUpButton = gEID('tUpButton'),
-    tDownButton = gEID('tDownButton'),
-    stationFilterInput = gEID('stationFilterInput'),
-    unInput = gEID('username'),
-    pwInput = gEID('password'),
-    unWarning = gEID('unWarning'),
-    pwWarning = gEID('pwWarning'),
-    sleepButton = gEID('sleepButton'),
-    scrubber = gEID('scrubber'),
-    volume = gEID('volume'),
-    coverArt = gEID('coverArt'),
-    login = gEID('login'),
-    scrubShow = gEID('scrubShow'),
-    volShow = gEID('volShow');
+let pauseButton = gEID("pauseButton"),
+    playButton = gEID("playButton"),
+    prevTS = qS("#prevTab > span"),
+    nextTS = qS("#nextTab > span"),
+    downloadButton = gEID("downloadButton"),
+    artistLink = gEID("artistLink"),
+    stationRefreshButton = gEID("stationRefreshButton"),
+    skipButton = gEID("skipButton"),
+    tUpButton = gEID("tUpButton"),
+    tDownButton = gEID("tDownButton"),
+    stationFilterInput = gEID("stationFilterInput"),
+    unInput = gEID("username"),
+    pwInput = gEID("password"),
+    unWarning = gEID("unWarning"),
+    pwWarning = gEID("pwWarning"),
+    sleepButton = gEID("sleepButton"),
+    scrubber = gEID("scrubber"),
+    volume = gEID("volume"),
+    coverArt = gEID("coverArt"),
+    login = gEID("login"),
+    scrubShow = gEID("scrubShow"),
+    volShow = gEID("volShow");
     
 
 function goToPanel(which) {
-    if (!tabsInit) return;
     if (which == 0) {
         updateHistory();
     }
+    localStorage.tabOn = which;
     panelOn = which;
-    for (let i = 0; i < panels.length; i++) {
-        document.getElementById(panels[i]).style.left = "calc(var(--width) * "+(i-which)+")";
-    }
+    gEID("panels").style.transform = `translateX(calc(var(--width) * -${panelOn}))`;
 }
 
 function initTabs() {
-    for (let i = 0; i < panels.length; i++) {
-        document.getElementById(panels[i]).style.left = "calc(var(--width) * "+i+")";
+    if (localStorage.tabOn) {
+        panelOn = parseInt(localStorage.tabOn);
+        gEID("panels").style.transform = `translateX(calc(var(--width) * -${localStorage.tabOn}))`;
     }
-    tabsInit = true;
-}
-
-function goToLogin() {
-    goToPanel(3);
-}
-
-function goToStations() {
-    goToPanel(2);
-}
-
-function goToPlayer() {
-    goToPanel(1);
 }
 
 function clearHistory() {
@@ -96,9 +72,9 @@ function downloadSong(url, title) {
 
     //trim the title of the song to 15 characters... not a perfect solution, but there were issues with it at full length
     title = title.substring(0, 15);
-    let a = document.createElement('a');
+    let a = document.createElement("a");
     a.href = url;
-    a.download = `${title.replace(/ /g, '_')}.mp4`
+    a.download = `${title.replace(/ /g, "_")}.mp4`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -125,7 +101,7 @@ function updateHistory() {
         let downloadAction = document.createElement("a");
         downloadAction.classList.add("bx-download", "hoverImg", "icon", "bx");
         downloadAction.href  = song.audioUrlMap.highQuality.audioUrl;
-        downloadAction.download = `${song.songName.replace(/ /g, '_')}.mp4`;
+        downloadAction.download = `${song.songName.replace(/ /g, "_")}.mp4`;
 
         let dislikeAction = document.createElement("div");
         dislikeAction.classList.add("hoverImg", "icon", "bx", "bx-dislike");
@@ -133,12 +109,12 @@ function updateHistory() {
 
         historyDiv.appendChild(historyElem);
         historyElem.appendChild(holder);
-        if (song.albumArtUrl && song.albumArtUrl !== '') {
+        if (song.albumArtUrl && song.albumArtUrl !== "") {
             cover.style.background = `url("${song.albumArtUrl}")`;
         } else {
             cover.style.background = "";
-            let icon = document.createElement('i');
-            icon.classList.add('bx', 'bx-album');
+            let icon = document.createElement("i");
+            icon.classList.add("bx", "bx-album");
             cover.appendChild(icon);
         }
         holder.appendChild(cover);
@@ -241,20 +217,20 @@ function addStations() {
         stationElem.appendChild(holder);
         if (!background.stationImgs[station.stationId]) {
             cover.classList.add("icon");
-            let icon = document.createElement('i');
-            icon.classList.add('bx', 'bx-album', 'stationIcon');
+            let icon = document.createElement("i");
+            icon.classList.add("bx", "bx-album", "stationIcon");
             cover.appendChild(icon);
             cover.style.background = "";
         } else {
-	    cover.classList.remove("icon");
-	    cover.children[0] && cover.children[0].classList.remove('bx', 'bx-album', 'stationIcon');
-	    cover.style.background = "url('"+background.stationImgs[station.stationId]+"')";
-	}
+            cover.classList.remove("icon");
+            cover.children[0] && cover.children[0].classList.remove("bx", "bx-album", "stationIcon");
+            cover.style.background = "url('"+background.stationImgs[station.stationId]+"')";
+        }
         holder.appendChild(overlay);
-	holder.appendChild(cover);
+        holder.appendChild(cover);
         overlay.appendChild(actions);
         actions.appendChild(playAction);
-	playAction.classList.add('bx', 'bx-play');
+        playAction.classList.add("bx", "bx-play");
         stationElem.appendChild(nameSpan);
 
         nameSpan.textContent = station.stationName;
@@ -270,7 +246,7 @@ function addStations() {
 
             goToPanel(1);
             handleSwitch();
-        }
+        };
 
         //this used to open the "station detail URL". that never seemed to work
         //and was confusing since it was expected to play the station.
@@ -282,10 +258,10 @@ function addStations() {
         stationCallbacks.push(() => {
             if (!background.stationImgs[station.stationId]) {
                 cover.style.background = "";
-                cover.children[0].classList.add('bx', 'bx-album');
+                cover.children[0].classList.add("bx", "bx-album");
             } else {
                 cover.classList.remove("icon");
-                cover.children[0] && cover.children[0].classList.remove('bx', 'bx-album');
+                cover.children[0] && cover.children[0].classList.remove("bx", "bx-album");
                 cover.style.background = `url("${background.stationImgs[thisStation.stationId]}")`;
             }
         });
@@ -295,7 +271,7 @@ var lastActiveStation = "";
 
 function updatePlayer() {
     if (background.currentSong) {
-        coverArt.href = background.currentSong.albumDetailUrl;
+        coverArt.href = wipeTrackers(background.currentSong.albumDetailUrl);
         if (background.currentSong.albumArtUrl != "") {
             coverArt.style.backgroundImage = "url(\""+background.currentSong.albumArtUrl+"\")";
             coverArt.children[0] && (coverArt.children[0].style.display = "none");
@@ -304,60 +280,97 @@ function updatePlayer() {
             coverArt.children[0] && (coverArt.children[0].style.display = "inline-block");
         }
 
-        gEID('dash').innerText = ' - ';
+        gEID("dash").innerText = "";
 
 
-        titleLink.href = wipeTrackers(background.currentSong.songDetailUrl);
-        titleLink.innerText = background.currentSong.songName;
+        gEID("titleLink").href = wipeTrackers(background.currentSong.songDetailUrl);
+        gEID("titleLink").innerText = background.currentSong.songName;
+
+        gEID("albumLink").href = wipeTrackers(background.currentSong.albumDetailUrl);
+        gEID("albumLink").innerText = background.currentSong.albumName;
         
         artistLink.href = wipeTrackers(background.currentSong.artistDetailUrl);
         artistLink.innerText = background.currentSong.artistName;
 
         downloadButton.href = background.currentSong.audioUrlMap.highQuality.audioUrl;
-        downloadButton.download = background.currentSong.songName.replace(/ /g, '_') + '.mp4';
+        downloadButton.download = background.currentSong.songName.replace(/ /g, "_") + ".mp4";
 
-        if (background.currentSong.songRating === 1) {
-            tUpButton.children[0] && tUpButton.children[0].classList.add("bxs-like");
-            tUpButton.children[0] && tUpButton.children[0].classList.remove("bx-like");
-        } else {
-            tUpButton.children[0] && tUpButton.children[0].classList.add("bx-like");
-            tUpButton.children[0] && tUpButton.children[0].classList.remove("bxs-like");
+        let tUC = tUpButton.children[0],
+            tDC = tDownButton.children[0];
+        if (background.currentSong.songRating === -1) {
+            likeStatus = "disliked";
+        } else if (background.currentSong.songRating === 0) {
+            likeStatus = "unrated";
+        } else if (background.currentSong.songRating === 1) {
+            likeStatus = "liked";
         }
-        tDownButton.children[0] && tUpButton.children[0].classList.remove('bxs-dislike');
-        tDownButton.children[0] && tUpButton.children[0].classList.add('bx-like');
+        if (background.currentSong.songRating === 1) {
+            tUC.classList.add("bxs-like");
+            tUC.classList.remove("bx-like");
+            tDC.classList.add("bx-dislike");
+            tDC.classList.remove("bxs-disliked");
+            likeStatus = "liked";
+        } else if (background.currentSong.songRating === -1) {
+            tUC.classList.remove("bxs-like");
+            tUC.classList.add("bx-like");
+            tDC.classList.remove("bx-dislike");
+            tDC.classList.add("bxs-disliked");
+        } else {
+            tUC.classList.remove("bxs-like");
+            tUC.classList.add("bx-like");
+            tDC.classList.remove("bxs-dislike");
+            tDC.classList.add("bx-dislike");
+        }
+
+        tDownButton.children[0] && tUpButton.children[0].classList.remove("bxs-dislike");
+        tDownButton.children[0] && tUpButton.children[0].classList.add("bx-like");
     }
 
     if (background.mp3Player.paused) {
-            playButton.style.display = '';
-            pauseButton.style.display = 'none';
+        playButton.style.display = "";
+        pauseButton.style.display = "none";
     } else {
-            playButton.style.display = 'none';
-            pauseButton.style.display = '';
+        playButton.style.display = "none";
+        pauseButton.style.display = "";
     }
 
     
     scrubber.value = 0;
     
-    scrubShow.style.width = '0%';
+    scrubShow.style.setProperty("--width", "0");
     updateStationCovers();
 }
 
+let likeStatus = "unrated";
+
+
 function drawPlayer() {
     var curMinutes = Math.floor(background.mp3Player.currentTime / 60),
-        curSecondsI = Math.ceil(background.mp3Player.currentTime % 60),
+        curSecondsI = Math.ceil(background.mp3Player.currentTime % 60 === 60 ?
+            0 : 
+            (background.mp3Player.currentTime % 60)
+        ),
         curSeconds = zeroPad(curSecondsI.length === 1
             ? "0" + curSecondsI
             : curSecondsI, 2),
         totalMinutes = Math.floor(background.mp3Player.duration / 60),
-        totalSecondsI = Math.ceil(background.mp3Player.duration % 60),
+        totalSecondsI = Math.ceil(background.mp3Player.duration % 60 === 60 ?
+            0 : 
+            (background.mp3Player.duration % 60)
+        ),
         totalSeconds = zeroPad(totalSecondsI.length === 1
             ? "0" + totalSecondsI
             : totalSecondsI, 2);
 
-    scrubber.setAttribute('title', `${curMinutes}:${curSeconds}/${totalMinutes}:${totalSeconds}`);
-    scrubber.value = (background.mp3Player.currentTime / background.mp3Player.duration) * 100;
-    
-    scrubShow.style.width = (background.mp3Player.currentTime / background.mp3Player.duration) * 100 + '%';
+    if (isNaN(curSeconds) || isNaN(totalMinutes) || isNaN(totalSeconds) || isNaN(curMinutes)) {
+        gEID("timestamp").innerText = "Buffering...";
+        scrubber.value = 100;
+        scrubShow.style.setProperty("--width", 1);
+    } else {
+        gEID("timestamp").innerText = `${curMinutes}:${curSeconds}/${totalMinutes}:${totalSeconds}`;
+        scrubber.value = (background.mp3Player.currentTime / background.mp3Player.duration) * 100;
+        scrubShow.style.setProperty("--width", background.mp3Player.currentTime / background.mp3Player.duration);
+    }
 }
 
 document.documentElement.style.setProperty("--height", localStorage.bodyHeight +"px");
@@ -368,110 +381,131 @@ if (localStorage.themeInfo && localStorage.themeInfo !== "") {
     }
 }
 
-document.addEventListener('DOMContentLoaded', async function () {
-    pauseButton = gEID('pauseButton');
-    playButton = gEID('playButton');
-    scrollerText = qS('.scrollerText');
-    nowPlayingContainerCell = gEID('nowPlayingContainerCell');
-    prevTS = qS('#prevTab > span');
-    nextTS = qS('#nextTab > span');
-    downloadButton = gEID('downloadButton');
-    artistLink = gEID('artistLink');
-    stationRefreshButton = gEID('stationRefreshButton');
-    skipButton = gEID('skipButton');
-    tUpButton = gEID('tUpButton');
-    tDownButton = gEID('tDownButton');
-    stationFilterInput = gEID('stationFilterInput');
-    unInput = gEID('username');
-    pwInput = gEID('password');
-    unWarning = gEID('unWarning');
-    pwWarning = gEID('pwWarning');
-    sleepButton = gEID('sleepButton');
-    scrubber = gEID('scrubber');
-    volume = gEID('volume');
-    coverArt = gEID('coverArt');
-    login = gEID('login');
-    scrubShow = gEID('scrubShow');
-    volShow = gEID('volShow');
+document.addEventListener("DOMContentLoaded", async function () {
+    pauseButton = gEID("pauseButton");
+    playButton = gEID("playButton");
+    prevTS = qS("#prevTab > span");
+    nextTS = qS("#nextTab > span");
+    downloadButton = gEID("downloadButton");
+    artistLink = gEID("artistLink");
+    stationRefreshButton = gEID("stationRefreshButton");
+    skipButton = gEID("skipButton");
+    tUpButton = gEID("tUpButton");
+    tDownButton = gEID("tDownButton");
+    stationFilterInput = gEID("stationFilterInput");
+    unInput = gEID("username");
+    pwInput = gEID("password");
+    unWarning = gEID("unWarning");
+    pwWarning = gEID("pwWarning");
+    sleepButton = gEID("sleepButton");
+    scrubber = gEID("scrubber");
+    volume = gEID("volume");
+    coverArt = gEID("coverArt");
+    login = gEID("login");
+    scrubShow = gEID("scrubShow");
+    volShow = gEID("volShow");
 
-    document.documentElement.style.setProperty("--height", localStorage.bodyHeight +"px");
-    document.documentElement.style.setProperty("--width", localStorage.bodyWidth + "px");
-
+    
     initTabs();
 
     if (background.mp3Player.paused) {
-        playButton.style.display = '';
-        pauseButton.style.display = 'none';
+        playButton.style.display = "";
+        pauseButton.style.display = "none";
     } else {
-        playButton.style.display = 'none';
-        pauseButton.style.display = '';
+        playButton.style.display = "none";
+        pauseButton.style.display = "";
     }
 
     volume.value = (localStorage.volume ? localStorage.volume * 100 : 20);
-    volShow.style.width = (localStorage.volume ? localStorage.volume * 100 : 20) + '%';
+    volShow.style.setProperty("--width", (localStorage.volume ? localStorage.volume * 100 : 20) / 100);
     
-    volume.addEventListener('input', (e) => {
+    volume.addEventListener("input", (e) => {
         background.mp3Player.volume = e.target.value / 100;
         localStorage.volume = e.target.value / 100;
-        volShow.style.width = e.target.value + '%';
-    })
+        volShow.style.setProperty("--width", e.target.value / 100);
+    });
 
-    scrubber.addEventListener('input', (e) => {
+    scrubber.addEventListener("input", (e) => {
         background.mp3Player.currentTime = background.mp3Player.duration * (e.target.value / 100);
-        scrubShow.style.width = e.target.value + '%';
-    })
+        scrubShow.style.setProperty("--width", e.target.value / 100);
+    });
 
-    playButton.addEventListener('click', play_audio);
-    pauseButton.addEventListener('click', pause_audio);
+    playButton.addEventListener("click", play_audio);
+    pauseButton.addEventListener("click", pause_audio);
 
     skipButton.addEventListener("click", () => {
         scrubber.value = 0;
-        scrubShow.style.width = '0%';
-        background.nextSong()
-    });
-    tUpButton.addEventListener("click", function () {
-        if (background.currentSong.songRating !== 1) {
-            background.addFeedback(-1, true);
-        }
-    });
-    tDownButton.addEventListener("click", async function () {
-        await background.addFeedback(-1, false);
+        scrubShow.style.setProperty("--width", "0");
         background.nextSong();
     });
+
+    let tUC = tUpButton.children[0],
+        tDC = tDownButton.children[0];
+
+    tUC.classList.add((likeStatus == "liked" ? "bxs-like" : "bx-like"));
+    tDC.classList.add((likeStatus == "disliked" ? "bxs-dislike" : "bx-dislike"));
+
+    tUpButton.addEventListener("click", (e) => {
+        if (likeStatus === "liked") {
+            return;
+        }
+        background.addFeedback(-1, true);
+        tUC.classList.add("bxs-like");
+        tUC.classList.remove("bx-like");
+        tDC.classList.add("bx-dislike");
+        tDC.classList.remove("bxs-disliked");
+        likeStatus = "liked";
+        e.preventDefault(e);
+    });
+    
+    tDownButton.addEventListener("click", (e) => {
+        if (likeStatus === "disliked") {
+            return;
+        }
+        background.addFeedback(-1, false);
+        tUC.classList.remove("liked");
+        tUC.classList.add("like");
+        tDC.classList.remove("dislike");
+        tDC.classList.add("disliked");
+        likeStatus = "disliked";
+        background.nextSong();
+        e.preventDefault(e);
+    });
+
     sleepButton.addEventListener("click", async function () {
         await background.sleepSong();
         background.nextSong();
     });
 
 
-    unWarning.style.display = 'none';
-    pwWarning.style.display = 'none';
+    unWarning.style.display = "none";
+    pwWarning.style.display = "none";
 
     login.addEventListener("submit", function (e) {
-		(async() => {
-			localStorage.username = unInput.value;
-			localStorage.password = pwInput.value;
-			await background.partnerLogin();
-			if (background.userAuthToken === "") {
-				document.getElementById("li1").classList.add("warning");
-				document.getElementById("li2").classList.add("warning");
-			} else {
-				await addStations();
-				//move to mid panel
-				goToStations();
-			}
-		})();
-		e.preventDefault();
-		return false;
+        (async() => {
+            localStorage.username = unInput.value;
+            localStorage.password = pwInput.value;
+            await background.partnerLogin();
+            if (background.userAuthToken === "") {
+                document.getElementById("li1").classList.add("warning");
+                document.getElementById("li2").classList.add("warning");
+            } else {
+                await addStations();
+                //move to mid panel
+                goToPanel(2);
+            }
+        })();
+        e.preventDefault();
+        return false;
     });
 
-    ['keypress', 'change', 'input', 'paste'].forEach(e => {
-        stationFilterInput.addEventListener(e, refreshStationList)
-    })
+    ["keypress", "change", "input", "paste"].forEach(e => {
+        stationFilterInput.addEventListener(e, refreshStationList);
+    });
     stationRefreshButton.addEventListener("click", async () => {
-        stationRefreshButton.children[0].classList.add('bx-spin');
+        stationRefreshButton.children[0].classList.add("bx-spin");
         await refreshStations();
-        stationRefreshButton.children[0].classList.remove('bx-spin');
+        stationRefreshButton.children[0].classList.remove("bx-spin");
     });
 
     if (background.stationList !== undefined) {
@@ -484,28 +518,15 @@ document.addEventListener('DOMContentLoaded', async function () {
             || localStorage.username.length === 0
             || localStorage.password.length === 0
             || background.userAuthToken.length === 0) {
-        goToLogin();
+        goToPanel(3);
     } else {
         if (!localStorage.lastStation) {
-            goToStations();
+            goToPanel(2);
         }
-        if (localStorage.lastStation) {
-            goToPlayer();
+        if (localStorage.lastStation && !localStorage.tabOn) {
+            goToPanel(1);
         }
     }
-
-    scrollerText.addEventListener("mouseover", () => {
-        if (subN(gCS(scrollerText).width) - subN(gCS(nowPlayingContainerCell).width) > 0) {
-            scrollerText.style.transition = `left ${(subN(gCS(scrollerText).width) - subN(gCS(nowPlayingContainerCell).width))*30}ms linear`,
-            scrollerText.style.left =  `${subN(gCS(nowPlayingContainerCell).width) - subN(gCS(scrollerText).width)}px`
-        } else {
-            scrollerText.style.left = 0;
-        }
-    });
-    scrollerText.addEventListener("mouseleave", () => {
-        //move it to left immediately
-        scrollerText.style.left = 0;
-    });
 
     if (background.mp3Player.src !== "") {
         downloadButton.src = background.mp3Player.src;
