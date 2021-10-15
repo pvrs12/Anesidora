@@ -270,10 +270,14 @@ function updatePlayer() {
     if (background.currentSong) {
         coverArt.href = wipeTrackers(background.currentSong.albumDetailUrl);
         if (background.currentSong.albumArtUrl != "") {
-            coverArt.style.backgroundImage = "url(\""+background.currentSong.albumArtUrl+"\")";
+            gEID("coverLink").style.backgroundImage =
+                coverArt.style.backgroundImage = 
+                    "url(\""+background.currentSong.albumArtUrl+"\")";
             coverArt.children[0] && (coverArt.children[0].style.display = "none");
         } else {
-            coverArt.style.background = "";
+            gEID("coverLink").style.backgroundImage =
+                coverArt.style.background = 
+                    "";
             coverArt.children[0] && (coverArt.children[0].style.display = "inline-block");
         }
 

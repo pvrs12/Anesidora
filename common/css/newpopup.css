@@ -168,19 +168,35 @@ a:hover {
     right: 0;
 }
 #coverLink {
+    --blurR: 5px;
     padding: 0;
     margin: 0;
+    background-color: var(--album-bg);
+    width: 100%;
+    position: absolute;
+    left: calc(-1 * var(--blurR, 3px));
+    right: calc(-1 * var(--blurR, 3px));
+    top: calc(-1 * var(--blurR, 3px));
+    bottom: calc(-1 * var(--blurR, 3px));
+    z-index: 1;
+
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    filter: blur(var(--blurR, 3px));
 }
 #coverArt {
-    min-width: var(--width);
+    position: relative;
+    z-index: 2;
     transition: width 350ms;
-    background-size: 100%;
     background-repeat: no-repeat;
     display: block;
     
     width: var(--width);
-    height: var(--width);
-    background-color: var(--album-bg);
+    height: 100%;
+
+    background-position: center;
+    background-size: contain;
 }
 .slight-margin {
     margin-left: 4%;
@@ -199,10 +215,11 @@ a:hover {
 
 
 #coverLinkCell {
-    position: absolute;
-    top: 0;
+    position: relative;
     width: 100%;
-    margin: 0;
+    height: 0;
+    flex-grow: 10;
+    max-height: 100vw;
 }
 #scrubber {
     border-radius: 0;
@@ -748,10 +765,6 @@ input[type=range]::-moz-range-track {
     display: flex;
     align-items: center;
     flex-direction: column;
-}
-
-div#coverLinkCell {
-    position: static;
 }
 
 .innerContainer {
