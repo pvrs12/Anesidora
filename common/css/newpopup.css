@@ -167,37 +167,42 @@ a:hover {
     left: 0;
     right: 0;
 }
-#coverLink {
-    --blurR: 5px;
-    padding: 0;
-    margin: 0;
-    background-color: var(--album-bg);
-    width: 100%;
-    position: absolute;
-    left: calc(-1 * var(--blurR, 3px));
-    right: calc(-1 * var(--blurR, 3px));
-    top: calc(-1 * var(--blurR, 3px));
-    bottom: calc(-1 * var(--blurR, 3px));
-    z-index: 1;
 
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: cover;
-    filter: blur(var(--blurR, 3px));
-}
 #coverArt {
-    position: relative;
-    z-index: 2;
-    transition: width 350ms;
-    background-repeat: no-repeat;
-    display: block;
+    opacity: 1;
+    transition: opacity  350ms;
     
-    width: var(--width);
     height: 100%;
-
-    background-position: center;
-    background-size: contain;
+    aspect-ratio: 1/1;
+    object-position: center;
+    object-fit: contain;
 }
+img[src=""]:not(#noopac) {
+    opacity: 0;
+}
+.iconGrad {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transform: scaleX(-1);
+}
+.iconGrad#gradLeft {
+    object-position: left center;
+    -webkit-mask-image: linear-gradient(
+-90deg, rgb(0 0 0 / 0%), rgb(0 0 0 / 60%) 70%, rgb(0 0 0 / 100%) 100%);
+    mask-image: linear-gradient(
+        -90deg, rgb(0 0 0 / 0%), rgb(0 0 0 / 60%) 70%, rgb(0 0 0 / 100%) 100%);
+    filter: blur(1px);
+}
+.iconGrad#gradRight {
+    object-position: right center;
+    -webkit-mask-image: linear-gradient(
+90deg, rgb(0 0 0 / 0%), rgb(0 0 0 / 60%) 70%, rgb(0 0 0 / 100%) 100%);
+    mask-image: linear-gradient(
+        90deg, rgb(0 0 0 / 0%), rgb(0 0 0 / 60%) 70%, rgb(0 0 0 / 100%) 100%);
+    filter: blur(1px);
+}
+
 .slight-margin {
     margin-left: 4%;
     margin-right: 3%;
@@ -215,11 +220,14 @@ a:hover {
 
 
 #coverLinkCell {
-    position: relative;
     width: 100%;
     height: 0;
     flex-grow: 10;
     max-height: 100vw;
+    overflow: hidden;
+    display: grid;
+    grid-template-rows: 100%;
+    grid-template-columns: 1fr auto 1fr;
 }
 #scrubber {
     border-radius: 0;
@@ -250,11 +258,14 @@ a:hover {
     pointer-events: none;
     background: none;
 }
-#prevTab > span, #nextTab > span {
+:is(#prevTab, #nextTab) > button {
     opacity: 0.5;
     display: inline-block;
     width: var(--tabSize);
     height: var(--tabSize);
+    font-size: 0.1px;
+    color: transparent;
+    cursor: pointer;
     background: transparent no-repeat center center;
     background-size: 100% 100%;
     pointer-events: all;
@@ -262,7 +273,7 @@ a:hover {
         z-index:99;
         filter: drop-shadow(0 0 2px black) drop-shadow(0 0 2px black);
 }
-#prevTab > span:hover, #nextTab > span:hover {
+:is(#prevTab, #nextTab) > button:hover {
     opacity: 0.9;
 }
 
@@ -272,10 +283,10 @@ a:hover {
 #nextTab {
     right: var(--tabOffset);
 }
-#prevTab > span {
+#prevTab > button {
     background-image: url("/images/new/leftarrow.svg");
 }
-#nextTab > span {
+#nextTab > button {
     background-image: url("/images/new/rightarrow.svg");
 }
 
@@ -677,6 +688,7 @@ a#artistLink, a#titleLink, a#albumLink {
     white-space: break-spaces;
     text-decoration: none;
     display: block;
+    overflow-wrap: break-word;
 }
 
 a#titleLink {

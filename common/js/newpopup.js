@@ -15,12 +15,11 @@ var background = get_browser().extension.getBackgroundPage();
 var panelOn = 0;
 
 const gEID = document.getElementById.bind(document);
-const qS = document.querySelector.bind(document);
 
 let pauseButton = gEID("pauseButton"),
     playButton = gEID("playButton"),
-    prevTS = qS("#prevTab > span"),
-    nextTS = qS("#nextTab > span"),
+    prevTS = gEID("prevTab") && gEID("prevTab").children[0],
+    nextTS = gEID("nextTab") && gEID("prevTab").children[0],
     downloadButton = gEID("downloadButton"),
     artistLink = gEID("artistLink"),
     stationRefreshButton = gEID("stationRefreshButton"),
@@ -270,15 +269,15 @@ function updatePlayer() {
     if (background.currentSong) {
         coverArt.href = wipeTrackers(background.currentSong.albumDetailUrl);
         if (background.currentSong.albumArtUrl != "") {
-            gEID("coverLink").style.backgroundImage =
-                coverArt.style.backgroundImage = 
-                    "url(\""+background.currentSong.albumArtUrl+"\")";
-            coverArt.children[0] && (coverArt.children[0].style.display = "none");
+            gEID("coverLinkCell").style.setProperty("--img", "url(\""+background.currentSong.albumArtUrl+"\")");
+            gEID("gradLeft").src = 
+                gEID("gradRight").src = 
+                coverArt.src = background.currentSong.albumArtUrl;
         } else {
-            gEID("coverLink").style.backgroundImage =
-                coverArt.style.background = 
-                    "";
-            coverArt.children[0] && (coverArt.children[0].style.display = "inline-block");
+            gEID("coverLinkCell").style.setProperty("--img", "url(\""+background.currentSong.albumArtUrl+"\")");
+            gEID("gradLeft").src = 
+                gEID("gradRight").src = 
+                coverArt.src = "";
         }
 
         gEID("dash").innerText = "";
@@ -387,8 +386,8 @@ if (localStorage.themeInfo && localStorage.themeInfo !== "") {
 document.addEventListener("DOMContentLoaded", async function () {
     pauseButton = gEID("pauseButton");
     playButton = gEID("playButton");
-    prevTS = qS("#prevTab > span");
-    nextTS = qS("#nextTab > span");
+    prevTS = gEID("prevTab").children[0];
+    nextTS = gEID("nextTab").children[0];
     downloadButton = gEID("downloadButton");
     artistLink = gEID("artistLink");
     stationRefreshButton = gEID("stationRefreshButton");
