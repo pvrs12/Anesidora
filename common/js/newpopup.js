@@ -34,7 +34,6 @@ let pauseButton = gEID("pauseButton"),
     sleepButton = gEID("sleepButton"),
     scrubber = gEID("scrubber"),
     volume = gEID("volume"),
-    coverArt = gEID("coverArt"),
     login = gEID("login"),
     scrubShow = gEID("scrubShow"),
     volShow = gEID("volShow");
@@ -79,7 +78,8 @@ function downloadSong(url, title) {
 function updateHistory() {
     clearHistory();
     const historyDiv = document.getElementById("historyDiv");
-    background.prevSongs.reverse().forEach(function (song, i) {
+    // do not sort in place
+    [...background.prevSongs].reverse().forEach(function (song, i) {
         let historyElem = document.createElement("div");
         historyElem.classList.add("historyItem");
         let cover = document.createElement("a");
@@ -265,20 +265,162 @@ function addStations() {
 }
 var lastActiveStation = "";
 
-function updatePlayer() {
-    if (background.currentSong) {
-        coverArt.href = wipeTrackers(background.currentSong.albumDetailUrl);
-        if (background.currentSong.albumArtUrl != "") {
-            gEID("coverLinkCell").style.setProperty("--img", "url(\""+background.currentSong.albumArtUrl+"\")");
-            gEID("gradLeft").src = 
-                gEID("gradRight").src = 
-                coverArt.src = background.currentSong.albumArtUrl;
+// function to be run once, when popup first loads
+function generateCovers() {
+    let covers = document.getElementById("covers");
+    if (covers.childElementCount > 0) {
+        return;
+    }
+    if (background.prevSongs.length > 0) {
+        let newCover;
+        let x = [...background.prevSongs].reverse()[0];
+        if (x) {
+            newCover = document.createElement("img");
+            newCover.src = x.albumArtUrl;
         } else {
-            gEID("coverLinkCell").style.setProperty("--img", "url(\""+background.currentSong.albumArtUrl+"\")");
-            gEID("gradLeft").src = 
-                gEID("gradRight").src = 
-                coverArt.src = "";
+            newCover = document.createElement("div");
         }
+        newCover.id = x.musicId;
+        newCover.classList.add("prev");
+        covers.appendChild(newCover);
+    }
+    if (background.currentSong) {
+        let newCover;
+        let x = background.currentSong;
+        if (x) {
+            newCover = document.createElement("img");
+            newCover.src = x.albumArtUrl;
+        } else {
+            newCover = document.createElement("div");
+        }
+        newCover.id = x.musicId;
+        newCover.classList.add("current");
+        covers.appendChild(newCover);
+    }
+    if (background.comingSong) {
+        let newCover;
+        let x = background.comingSong;
+        if (x) {
+            newCover = document.createElement("img");
+            newCover.src = x.albumArtUrl;
+        } else {
+            newCover = document.createElement("div");
+        }
+        newCover.id = x.musicId;
+        newCover.classList.add("next");
+        covers.appendChild(newCover);
+    }
+    if (background.currentPlaylist.length > 0) {
+        let newCover;
+        let x = background.currentPlaylist[0];
+        if (x) {
+            newCover = document.createElement("img");
+            newCover.src = x.albumArtUrl;
+        } else {
+            newCover = document.createElement("div");
+        }
+        newCover.id = x.musicId;
+        newCover.classList.add("uberNext");
+        covers.appendChild(newCover);
+    }
+}
+
+function updateCovers() {
+    let covers = document.getElementById("covers");
+    if (document.querySelector("#covers > .current").id === background.currentSong.musicId) {
+        // don't need to do anything
+        return;
+    }
+    let prev = document.querySelector("#covers > .prev");
+    if (prev) {
+        prev.classList.add("uberPrev");
+        prev.classList.remove("prev");
+        prev.addEventListener("transitionend", () => {
+            covers.removeChild(prev);
+        });
+    } else if (background.prevSongs.length > 0) {
+        let newCover;
+        let x = background.prevSongs[background.prevSongs.length - 1];
+        if (x) {
+            newCover = document.createElement("img");
+            newCover.src = x.albumArtUrl;
+        } else {
+            newCover = document.createElement("div");
+        }
+        newCover.id = x.musicId;
+        newCover.classList.add("prev");
+        covers.appendChild(newCover);
+        setTimeout(() => {
+            newCover.classList.add("uberPrev");
+            newCover.classList.remove("prev");
+            newCover.addEventListener("transitionend", () => {
+                covers.removeChild(newCover);
+            });
+        }, 0);
+    }
+    let curr = document.querySelector("#covers > .current");
+    curr.classList.add("prev");
+    curr.classList.remove("current");
+
+    let next = document.querySelector("#covers > .next");
+    if (next) {
+        next.classList.add("current");
+        next.classList.remove("next");
+    } else if  (background.currentSong) {
+        let newCover;
+        let x = background.currentSong;
+        if (x) {
+            newCover = document.createElement("img");
+            newCover.src = x.albumArtUrl;
+        } else {
+            newCover = document.createElement("div");
+        }
+        newCover.id = x.musicId;
+        newCover.classList.add("current");
+        covers.appendChild(newCover);
+    }
+
+    let uberNext = document.querySelector("#covers > .uberNext");
+    if (uberNext) {
+        uberNext.classList.add("next");
+        uberNext.classList.remove("uberNext");
+    } else if (background.comingSong) {
+        let newCover;
+        let x = background.comingSong;
+        if (x) {
+            newCover = document.createElement("img");
+            newCover.src = x.albumArtUrl;
+        } else {
+            newCover = document.createElement("div");
+        }
+        newCover.id = x.musicId;
+        newCover.classList.add("next");
+        covers.appendChild(newCover);
+    }
+    if (background.currentPlaylist[0]) {
+        let newCover;
+        let x = background.currentPlaylist[0];
+        if (x) {
+            newCover = document.createElement("img");
+            newCover.src = x.albumArtUrl;
+        } else {
+            newCover = document.createElement("div");
+        }
+        newCover.id = x.musicId;
+        newCover.classList.add("uberNext");
+        covers.appendChild(newCover);
+    }
+}
+
+function updatePlayer() {
+    let covers = document.getElementById("covers");
+    if (covers.childElementCount > 0) {
+        updateCovers();
+    } else {
+        generateCovers();
+    }
+    if (background.currentSong) {
+        gEID("coverLinkCell").style.setProperty("--img", "url(\""+(background.currentSong.albumArtUrl || "")+"\")");
 
         gEID("dash").innerText = "";
 
@@ -402,7 +544,6 @@ document.addEventListener("DOMContentLoaded", async function () {
     sleepButton = gEID("sleepButton");
     scrubber = gEID("scrubber");
     volume = gEID("volume");
-    coverArt = gEID("coverArt");
     login = gEID("login");
     scrubShow = gEID("scrubShow");
     volShow = gEID("volShow");

@@ -62,8 +62,8 @@ function getSyncTime(syncTime) {
     return parseInt(syncTime) + (now - clientStartTime);
 }
 
+var failed = false;
 async function sendRequest(secure, encrypted, method, request) {
-    var failed = false;
     var url, parameters;
     if (localStorage.forceSecure === "true" || secure) {
         url = "https://tuner.pandora.com/services/json/?method=";
@@ -224,7 +224,12 @@ async function getPlaylist(stationToken) {
         "syncTime": getSyncTime(syncTime)
     });
     let response = await sendRequest(true, true, "station.getPlaylist", request);
-
+    if (!response.result) {
+        failed = true;
+        return;
+    } else {
+        failed = false;
+    }
     currentPlaylist = response.result.items;
     //currentPlaylist.pop(); //Pop goes the advertisment.
     removeAds(currentPlaylist);
