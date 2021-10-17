@@ -118,6 +118,7 @@ a:hover {
     gap: 1rem;
     padding: 1rem;
     box-sizing: border-box;
+    overflow-y: auto;
 }
 
 #stationHeaderDiv {
