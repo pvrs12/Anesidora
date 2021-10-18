@@ -42,15 +42,6 @@
     height: 100%;
     background: var(--background);
 }
-.switch {
-    width: min-content;
-    height: 100%;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    z-index: 99;
-    pointer-events: none;
-}
 * {
     outline: none;
     box-sizing: content-box;
@@ -85,9 +76,6 @@ a {
 a:hover {
   text-decoration: underline;
 }
-.deadLink {
-    text-decoration: none;
-}
 #anesidora{
     width: var(--width);
     height: var(--height);
@@ -119,11 +107,6 @@ a:hover {
     padding: 1rem;
     box-sizing: border-box;
     overflow-y: auto;
-}
-
-#stationHeaderDiv {
-    height: 30px;
-    width: 100%;
 }
 
 #stationFilterInput {
@@ -159,19 +142,9 @@ a:hover {
     overflow-y: auto;
 }
 
-#stationList {
-    width: 100%;
-    height: 100%;
-}
 .innerInnerContainer > *{
     display: inline-block;
     margin: calc(var(--size) / 20);
-}
-#nowPlayingContainerCell {
-    width: 90%;
-    height: min-content;
-    margin-top: 0.6rem;
-    margin-bottom: -14px;
 }
 #scrubberCell {
     width: 100%;
@@ -181,17 +154,6 @@ a:hover {
     right: 0;
 }
 
-.cover {
-    height: 100%;
-    aspect-ratio: 1/1;
-    object-fit: cover;
-    object-position: center;
-
-    -webkit-user-drag: none;
-    user-select: none;
-    max-height: 100vw;
-    transition: transform 350ms;
-}
 img[src=""]:not(#noopac), img:not([src]):not(#noopac) {
     opacity: 0;
     max-height: 0;
@@ -277,43 +239,13 @@ div#gradRight {
     transform: scaleY(1.1);
 }
 
-.slight-margin {
-    margin-left: 4%;
-    margin-right: 3%;
-}
-
-.innerContainer {
-    position: absolute;
-    width: 100%;
-    bottom: 0;
-    height: calc(100% - var(--width));
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-}
-
-
-
-
-
 #scrubber {
     border-radius: 0;
     border: 0;
 }
-.ui-slider-handle {
-    opacity: 0;
-}
-.ui-slider-horizontal .ui-slider-range {
-    border: 0;
-    border-radius: 0;
-    background: var(--accent-color);
-}
 
 .hoverImg {
     color: var(--button-color);
-}
-.switch > * {
-    pointer-events: auto;
 }
 #prevTab, #nextTab {
     position: absolute;
@@ -596,13 +528,6 @@ span, a, #nowPlayingContainerCell, #nowPlayingContainer, #nowPlaying {
     left: 25px;
 }
 
-.flex-2 {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    flex-direction: column;
-}
-
 #historyDiv:empty:before {
     content: "History is empty";
     width: 100%;
@@ -629,10 +554,6 @@ span, a, #nowPlayingContainerCell, #nowPlayingContainer, #nowPlaying {
 
 /* Volume */
 
-#volumeCell > img {
-    width: calc(var(--width) / 10);
-    pointer-events: none;
-}
 #volume {
     width: calc(var(--width)/2);
     transition: transform 150ms;

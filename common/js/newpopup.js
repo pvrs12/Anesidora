@@ -347,15 +347,15 @@ function updateCovers() {
         } else {
             newCover = document.createElement("div");
         }
+        newCover.addEventListener("transitionend", () => {
+            covers.removeChild(newCover);
+        });
         newCover.id = x.musicId;
         newCover.classList.add("prev");
         covers.appendChild(newCover);
         setTimeout(() => {
             newCover.classList.add("uberPrev");
             newCover.classList.remove("prev");
-            newCover.addEventListener("transitionend", () => {
-                covers.removeChild(newCover);
-            });
         }, 0);
     }
     let curr = document.querySelector("#covers > .current");
