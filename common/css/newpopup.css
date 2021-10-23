@@ -67,11 +67,11 @@ body {
     height: 100%;
 }
 a {
-    font-family: var(--font-family);
-    font-size: var(--font-size);
+    font-family: inherit;
+    font-size: inherit;
     text-decoration: none;
-    color: var(--text-color);
-    font-weight: lighter;
+    color: inherit;
+    font-weight: inherit;
 }
 a:hover {
   text-decoration: underline;
@@ -101,7 +101,7 @@ a:hover {
 }
 #historyDiv {
     display: grid;
-    grid-template-columns: repeat(var(--history-column-count, 3), minmax(0, 1fr));
+    grid-template-columns: repeat(var(--history-column-count, 3), minmax(8vw, 1fr));
     grid-auto-rows: max-content;
     gap: 1rem;
     padding: 1rem;
@@ -128,11 +128,23 @@ a:hover {
     margin-right: 1rem;
 }
 
+@media (min-width: 800px) {
+    #midPanel {
+        --cols: var(--station-columns, 6);
+    }
+}
+@media (max-width: 799px) {
+    #midPanel {
+        --cols: var(--cols, 3);
+    }
+}
 #stationListDiv {
+    --size: max(calc(var(--width, 100vw) / var(--cols, 3) - 1rem), 8vw);
     height: 100%;
     margin: 0;
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(var(--cols, 3), minmax(8vw, 1fr));
+    grid-auto-rows: max-content;
     gap: 1rem;
     padding: 1rem;
     box-sizing: border-box;
@@ -200,25 +212,29 @@ img[src=""]:not(#noopac), img:not([src]):not(#noopac) {
     height: 100%;
     aspect-ratio: 1/1;
     grid-area: 1/2;
+    display: grid;
+    overflow: clip;
+    grid-auto-columns: 100%;
+    grid-auto-rows: 100%;
 }
 #covers > :is(.current, .prev, .next, .uberNext, .uberPrev) {
     transition: transform 350ms;
 }
 #covers > .uberNext {
-    transform: translateX(200%);
+    transform: translateX(200%) scale(0.9);
 }
 #covers > .next {
-    transform: translateX(100%);
+    transform: translateX(100%) scale(0.9);
 }
 #covers > .current {
-    transform: scale(1.1);
+    transform: scale(1);
     z-index: 3;
 }
 #covers > .prev {
-    transform: translateX(-100%);
+    transform: translateX(-100%) scale(0.9);
 }
 #covers > .uberPrev {
-    transform: translateX(-200%);
+    transform: translateX(-200%) scale(0.9);
 }
 
 div#gradLeft {
@@ -682,6 +698,7 @@ a#artistLink, a#titleLink, a#albumLink {
     text-decoration: none;
     display: block;
     overflow-wrap: break-word;
+    max-width: max-content;
 }
 
 a#titleLink {
@@ -844,4 +861,65 @@ div#volIcon {
 }
 .innerInnerContainer, #volumeCell {
     user-select: none;
+}
+
+.info, .actualCover {
+    grid-area: 1 / 1;
+}
+
+.actualCover {
+    width: 100%;
+    height: 100%;
+}
+
+.info {
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: end;
+    justify-content: end;
+    padding: 2rem;
+    background: #000000d9;
+    font-size: 2rem;
+    font-weight: 700;
+    opacity: 0;
+    transition: opacity 350ms;
+    text-align: right;
+}
+
+.info a {
+    text-decoration: none;
+}
+
+.info .author {
+    font-weight: 600;
+    opacity: 0.5;
+    font-size: 1.5rem;
+}
+
+#covers > *:hover > .info {
+    opacity: 1;
+}
+.current .info {
+    display: none;
+}
+.next .info {
+    align-items: start;
+    text-align: left;
+}
+
+.songTitle {
+    font-size: 3rem;
+    font-weight: 600;
+}
+
+.albumTitle {
+    font-size: 1.4rem;
+    opacity: 0.5;
+    font-weight: 600;
+}
+
+.coverActions {
+    padding: 0.3rem;
+    opacity: 0.5;
 }

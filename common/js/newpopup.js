@@ -272,90 +272,206 @@ function generateCovers() {
         return;
     }
     if (background.prevSongs.length > 0) {
-        let newCover;
         let x = [...background.prevSongs].reverse()[0];
-        if (x) {
-            newCover = document.createElement("img");
-            newCover.src = x.albumArtUrl;
-        } else {
-            newCover = document.createElement("div");
-        }
+        let newCover = generateCoverSingular("prev", {
+            authorName: x.artistName,
+            authorLink: wipeTrackers(x.artistDetailUrl),
+            albumLink: wipeTrackers(x.albumDetailUrl),
+            albumTitle: x.albumName,
+            downloadLink: x.audioUrlMap.highQuality.audioUrl,
+            likeStatus: x.songRating,
+            songLink: wipeTrackers(x.songDetailUrl),
+            songTitle: x.songName,
+            coverSrc: x.albumArtUrl
+        });
         newCover.id = x.musicId;
-        newCover.classList.add("prev");
         covers.appendChild(newCover);
     }
     if (background.currentSong) {
-        let newCover;
         let x = background.currentSong;
-        if (x) {
-            newCover = document.createElement("img");
-            newCover.src = x.albumArtUrl;
-        } else {
-            newCover = document.createElement("div");
-        }
+        let newCover = generateCoverSingular("current", {
+            authorName: x.artistName,
+            authorLink: wipeTrackers(x.artistDetailUrl),
+            albumLink: wipeTrackers(x.albumDetailUrl),
+            albumTitle: x.albumName,
+            downloadLink: x.audioUrlMap.highQuality.audioUrl,
+            likeStatus: x.songRating,
+            songLink: wipeTrackers(x.songDetailUrl),
+            songTitle: x.songName,
+            coverSrc: x.albumArtUrl
+        });
         newCover.id = x.musicId;
-        newCover.classList.add("current");
         covers.appendChild(newCover);
     }
     if (background.comingSong) {
-        let newCover;
         let x = background.comingSong;
-        if (x) {
-            newCover = document.createElement("img");
-            newCover.src = x.albumArtUrl;
-        } else {
-            newCover = document.createElement("div");
-        }
+        let newCover = generateCoverSingular("next", {
+            authorName: x.artistName,
+            authorLink: wipeTrackers(x.artistDetailUrl),
+            albumLink: wipeTrackers(x.albumDetailUrl),
+            albumTitle: x.albumName,
+            downloadLink: x.audioUrlMap.highQuality.audioUrl,
+            likeStatus: x.songRating,
+            songLink: wipeTrackers(x.songDetailUrl),
+            songTitle: x.songName,
+            coverSrc: x.albumArtUrl
+        });
         newCover.id = x.musicId;
-        newCover.classList.add("next");
         covers.appendChild(newCover);
     }
-    if (background.currentPlaylist.length > 0) {
-        let newCover;
+    if (background.currentPlaylist && background.currentPlaylist.length > 0) {
         let x = background.currentPlaylist[0];
-        if (x) {
-            newCover = document.createElement("img");
-            newCover.src = x.albumArtUrl;
-        } else {
-            newCover = document.createElement("div");
-        }
+        let newCover = generateCoverSingular("uberNext", {
+            authorName: x.artistName,
+            authorLink: wipeTrackers(x.artistDetailUrl),
+            albumLink: wipeTrackers(x.albumDetailUrl),
+            albumTitle: x.albumName,
+            downloadLink: x.audioUrlMap.highQuality.audioUrl,
+            likeStatus: x.songRating,
+            songLink: wipeTrackers(x.songDetailUrl),
+            songTitle: x.songName,
+            coverSrc: x.albumArtUrl
+        });
         newCover.id = x.musicId;
-        newCover.classList.add("uberNext");
         covers.appendChild(newCover);
     }
 }
+/**
+ * @returns {HTMLDivElement}
+ * @param where {string} Class to be added to outer.
+ * @param info {{authorName: string, authorLink: string, songTitle: string, songLink: string, albumTitle: string, albumLink: string, downloadLink: string, likeStatus: number, coverSrc?: string}}
+ * @description
+ * Creates cover structure for centerfold and returns it. 
+ */
+function generateCoverSingular(where, info) {
+    /**
+     * Cover structure:
+     * 
+     * <div.{uberPrev|prev|current|next|uberNext}>
+     *   <div.info>
+     *     <span.author>Author Name</span.author>
+     *     <span.songTitle>Song Title</span.songTitle>
+     *     <span.albumTitle>Album Title</span.albumTitle>
+     *     <div.coverActions>
+     *       <button><i.bx.bx{s?}-like /></button>
+     *       <a><i.bx.bx{s?}-download /></a>
+     *       <button><i.bx.bx{s?}-dislike /></button>
+     *     </div.coverActions>
+     *   </div.info>
+     *   <img.actualCover />
+     * </div>
+     * 
+     **/
+    /* This is quite possibly the worst I could've organized my variables but I thought it was funny */
+    const tree = {
+        r: document.createElement("div"),
+        info: {
+            r: document.createElement("div"),
+            author: document.createElement("a"),
+            songTitle: document.createElement("a"),
+            albumTitle: document.createElement("a"),
+            coverActions: {
+                r: document.createElement("div"),
+                like: {
+                    r: document.createElement("button"),
+                    i: document.createElement("i")
+                },
+                download: {
+                    r: document.createElement("a"),
+                    i: document.createElement("i")
+                },
+                dislike: {
+                    r: document.createElement("button"),
+                    i: document.createElement("i")
+                }
+            }
+        },
+        actualCover: document.createElement("img")
+    };
 
+    tree.r.appendChild(tree.info.r);
+    tree.info.r.appendChild(tree.info.author);
+    tree.info.r.appendChild(tree.info.songTitle);
+    tree.info.r.appendChild(tree.info.albumTitle);
+    tree.info.r.appendChild(tree.info.coverActions.r);
+    tree.info.coverActions.r.appendChild(tree.info.coverActions.like.r);
+    tree.info.coverActions.like.r.appendChild(tree.info.coverActions.like.i);
+    tree.info.coverActions.r.appendChild(tree.info.coverActions.download.r);
+    tree.info.coverActions.download.r.appendChild(tree.info.coverActions.download.i);
+    tree.info.coverActions.r.appendChild(tree.info.coverActions.dislike.r);
+    tree.info.coverActions.dislike.r.appendChild(tree.info.coverActions.dislike.i);
+    tree.r.appendChild(tree.actualCover);
+
+    tree.r.classList.add(where);
+    tree.actualCover.classList.add("actualCover");
+    tree.info.r.classList.add("info");
+    tree.info.author.classList.add("author");
+    tree.info.songTitle.classList.add("songTitle");
+    tree.info.albumTitle.classList.add("albumTitle");
+    tree.info.coverActions.r.classList.add("coverActions");
+    tree.info.coverActions.like.i.classList.add(
+        "bx", "hoverImg", "icon",
+        info.likeStatus === 1 ? "bxs-like" : "bx-like"
+    );
+    tree.info.coverActions.download.i.classList.add(
+        "bx", "hoverImg", "icon",
+        "bx-download"
+    );
+    tree.info.coverActions.dislike.i.classList.add(
+        "bx", "hoverImg", "icon",
+        info.likeStatus === -1 ? "bxs-dislike" : "bx-dislike"
+    );
+    if (info.coverSrc) {
+        tree.actualCover.src = info.coverSrc;
+    }
+    tree.info.author.innerText = info.authorName;
+    tree.info.author.href = info.authorLink;
+    tree.info.songTitle.innerText = info.songTitle;
+    tree.info.songTitle.href = info.songLink;
+    tree.info.albumTitle.innerText = info.albumTitle;
+    tree.info.albumTitle.href = info.albumLink;
+    return tree.r;
+}
 function updateCovers() {
     let covers = document.getElementById("covers");
     if (document.querySelector("#covers > .current").id === background.currentSong.musicId) {
         // don't need to do anything
         return;
     }
+    [...covers.children].forEach(e => {
+        if (e.classList.contains("uberPrev")) {
+            covers.removeChild(e);
+        }
+    });
     let prev = document.querySelector("#covers > .prev");
     if (prev) {
-        prev.classList.add("uberPrev");
-        prev.classList.remove("prev");
         prev.addEventListener("transitionend", () => {
             covers.removeChild(prev);
+        }, {
+            once: true
         });
+        prev.classList.add("uberPrev");
+        prev.classList.remove("prev");
+        setTimeout(() => { covers.removeChild(prev); }, 350);
     } else if (background.prevSongs.length > 0) {
-        let newCover;
         let x = background.prevSongs[background.prevSongs.length - 1];
-        if (x) {
-            newCover = document.createElement("img");
-            newCover.src = x.albumArtUrl;
-        } else {
-            newCover = document.createElement("div");
-        }
-        newCover.addEventListener("transitionend", () => {
-            covers.removeChild(newCover);
+        let newCover = generateCoverSingular("prev", {
+            authorName: x.artistName,
+            authorLink: wipeTrackers(x.artistDetailUrl),
+            albumLink: wipeTrackers(x.albumDetailUrl),
+            albumTitle: x.albumName,
+            downloadLink: x.audioUrlMap.highQuality.audioUrl,
+            likeStatus: x.songRating,
+            songLink: wipeTrackers(x.songDetailUrl),
+            songTitle: x.songName,
+            coverSrc: x.albumArtUrl
         });
         newCover.id = x.musicId;
-        newCover.classList.add("prev");
         covers.appendChild(newCover);
         setTimeout(() => {
             newCover.classList.add("uberPrev");
             newCover.classList.remove("prev");
+            setTimeout(() => { covers.removeChild(newCover); }, 350);
         }, 0);
     }
     let curr = document.querySelector("#covers > .current");
@@ -367,16 +483,19 @@ function updateCovers() {
         next.classList.add("current");
         next.classList.remove("next");
     } else if  (background.currentSong) {
-        let newCover;
         let x = background.currentSong;
-        if (x) {
-            newCover = document.createElement("img");
-            newCover.src = x.albumArtUrl;
-        } else {
-            newCover = document.createElement("div");
-        }
+        let newCover = generateCoverSingular("current", {
+            authorName: x.artistName,
+            authorLink: wipeTrackers(x.artistDetailUrl),
+            albumLink: wipeTrackers(x.albumDetailUrl),
+            albumTitle: x.albumName,
+            downloadLink: x.audioUrlMap.highQuality.audioUrl,
+            likeStatus: x.songRating,
+            songLink: wipeTrackers(x.songDetailUrl),
+            songTitle: x.songName,
+            coverSrc: x.albumArtUrl
+        });
         newCover.id = x.musicId;
-        newCover.classList.add("current");
         covers.appendChild(newCover);
     }
 
@@ -385,29 +504,35 @@ function updateCovers() {
         uberNext.classList.add("next");
         uberNext.classList.remove("uberNext");
     } else if (background.comingSong) {
-        let newCover;
         let x = background.comingSong;
-        if (x) {
-            newCover = document.createElement("img");
-            newCover.src = x.albumArtUrl;
-        } else {
-            newCover = document.createElement("div");
-        }
+        let newCover = generateCoverSingular("next", {
+            authorName: x.artistName,
+            authorLink: wipeTrackers(x.artistDetailUrl),
+            albumLink: wipeTrackers(x.albumDetailUrl),
+            albumTitle: x.albumName,
+            downloadLink: x.audioUrlMap.highQuality.audioUrl,
+            likeStatus: x.songRating,
+            songLink: wipeTrackers(x.songDetailUrl),
+            songTitle: x.songName,
+            coverSrc: x.albumArtUrl
+        });
         newCover.id = x.musicId;
-        newCover.classList.add("next");
         covers.appendChild(newCover);
     }
     if (background.currentPlaylist[0]) {
-        let newCover;
         let x = background.currentPlaylist[0];
-        if (x) {
-            newCover = document.createElement("img");
-            newCover.src = x.albumArtUrl;
-        } else {
-            newCover = document.createElement("div");
-        }
+        let newCover = generateCoverSingular("uberNext", {
+            authorName: x.artistName,
+            authorLink: wipeTrackers(x.artistDetailUrl),
+            albumLink: wipeTrackers(x.albumDetailUrl),
+            albumTitle: x.albumName,
+            downloadLink: x.audioUrlMap.highQuality.audioUrl,
+            likeStatus: x.songRating,
+            songLink: wipeTrackers(x.songDetailUrl),
+            songTitle: x.songName,
+            coverSrc: x.albumArtUrl
+        });
         newCover.id = x.musicId;
-        newCover.classList.add("uberNext");
         covers.appendChild(newCover);
     }
 }
