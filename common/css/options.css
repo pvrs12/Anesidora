@@ -1,7 +1,53 @@
 :root {
-    
+    --width: 350px;
+    --height: 599px;
+    --transitiontime: 350ms;
+    --background: #3a3a3a;
+    --font-family: Inter, sans-serif;
+    --font-weight: 400;
+    --font-size: 12px;
+    --text-color: white;
+    --inverse-color: black;
+    --accent-color: #00F782;
+    --accent-color-darker: #171d1a;
+    --tabSize: 20px;
+    --warning-bgcolor: #ff3722;
+    --warning-color: white;
+    --album-bg: #6a6c26;
+    --button-color: white;
+    --active-button-color: #ffa700;
+    --album-color: red;
+    --tabOffset: 5px;
 }
 
+body {
+    min-height: 100vh;
+    background: var(--background);
+    font-family: var(--font-family);
+    color: var(--text-color);
+
+    display: grid;
+    grid-template-columns: var(--width) minmax(0, 1fr);
+    grid-auto-rows: max-content;
+
+    /** Injected stylesheets screw with my box-sizing >:( */
+    margin: 0;
+    padding: 14px 17px;
+
+    gap: 14px 17px;
+}
+
+#preview {
+    width: var(--width);
+    height: var(--height);
+    align-self: center;
+    grid-column: 1;
+    grid-row: 2;
+}
+
+.opts {
+    grid-column: 2;
+}
 
 * {
     border: none;
@@ -15,4 +61,93 @@ input, button {
     font-family: inherit;
     font-size: inherit;
     font-weight: inherit;
+}
+
+h1 {
+    font-weight: 900;
+    font-size: 2rem;
+    background: linear-gradient(var(--accent-color), transparent);
+    display: inline-block;
+    background-position: center bottom;
+    background-repeat: no-repeat;
+    background-size: 100% 0.2rem;
+    margin-bottom: 1rem;
+}
+
+h3 {
+    font-weight: 600;
+    font-size: 1.4rem;
+    color: inherit;
+    /* Damn you injected styles! */
+}
+
+iframe.view {
+    pointer-events: none;
+}
+
+.item > :checked ~ .radioLike {
+    box-shadow: 0 0 0 5px lightseagreen;
+}
+
+.item > :focus:not(:checked) ~ .radioLike, .item > :not(:checked) ~ .radioLike:hover {
+    box-shadow: 0 0 0 3px orange;
+}
+
+.item :not(:focus, :checked) ~ .radioLike {
+    box-shadow: 0 0 0 1px lightslategrey;
+}
+
+.radioLike {
+    gap: 0.5rem;
+    width: max-content;
+    height: max-content;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-radius: 10px;
+    overflow: clip;
+    padding: 0;
+    box-shadow: 0 0 0 5px transparent;
+    transition: box-shadow 150ms;
+}
+
+.optGroup {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.group {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    gap: 10px;
+    padding: 10px;
+}
+
+.item {
+    display: grid;
+    grid-auto-columns: 100%;
+    grid-auto-rows: max-content;
+    
+    cursor: pointer;
+    user-select: none;
+}
+
+.item input[type="radio"] {
+    font-size: 0;
+    width: 0;
+    height: 0;
+    position: absolute;
+    left: -5px;
+    top: -5px;
+}
+
+.item span {
+    padding-bottom: 0.5rem;
+    font-size: 1.3rem;
+    font-weight: 600;
+    box-sizing: content-box;
+    display: block;
 }

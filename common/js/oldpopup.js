@@ -15,14 +15,10 @@ var background = get_browser().extension.getBackgroundPage();
 
 function initBodySize() {
     "use strict";
-    if (localStorage.bodyWidth === undefined || localStorage.bodyWidth === 0) {
-        localStorage.bodyWidth = default_width;
-    }
-    if (localStorage.bodyHeight === undefined || localStorage.bodyHeight === 0) {
-        localStorage.bodyHeight = default_height;
-    }
-    $("#bodyWidth").val(localStorage.bodyWidth);
-    $("#bodyHeight").val(localStorage.bodyHeight);
+    let usedWidth = window.forceWidth || localStorage.bodyWidth || default_width;
+    let usedHeight = window.forceHeight || localStorage.bodyHeight || default_height;
+    $("#bodyWidth").val(usedWidth);
+    $("#bodyHeight").val(usedHeight);
 }
 
 function goToPanel(id) {
@@ -257,14 +253,23 @@ function drawPlayer() {
 
 $(document).ready(async function () {
     "use strict";
+    let usedWidth = window.forceWidth || localStorage.bodyWidth || default_width;
+    let usedHeight = window.forceHeight || localStorage.bodyHeight || default_height;
+    if (window.top && window.top.location.href.endsWith("options.htm")) {
+        usedWidth = "350px";
+        usedHeight = "100px";
+        // For options previews, be smol
+    }
+    console.log(usedWidth);
+
     $("body").bind("click", function (e) {
         if (e.target.id !== "artistLink" && e.target.id !== "titleLink") {
             $(".details").hide();
         }
     });
     initBodySize();
-    $("body").width(localStorage.bodyWidth);
-    $("body").height(localStorage.bodyHeight);
+    $("body").width(usedWidth);
+    $("body").height(usedHeight);
 
     var scrollerWidth = $("body").width() * 0.6;
     $(".scrollerContainer").width(scrollerWidth);
@@ -359,29 +364,29 @@ $(document).ready(async function () {
     $("#unWarning").hide();
     $("#pwWarning").hide();
     $("#login").bind("submit", function (e) {
-		(async() => {
-			localStorage.username = $("#username").val();
-			localStorage.password = $("#password").val();
-			await background.partnerLogin();
-			if (background.userAuthToken === "") {
-				$("#unWarning").show();
-				$("#pwWarning").show();
-				$("#username").css({
-					"padding-left": "16px",
-					"width": "216px"
-				});
-				$("#password").css({
-					"padding-left": "16px",
-					"width": "216px"
-				});
-			} else {
-				addStations();
-				//move to mid panel
-				goToStations();
-			}
-		})();
-		e.preventDefault();
-		return false;
+        (async() => {
+            localStorage.username = $("#username").val();
+            localStorage.password = $("#password").val();
+            await background.partnerLogin();
+            if (background.userAuthToken === "") {
+                $("#unWarning").show();
+                $("#pwWarning").show();
+                $("#username").css({
+                    "padding-left": "16px",
+                    "width": "216px"
+                });
+                $("#password").css({
+                    "padding-left": "16px",
+                    "width": "216px"
+                });
+            } else {
+                addStations();
+                //move to mid panel
+                goToStations();
+            }
+        })();
+        e.preventDefault();
+        return false;
     });
 
     $("#stationFilterInput").bind("keypress change input paste", () => {

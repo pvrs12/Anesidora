@@ -17,12 +17,13 @@
     -webkit-background-clip: padding-box;
 }
 :root {
-    --width: 0;
-    --height: 0;
+    --width: 100%;
+    --height: 100%;
     --transitiontime: 350ms;
-    --size: calc(var(--width) / 4);
+    --size: calc(100vw / 4);
     --background: #3a3a3a;
-    --font-family: Verdana, Arial, sans-serif;
+    --font-family: Inter, sans-serif;
+    --font-weight: 400;
     --font-size: 12px;
     --text-color: white;
     --inverse-color: black;
@@ -51,8 +52,6 @@ html {
     margin: 0;
 }
 body {
-    --height: 100vh !important;
-    --width: 100vw !important;
     overflow:hidden;
     padding: 0;
     margin: 0;
@@ -62,9 +61,9 @@ body {
     font-size: var(--font-size);
     text-decoration: none;
     color: var(--text-color);
-    width: var(--width);
+    width: 100vw;
     resize: both;
-    height: 100%;
+    height: 100vh;
 }
 a {
     font-family: inherit;
@@ -77,29 +76,42 @@ a:hover {
   text-decoration: underline;
 }
 #anesidora{
-    width: var(--width);
-    height: var(--height);
+    width: 100vw;
+    height: 100vh;
     background: var(--background);
 }
 #panels > div {
     display: inline-flex;
     flex-direction: row;
     align-items: center;
-    min-width: var(--width);
-    min-height: var(--height);
+    min-width: 100vw;
+    min-height: 100vh;
     flex: 0 0 0;
-    max-width: var(--width);
-    max-height: var(--height);
+    max-width: 100vw;
+    max-height: 100vh;
 }
 #panels {
-    transform: translateX(var(--width));
+    transform: translateX(100vw);
     transition: transform var(--transitiontime);
     display: flex;
     align-items: normal;
     flex-direction: row;
     flex-wrap: nowrap;
 }
+
+@media (min-width: 800px) {
+    #historyDiv {
+        --history-column-count: var(--history-column-count-columns, 6);
+    }
+}
+@media (max-width: 799px) {
+    #historyDiv {
+        --history-column-count: var(--history-column-count, 3);
+    }
+}
+
 #historyDiv {
+    --size: max(calc(var(--width, 100vw) / var(--history-column-count, 3) - 1rem), 8vw);
     display: grid;
     grid-template-columns: repeat(var(--history-column-count, 3), minmax(8vw, 1fr));
     grid-auto-rows: max-content;
@@ -194,7 +206,6 @@ img[src=""]:not(#noopac), img:not([src]):not(#noopac) {
     display: grid;
     grid-template-columns: 100vw;
     grid-template-rows: 100%;
-    padding-top: 4%;
 }
 #coverLinkCell:not([style]), #coverLinkCell[style*='url("");'] {
     max-height: 0;
@@ -549,7 +560,7 @@ span, a, #nowPlayingContainerCell, #nowPlayingContainer, #nowPlaying {
     width: 100%;
     text-align: center;
     display: block;
-    font-size: calc(var(--width) / 7);
+    font-size: calc(100vw / 7);
     color: rgba(255,255,255,0.3);
     animation: fadeIn 500ms ease-in-out;
 }
@@ -571,7 +582,7 @@ span, a, #nowPlayingContainerCell, #nowPlayingContainer, #nowPlaying {
 /* Volume */
 
 #volume {
-    width: calc(var(--width)/2);
+    width: calc(100vw/2);
     transition: transform 150ms;
     border: 0;
 }
@@ -644,7 +655,7 @@ input[type=range]::-webkit-slider-thumb {
 }
 
 #coverArt i {
-    font-size: var(--width);
+    font-size: 100vw;
 }
 
 .bx-album {
@@ -655,16 +666,6 @@ input[type=range]::-webkit-slider-thumb {
 
 /** Hucario edits - 10/12/2021 */
 
-:root {
-    --height: 100% !important;
-    --font-family: Inter !important;
-    --font-weight: 400;
-    --background: #0a0a0a !important;
-}
-
-#midPanel {
-    --size: calc(var(--width) * 0.43);
-}
 
 .historyItem > span {
     font-weight: 400;
@@ -870,6 +871,10 @@ div#volIcon {
 .actualCover {
     width: 100%;
     height: 100%;
+    opacity: 1;
+    transform: none;
+    will-change: transform, opacity;
+    transition: opacity 350ms, transform 150ms;
 }
 
 .info {
@@ -878,12 +883,13 @@ div#volIcon {
     flex-direction: column;
     align-items: end;
     justify-content: end;
-    padding: 2rem;
-    background: #000000d9;
+    padding: min(2rem, 1vw);
     font-size: 2rem;
     font-weight: 700;
+    transform: scale(0.99);
     opacity: 0;
-    transition: opacity 350ms;
+    will-change: transform;
+    transition: transform 350ms, opacity 350ms;
     text-align: right;
 }
 
@@ -894,32 +900,49 @@ div#volIcon {
 .info .author {
     font-weight: 600;
     opacity: 0.5;
-    font-size: 1.5rem;
+    font-size: min(1.5rem, 2vw);
 }
 
-#covers > *:hover > .info {
+#covers > *:not(.current):hover > .info {
+    transform: none;
     opacity: 1;
 }
-.current .info {
-    display: none;
+
+#covers > *:not(.current):hover > .actualCover {
+    opacity: 0.2;
+    transform: scale(0.99);
 }
+
 .next .info {
     align-items: start;
     text-align: left;
 }
 
 .songTitle {
-    font-size: 3rem;
+    font-size: min(3rem, 3vw);
     font-weight: 600;
 }
 
 .albumTitle {
-    font-size: 1.4rem;
+    font-size: min(1.4rem, 2vw);
     opacity: 0.5;
     font-weight: 600;
 }
 
 .coverActions {
-    padding: 0.3rem;
+    padding: min(0.3rem, 1vw) 0;
     opacity: 0.5;
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+}
+
+.coverActions > * {
+    display: inline-flex;
+    height: max-content;
+}
+
+.coverActions > * > * {
+    font-size: min(3rem, 3vw);
+    height: max-content;
 }

@@ -45,13 +45,13 @@ function goToPanel(which) {
     }
     localStorage.tabOn = which;
     panelOn = which;
-    gEID("panels").style.transform = `translateX(calc(var(--width) * -${panelOn}))`;
+    gEID("panels").style.transform = `translateX(${-100 * panelOn}vw)`;
 }
 
 function initTabs() {
     if (localStorage.tabOn) {
         panelOn = parseInt(localStorage.tabOn);
-        gEID("panels").style.transform = `translateX(calc(var(--width) * -${localStorage.tabOn}))`;
+        gEID("panels").style.transform = `translateX(${-100 * panelOn}vw)`;
     }
 }
 
@@ -423,6 +423,9 @@ function generateCoverSingular(where, info) {
     );
     if (info.coverSrc) {
         tree.actualCover.src = info.coverSrc;
+    }
+    if (info.downloadLink) {
+        tree.info.coverActions.download.r.href = info.downloadLink;
     }
     tree.info.author.innerText = info.authorName;
     tree.info.author.href = info.authorLink;
