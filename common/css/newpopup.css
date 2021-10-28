@@ -207,9 +207,6 @@ img[src=""]:not(#noopac), img:not([src]):not(#noopac) {
     grid-template-columns: 100vw;
     grid-template-rows: 100%;
 }
-#coverLinkCell:not([style]), #coverLinkCell[style*='url("");'] {
-    max-height: 0;
-}
 #covers {
     display: grid;
     grid-area: 1/1;
@@ -874,7 +871,7 @@ div#volIcon {
     opacity: 1;
     transform: none;
     will-change: transform, opacity;
-    transition: opacity 350ms, transform 150ms;
+    transition: opacity 150ms, transform 150ms;
 }
 
 .info {
@@ -903,16 +900,20 @@ div#volIcon {
     font-size: min(1.5rem, 2vw);
 }
 
-#covers > *:not(.current):hover > .info {
+#covers > *:not(.current):hover > .info, #covers > .noCover:not(.current) > .info {
     transform: none;
     opacity: 1;
 }
 
-#covers > *:not(.current):hover > .actualCover {
+#covers > *:not(.current):hover > .actualCover, #covers > .noCover:not(.current) > .actualCover {
     opacity: 0.2;
     transform: scale(0.99);
 }
 
+
+.current .info {
+    pointer-events: none;
+}
 .next .info {
     align-items: start;
     text-align: left;

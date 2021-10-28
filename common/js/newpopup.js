@@ -13,7 +13,7 @@ var background = get_browser().extension.getBackgroundPage();
 
 
 var panelOn = 0;
-
+/** @type {typeof document['getElementById']} */
 const gEID = document.getElementById.bind(document);
 
 let pauseButton = gEID("pauseButton"),
@@ -45,7 +45,11 @@ function goToPanel(which) {
     }
     localStorage.tabOn = which;
     panelOn = which;
+    [...gEID("panels").children].forEach(e => {
+        e.setAttribute("tabindex", "-1");
+    });
     gEID("panels").style.transform = `translateX(${-100 * panelOn}vw)`;
+    gEID("panels").children[panelOn].setAttribute("tabindex", "0");
 }
 
 function initTabs() {
@@ -423,6 +427,8 @@ function generateCoverSingular(where, info) {
     );
     if (info.coverSrc) {
         tree.actualCover.src = info.coverSrc;
+    } else {
+        tree.r.classList.add("noCover");
     }
     if (info.downloadLink) {
         tree.info.coverActions.download.r.href = info.downloadLink;
