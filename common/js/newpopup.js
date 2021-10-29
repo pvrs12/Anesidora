@@ -1,4 +1,4 @@
-"use strict";
+
 /*globals get_browser */
 
 //https://stackoverflow.com/questions/10073699/pad-a-number-with-leading-zeros-in-javascript#answer-10074204
@@ -36,7 +36,9 @@ let pauseButton = gEID("pauseButton"),
     volume = gEID("volume"),
     login = gEID("login"),
     scrubShow = gEID("scrubShow"),
-    volShow = gEID("volShow");
+    volShow = gEID("volShow"),
+    covers = gEID("covers"),
+    back = gEID("back");
     
 
 function goToPanel(which) {
@@ -49,12 +51,18 @@ function goToPanel(which) {
         e.setAttribute("tabindex", "-1");
     });
     gEID("panels").style.transform = `translateX(${-100 * panelOn}vw)`;
-    gEID("panels").children[panelOn].setAttribute("tabindex", "0");
+    gEID("panels").children[panelOn].removeAttribute("tabindex");
 }
 
 function initTabs() {
     if (localStorage.tabOn) {
         panelOn = parseInt(localStorage.tabOn);
+        [...gEID("panels").children].forEach((e, i) => {
+            if (i !== panelOn) {
+                e.setAttribute("tabindex", "-1");
+            }
+        });
+        gEID("panels").children[panelOn].removeAttribute("tabindex");
         gEID("panels").style.transform = `translateX(${-100 * panelOn}vw)`;
     }
 }
@@ -269,90 +277,34 @@ function addStations() {
 }
 var lastActiveStation = "";
 
-// function to be run once, when popup first loads
-function generateCovers() {
-    let covers = document.getElementById("covers");
-    if (covers.childElementCount > 0) {
-        return;
-    }
-    if (background.prevSongs.length > 0) {
-        let x = [...background.prevSongs].reverse()[0];
-        let newCover = generateCoverSingular("prev", {
-            authorName: x.artistName,
-            authorLink: wipeTrackers(x.artistDetailUrl),
-            albumLink: wipeTrackers(x.albumDetailUrl),
-            albumTitle: x.albumName,
-            downloadLink: x.audioUrlMap.highQuality.audioUrl,
-            likeStatus: x.songRating,
-            songLink: wipeTrackers(x.songDetailUrl),
-            songTitle: x.songName,
-            coverSrc: x.albumArtUrl
-        });
-        newCover.id = x.musicId;
-        covers.appendChild(newCover);
-    }
-    if (background.currentSong) {
-        let x = background.currentSong;
-        let newCover = generateCoverSingular("current", {
-            authorName: x.artistName,
-            authorLink: wipeTrackers(x.artistDetailUrl),
-            albumLink: wipeTrackers(x.albumDetailUrl),
-            albumTitle: x.albumName,
-            downloadLink: x.audioUrlMap.highQuality.audioUrl,
-            likeStatus: x.songRating,
-            songLink: wipeTrackers(x.songDetailUrl),
-            songTitle: x.songName,
-            coverSrc: x.albumArtUrl
-        });
-        newCover.id = x.musicId;
-        covers.appendChild(newCover);
-    }
-    if (background.comingSong) {
-        let x = background.comingSong;
-        let newCover = generateCoverSingular("next", {
-            authorName: x.artistName,
-            authorLink: wipeTrackers(x.artistDetailUrl),
-            albumLink: wipeTrackers(x.albumDetailUrl),
-            albumTitle: x.albumName,
-            downloadLink: x.audioUrlMap.highQuality.audioUrl,
-            likeStatus: x.songRating,
-            songLink: wipeTrackers(x.songDetailUrl),
-            songTitle: x.songName,
-            coverSrc: x.albumArtUrl
-        });
-        newCover.id = x.musicId;
-        covers.appendChild(newCover);
-    }
-    if (background.currentPlaylist && background.currentPlaylist.length > 0) {
-        let x = background.currentPlaylist[0];
-        let newCover = generateCoverSingular("uberNext", {
-            authorName: x.artistName,
-            authorLink: wipeTrackers(x.artistDetailUrl),
-            albumLink: wipeTrackers(x.albumDetailUrl),
-            albumTitle: x.albumName,
-            downloadLink: x.audioUrlMap.highQuality.audioUrl,
-            likeStatus: x.songRating,
-            songLink: wipeTrackers(x.songDetailUrl),
-            songTitle: x.songName,
-            coverSrc: x.albumArtUrl
-        });
-        newCover.id = x.musicId;
-        covers.appendChild(newCover);
-    }
+function adaptSchema(song) {
+    return {
+        authorName: song.artistName,
+        authorLink: wipeTrackers(song.artistDetailUrl),
+        albumLink: wipeTrackers(song.albumDetailUrl),
+        albumTitle: song.albumName,
+        downloadLink: song.audioUrlMap.highQuality.audioUrl,
+        likeStatus: song.songRating,
+        songLink: wipeTrackers(song.songDetailUrl),
+        songTitle: song.songName,
+        coverSrc: song.albumArtUrl
+    };
 }
+
 /**
  * @returns {HTMLDivElement}
- * @param where {string} Class to be added to outer.
+ * @param where {number} Position of cover. - left of center, 0 center, + right of center.
  * @param info {{authorName: string, authorLink: string, songTitle: string, songLink: string, albumTitle: string, albumLink: string, downloadLink: string, likeStatus: number, coverSrc?: string}}
  * @description
  * Creates cover structure for centerfold and returns it. 
  */
-function generateCoverSingular(where, info) {
+function generateCover(where, info) {
     /**
      * Cover structure:
      * 
-     * <div.{uberPrev|prev|current|next|uberNext}>
+     * <div.{current?}>
      *   <div.info>
+     *     <span.position>Coming in 5 songs | 5 songs ago</span.position>
      *     <span.author>Author Name</span.author>
      *     <span.songTitle>Song Title</span.songTitle>
      *     <span.albumTitle>Album Title</span.albumTitle>
@@ -371,6 +323,7 @@ function generateCoverSingular(where, info) {
         r: document.createElement("div"),
         info: {
             r: document.createElement("div"),
+            position: document.createElement("span"),
             author: document.createElement("a"),
             songTitle: document.createElement("a"),
             albumTitle: document.createElement("a"),
@@ -394,6 +347,7 @@ function generateCoverSingular(where, info) {
     };
 
     tree.r.appendChild(tree.info.r);
+    tree.info.r.appendChild(tree.info.position);
     tree.info.r.appendChild(tree.info.author);
     tree.info.r.appendChild(tree.info.songTitle);
     tree.info.r.appendChild(tree.info.albumTitle);
@@ -406,9 +360,10 @@ function generateCoverSingular(where, info) {
     tree.info.coverActions.dislike.r.appendChild(tree.info.coverActions.dislike.i);
     tree.r.appendChild(tree.actualCover);
 
-    tree.r.classList.add(where);
+    //tree.r.style.transform = `translateX(${where}00%) scale(0.9)`;
     tree.actualCover.classList.add("actualCover");
     tree.info.r.classList.add("info");
+    tree.info.position.classList.add("position");
     tree.info.author.classList.add("author");
     tree.info.songTitle.classList.add("songTitle");
     tree.info.albumTitle.classList.add("albumTitle");
@@ -433,6 +388,10 @@ function generateCoverSingular(where, info) {
     if (info.downloadLink) {
         tree.info.coverActions.download.r.href = info.downloadLink;
     }
+    tree.info.position.innerText = (where < 0 ?
+        (where === -1 ? "Previous song" : `${Math.abs(where)} songs ago`) :
+        (where ===  1 ? "Next song" : `Coming in ${where} songs`)
+    );
     tree.info.author.innerText = info.authorName;
     tree.info.author.href = info.authorLink;
     tree.info.songTitle.innerText = info.songTitle;
@@ -441,118 +400,64 @@ function generateCoverSingular(where, info) {
     tree.info.albumTitle.href = info.albumLink;
     return tree.r;
 }
+// Edge case that needs covering: Same song appears multiple time in feed
 function updateCovers() {
-    let covers = document.getElementById("covers");
-    if (document.querySelector("#covers > .current").id === background.currentSong.musicId) {
-        // don't need to do anything
-        return;
-    }
-    [...covers.children].forEach(e => {
-        if (e.classList.contains("uberPrev")) {
-            covers.removeChild(e);
+    const covers = document.getElementById("covers");
+    const children = [...covers.children];
+    const feed = [
+        ...(background.prevSongs || []),
+        background.currentSong,
+        background.comingSong,
+        ...(background.currentPlaylist || [])
+    ].filter(e => !!e); // if any of currentSong | comingSong | currentPlaylist is undefined, pop em'
+    
+    const prevSongsLength = (background.prevSongs || []).length;
+    feed.forEach((song, i) => {
+        let elem;
+        const where = (i - prevSongsLength);
+        const oldElem = children.find(e => (e.id === song.musicId));
+        if (oldElem) {
+            elem = oldElem;
+        }
+        if (!elem) {
+            elem = generateCover(where, adaptSchema(song));
+            elem.id = song.musicId;
+            covers.appendChild(elem);
+        } else {
+            //elem.style.transform = `translateX(${where}00%) scale(0.9)`;
+            elem.children[0].children[0].innerText = (where < 0 ?
+                (where === -1 ? "Previous song" : `${Math.abs(where)} songs ago`) :
+                (where ===  1 ? "Next song" : `Coming in ${where} songs`)
+            );
+        }
+
+        if (where === 0) {
+            elem.classList.add("current");
+            if (doReturn) {
+                requestAnimationFrame(() => {
+                    covers.scrollLeft += (elem.getBoundingClientRect().left - ((window.innerWidth - elem.clientWidth) / 2));
+                });
+            }
+        } else {
+            elem.classList.remove("current");
+        }
+        if (where > 0) {
+            elem.classList.add("leftAlign");
+        } else {
+            elem.classList.remove("leftAlign");
         }
     });
-    let prev = document.querySelector("#covers > .prev");
-    if (prev) {
-        prev.addEventListener("transitionend", () => {
-            covers.removeChild(prev);
-        }, {
-            once: true
-        });
-        prev.classList.add("uberPrev");
-        prev.classList.remove("prev");
-        setTimeout(() => { covers.removeChild(prev); }, 350);
-    } else if (background.prevSongs.length > 0) {
-        let x = background.prevSongs[background.prevSongs.length - 1];
-        let newCover = generateCoverSingular("prev", {
-            authorName: x.artistName,
-            authorLink: wipeTrackers(x.artistDetailUrl),
-            albumLink: wipeTrackers(x.albumDetailUrl),
-            albumTitle: x.albumName,
-            downloadLink: x.audioUrlMap.highQuality.audioUrl,
-            likeStatus: x.songRating,
-            songLink: wipeTrackers(x.songDetailUrl),
-            songTitle: x.songName,
-            coverSrc: x.albumArtUrl
-        });
-        newCover.id = x.musicId;
-        covers.appendChild(newCover);
-        setTimeout(() => {
-            newCover.classList.add("uberPrev");
-            newCover.classList.remove("prev");
-            setTimeout(() => { covers.removeChild(newCover); }, 350);
-        }, 0);
-    }
-    let curr = document.querySelector("#covers > .current");
-    curr.classList.add("prev");
-    curr.classList.remove("current");
-
-    let next = document.querySelector("#covers > .next");
-    if (next) {
-        next.classList.add("current");
-        next.classList.remove("next");
-    } else if  (background.currentSong) {
-        let x = background.currentSong;
-        let newCover = generateCoverSingular("current", {
-            authorName: x.artistName,
-            authorLink: wipeTrackers(x.artistDetailUrl),
-            albumLink: wipeTrackers(x.albumDetailUrl),
-            albumTitle: x.albumName,
-            downloadLink: x.audioUrlMap.highQuality.audioUrl,
-            likeStatus: x.songRating,
-            songLink: wipeTrackers(x.songDetailUrl),
-            songTitle: x.songName,
-            coverSrc: x.albumArtUrl
-        });
-        newCover.id = x.musicId;
-        covers.appendChild(newCover);
-    }
-
-    let uberNext = document.querySelector("#covers > .uberNext");
-    if (uberNext) {
-        uberNext.classList.add("next");
-        uberNext.classList.remove("uberNext");
-    } else if (background.comingSong) {
-        let x = background.comingSong;
-        let newCover = generateCoverSingular("next", {
-            authorName: x.artistName,
-            authorLink: wipeTrackers(x.artistDetailUrl),
-            albumLink: wipeTrackers(x.albumDetailUrl),
-            albumTitle: x.albumName,
-            downloadLink: x.audioUrlMap.highQuality.audioUrl,
-            likeStatus: x.songRating,
-            songLink: wipeTrackers(x.songDetailUrl),
-            songTitle: x.songName,
-            coverSrc: x.albumArtUrl
-        });
-        newCover.id = x.musicId;
-        covers.appendChild(newCover);
-    }
-    if (background.currentPlaylist[0]) {
-        let x = background.currentPlaylist[0];
-        let newCover = generateCoverSingular("uberNext", {
-            authorName: x.artistName,
-            authorLink: wipeTrackers(x.artistDetailUrl),
-            albumLink: wipeTrackers(x.albumDetailUrl),
-            albumTitle: x.albumName,
-            downloadLink: x.audioUrlMap.highQuality.audioUrl,
-            likeStatus: x.songRating,
-            songLink: wipeTrackers(x.songDetailUrl),
-            songTitle: x.songName,
-            coverSrc: x.albumArtUrl
-        });
-        newCover.id = x.musicId;
-        covers.appendChild(newCover);
-    }
+    const feedIds = feed.map(e => e.musicId);
+    children.forEach(cover => {
+        if (!feedIds.includes(cover.id)) {
+            covers.removeChild(cover);
+            // If switching a playlist or something
+        }
+    });
 }
 
 function updatePlayer() {
-    let covers = document.getElementById("covers");
-    if (covers.childElementCount > 0) {
-        updateCovers();
-    } else {
-        generateCovers();
-    }
+    updateCovers();
     if (background.currentSong) {
         gEID("coverLinkCell").style.setProperty("--img", "url(\""+(background.currentSong.albumArtUrl || "")+"\")");
 
@@ -681,6 +586,8 @@ document.addEventListener("DOMContentLoaded", async function () {
     login = gEID("login");
     scrubShow = gEID("scrubShow");
     volShow = gEID("volShow");
+    covers = gEID("covers");
+    back = gEID("back");
 
     
     initTabs();
@@ -828,7 +735,34 @@ document.addEventListener("DOMContentLoaded", async function () {
         handleSwitch();
     });
     updateHistory();
+    if (background.currentSong) {
+        updateCovers();
+    }
+    setTimeout(() => {
+        covers.style.scrollBehavior = "smooth";
+    }, 50);
+    covers.addEventListener("scroll", () => {
+        if (
+            Math.abs(
+                document.querySelector(".current").getBoundingClientRect().left - 
+                    (window.innerWidth - document.querySelector(".current").clientWidth) / 2
+            )
+                < 50
+        ) {
+            back.classList.add("out");
+            return;
+        }
+        doReturn = false;
+        back.classList.remove("out");
+    }, { passive: true });
+
+    back.addEventListener("click", () => {
+        doReturn = true;
+        covers.scrollLeft += (document.querySelector(".current").getBoundingClientRect().left - ((window.innerWidth - document.querySelector(".current").clientWidth) / 2));
+    });
 });
+
+let doReturn = true;
 
 function handleSwitch() {
     if (panelOn <= 0) {
