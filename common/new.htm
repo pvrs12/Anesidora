@@ -1,9 +1,11 @@
 <!DOCTYPE HTML>
 <html xmlns="http://www.w3.org/1999/xhtml">
+
 <head>
     <meta charset="utf-8">
     <base target="_blank">
     <title>Anesidora</title>
+    <link rel="icon" href="./images/anesidora-128.png" type="image/png">
 
     <script type="text/javascript" src="./js/platform_specific.js"></script>
     <script type="text/javascript" src="./js/options.js"></script>
@@ -15,6 +17,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;400;600;900&display=swap" rel="stylesheet">
     <link href='https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css' rel='stylesheet'>
 </head>
+
 <body>
     <div id="anesidora">
         <div id="prevTab">
@@ -24,107 +27,108 @@
             <button></button>
         </div>
         <div id="panels">
-            <div id="historyPanel">
-                <div id="historyDiv" class="container"></div>
+            <div id="historyPanel" class="panel">
             </div>
-            <div id="leftPanel">
-                <div class="popup container">
-                    <div id="coverLinkCell">
-                        <div id="ghosts">
-                            <div id="gradLeft"></div>
-                            <div id="centerGhost"></div>
-                            <div id="gradRight"></div>
-                        </div>
-                        <div id="covers"></div>
-                        <button id="back" class="out">Back to current song <i class="bx bx-right-arrow-alt"></i></button>
+            <div id="leftPanel" class="panel">
+                <div id="coverLinkCell">
+                    <div id="ghosts">
+                        <div id="gradLeft"></div>
+                        <div id="centerGhost"></div>
+                        <div id="gradRight"></div>
                     </div>
-                    <div class="grid-cell" id="scrubberCell">
-                        <div class="range">
-                            <input type="range" min="0" max="100" id="scrubber">
-                            <div class="rangeShow" id="scrubShow"></div>
-                        </div>
-                        <span id="timestamp"></span>
+                    <div id="covers"></div>
+                    <button id="back" class="out">Back to current song <i class="bx bx-right-arrow-alt"></i></button>
+                </div>
+                <div class="grid-cell" id="scrubberCell">
+                    <div class="range">
+                        <input type="range" min="0" max="100" id="scrubber">
+                        <div class="rangeShow" id="scrubShow"></div>
                     </div>
-                    <div class="musicInfo">
-                        <div class="centerAgain">
-                            <span id="dash">Play to resume last station</span>
-                            <a id="artistLink" href="#"></a>
-                            <a id="titleLink" href="#"></a>
-                            <a id="albumLink" href="#"></a>
-                            <div class="playPauseButtonCell grid-cell"><button title="Play" id="playButton" class="hoverImg icon"><i class='bx bx-play' ></i></button><button title="Pause" id="pauseButton" style="display:none" class="hoverImg icon"><i class='bx bx-pause' ></i></button></div><div class="skipButtonCell grid-cell"><button title="Next song" id="skipButton" class="hoverImg icon" ><i class='bx bx-skip-next' ></i></button></div>
-                        </div>
-                    </div>
-                    <div class="innerInnerContainer">
-                        <div class="tUpButtonCell grid-cell">
-                            <button title="Like this song" id="tUpButton" class="hoverImg icon" >
-                                <i class='bx bx-like' ></i>
-                            </button>
-                        </div>
-                        <div class="sleepButtonCell grid-cell"> 
-                            <button title="I'm tired of this song" id="sleepButton" class="hoverImg icon">
-                                <i class='bx bx-hourglass'></i>
-                            </button>
-                        </div>
-                        <div class="downloadButtonCell grid-cell">
-                            <a title="Download this song" id="downloadButton" download class="hoverImg icon" >
-                                <i class='bx bx-download'></i>
-                            </a>
-                        </div>
-                        <div class="moreInfoButtonCell grid-cell">
-                            <a title="Options" id="moreInfoButton" class="hoverImg icon" href="./options.htm" target="_blank">
-                                <i class='bx bx-cog' ></i>
-                            </a>
-                        </div>
-                        <div class="tDownButtonCell grid-cell">
-                            <button title="Dislike this song" id="tDownButton" class="hoverImg icon" >
-                                <i class='bx bx-dislike' ></i>
-                            </button>
-                        </div>
-                    </div>
-                    <div id="volumeCell"> 
-                        <div id="volIcon" class="icon">
-                            <i class='bx bx-volume-full' ></i>
-                        </div>
-                        <div class="range" id="volRan">
-                            <input type="range" min="0" max="100" title="Volume" id="volume">
-                            <div class="rangeShow" id="volShow"></div>
-                        </div>
+                    <span id="timestamp"></span>
+                </div>
+                <div class="musicInfo">
+                    <div class="centerAgain">
+                        <span id="dash">Play to resume last station</span>
+                        <a id="artistLink" href="#"></a>
+                        <a id="titleLink" href="#"></a>
+                        <a id="albumLink" href="#"></a>
+                        <div class="playPauseButtonCell grid-cell"><button title="Play" id="playButton"
+                                class="hoverImg icon"><i class='bx bx-play'></i></button><button title="Pause"
+                                id="pauseButton" style="display:none" class="hoverImg icon"><i
+                                    class='bx bx-pause'></i></button></div>
+                        <div class="skipButtonCell grid-cell"><button title="Next song" id="skipButton"
+                                class="hoverImg icon"><i class='bx bx-skip-next'></i></button></div>
                     </div>
                 </div>
-            </div>
-            <div id="midPanel">
-                <div class="container">
-                    <div id="stationHeaderdiv" class="labeled-input">
-                        <label>Search</label>
-                        <input type="text" id="stationFilterInput" />
-                        <button title="Refresh" id="stationRefreshButton" class="hoverImg icon">
-                            <i class='bx bx-refresh' ></i>
+                <div class="innerInnerContainer">
+                    <div class="tUpButtonCell grid-cell">
+                        <button title="Like this song" id="tUpButton" class="hoverImg icon">
+                            <i class='bx bx-like'></i>
                         </button>
                     </div>
-                    <div id="stationListDiv">
+                    <div class="sleepButtonCell grid-cell">
+                        <button title="I'm tired of this song" id="sleepButton" class="hoverImg icon">
+                            <i class='bx bx-hourglass'></i>
+                        </button>
+                    </div>
+                    <div class="downloadButtonCell grid-cell">
+                        <a title="Download this song" id="downloadButton" download class="hoverImg icon">
+                            <i class='bx bx-download'></i>
+                        </a>
+                    </div>
+                    <div class="moreInfoButtonCell grid-cell">
+                        <a title="Options" id="moreInfoButton" class="hoverImg icon" href="./options.htm"
+                            target="_blank">
+                            <i class='bx bx-cog'></i>
+                        </a>
+                    </div>
+                    <div class="tDownButtonCell grid-cell">
+                        <button title="Dislike this song" id="tDownButton" class="hoverImg icon">
+                            <i class='bx bx-dislike'></i>
+                        </button>
+                    </div>
+                </div>
+                <div id="volumeCell">
+                    <div id="volIcon" class="icon">
+                        <i class='bx bx-volume-full'></i>
+                    </div>
+                    <div class="range" id="volRan">
+                        <input type="range" min="0" max="100" title="Volume" id="volume">
+                        <div class="rangeShow" id="volShow"></div>
                     </div>
                 </div>
             </div>
-            <div id="rightPanel">
-                <div class="container">
-                    <form id="login" action="" target="_self">
-                        <div class="labeled-input" id="li1">
-                            <label>email</label>
-                            <input id="username" tabindex="1"/>
-                            <i id="unWarning" class='bx bx-error-circle' ></i>
-                        </div>
-                        <div class="labeled-input" id="li2">
-                            <label>password</label>
-                            <input id="password" type="password" tabindex="2" />
-                            <i id="pwWarning" class='bx bx-error-circle' ></i>
-                        </div>
-                            <input id="save" type="submit" value="Save" />
-                            <a href="https://github.com/pvrs12/Anesidora/blob/master/login.md" target="_blank"> Concerned about security?</a>
-                    </form>
+            <div id="midPanel" class="panel">
+                <div id="stationHeaderdiv" class="labeled-input">
+                    <label>Search</label>
+                    <input type="text" id="stationFilterInput" />
+                    <button title="Refresh" id="stationRefreshButton" class="hoverImg icon">
+                        <i class='bx bx-refresh'></i>
+                    </button>
                 </div>
-            </div> 
+                <div id="stationListDiv">
+                </div>
+            </div>
+            <div id="rightPanel" class="panel">
+                <form id="login" action="" target="_self">
+                    <div class="labeled-input" id="li1">
+                        <label>email</label>
+                        <input id="username"/>
+                        <i id="unWarning" class='bx bx-error-circle'></i>
+                    </div>
+                    <div class="labeled-input" id="li2">
+                        <label>password</label>
+                        <input id="password" type="password"/>
+                        <i id="pwWarning" class='bx bx-error-circle'></i>
+                    </div>
+                    <input id="save" type="submit" value="Save" />
+                    <a href="https://github.com/pvrs12/Anesidora/blob/master/login.md" target="_blank"> Concerned
+                        about security?</a>
+                </form>
+            </div>
         </div>
 
     </div>
 </body>
+
 </html>

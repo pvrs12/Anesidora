@@ -1,6 +1,6 @@
 "use strict";
-/*globals is_android stationImgs, encrypt, decrypt, currentSong, play, prevSongs*/
-/*exported addFeedback, explainTrack, search, createStation, sleepSong, setQuickMix, deleteStation */
+/*globals is_android stationImgs, encrypt, decrypt, currentSong, play, prevSongs, comingSong*/
+/*exported addFeedback, addFeedbackFromToken explainTrack, search, createStation, sleepSong, setQuickMix, deleteStation */
 
 let dontRetryPartnerLogin = false;
 
@@ -235,8 +235,35 @@ async function getPlaylist(stationToken) {
     removeAds(currentPlaylist);
 }
 
+/**
+ * @param {string} token 
+ * @param {boolean} liked 
+ */
+async function addFeedbackFromToken(token, liked) {
+    const song = [...prevSongs, currentSong, comingSong, ...currentPlaylist]
+        .filter(e => !!e)
+        .find(e => e.trackToken === token);
+
+    if (!song) {
+        throw new Error("Couldn't find song for token " + token);
+    }
+
+    if (song.songRating === (liked?1:-1)) {
+        return; // no action needed
+    }
+
+    let request = JSON.stringify({
+        "trackToken": song.trackToken,
+        "isPositive": liked,
+        "userAuthToken": userAuthToken,
+        "syncTime": getSyncTime(syncTime)
+    });
+    song.songRating = (liked?1:-1);
+    await sendRequest(false, true, "station.addFeedback", request);
+}
+
 async function addFeedback(songNum, liked) {
-    if (currentSong.songRating === true && liked) {  // Bug fix for addFeedback being executed by bind()
+    if (currentSong.songRating === true && liked) {  // Fixes for addFeedback being executed by bind()
         return; // edit by hucario, 5/22/2021: i have no idea why this is here but I don't want to reintroduce a bug
     }
     

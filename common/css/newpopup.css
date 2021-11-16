@@ -37,11 +37,7 @@
     --active-button-color: #ffa700;
     --album-color: red;
     --tabOffset: 5px;
-}
-.container {
-    flex-grow: 1;
-    height: 100%;
-    background: var(--background);
+    overflow: hidden;
 }
 * {
     outline: none;
@@ -80,8 +76,9 @@ a:hover {
     height: 100vh;
     background: var(--background);
 }
-#panels > div {
+.panel {
     display: inline-flex;
+    overflow-x: clip;
     flex-direction: row;
     align-items: center;
     min-width: 100vw;
@@ -89,6 +86,9 @@ a:hover {
     flex: 0 0 0;
     max-width: 100vw;
     max-height: 100vh;
+
+    align-items: center;
+    flex-direction: column;
 }
 #panels {
     transform: translateX(100vw);
@@ -100,19 +100,19 @@ a:hover {
 }
 
 @media (min-width: 800px) {
-    #historyDiv {
+    #historyPanel {
         --history-column-count: var(--history-column-count-columns, 6);
     }
 }
 @media (max-width: 799px) {
-    #historyDiv {
+    #historyPanel {
         --history-column-count: var(--history-column-count, 3);
     }
 }
 
-#historyDiv {
+#historyPanel {
     --size: max(calc(var(--width, 100vw) / var(--history-column-count, 3) - 1rem), 8vw);
-    display: grid;
+    display: inline-grid;
     grid-template-columns: repeat(var(--history-column-count, 3), minmax(8vw, 1fr));
     grid-auto-rows: max-content;
     gap: 1rem;
@@ -162,7 +162,7 @@ a:hover {
     box-sizing: border-box;
 }
 
-#midPanel .container {
+#midPanel {
     overflow-y: auto;
 }
 
@@ -212,13 +212,16 @@ img[src=""]:not(#noopac), img:not([src]):not(#noopac) {
     grid-area: 1/1;
     height: 100%;
     width: 100vw;
-    max-width: 100vw;
+    padding-right: 50vh;
+    padding-left: 50vh;
+    box-sizing: border-box;
     overflow-x: scroll;
     
     scrollbar-width: 5px; /* Firefox */
     -ms-overflow-style: 5px;  /* IE 10+ */
 
     scroll-behavior: auto;
+    scroll-snap-type: y proximity;
 }
 #covers > * {
     height: 100%;
@@ -233,6 +236,7 @@ img[src=""]:not(#noopac), img:not([src]):not(#noopac) {
     transition: transform 350ms;
 }
 #covers > .current {
+    scroll-snap-align: center;
     transform: scale(1);
     z-index: 3;
 }
@@ -334,10 +338,10 @@ div#gradRight {
     border-radius: 13px;
     color: var(--text-color);
     width: auto !important;
-    transition: all 250ms;
+    transition: background-color 250ms, border-color 250ms, color 250ms;
 }
 
-#rightPanel > .container {
+#rightPanel {
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -347,7 +351,6 @@ div#gradRight {
     margin-top: 1em;
     padding: 5px 15px !important;
     font-weight: lighter;
-    transition: all 250ms;
 }
 #login {
     display: flex;
@@ -519,7 +522,7 @@ span, a, #nowPlayingContainerCell, #nowPlayingContainer, #nowPlaying {
 
 #stationHeaderdiv {
     overflow: hidden;
-    height: 26px;
+    height: max-content;
     padding: 13px;
     margin-bottom: 0;
     display: flex;
@@ -528,7 +531,8 @@ span, a, #nowPlayingContainerCell, #nowPlayingContainer, #nowPlaying {
     top: 0;
     z-index: 15;
     box-shadow: 0 3px 5px var(--background);
-    width: auto;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 @keyframes rotate {
@@ -773,11 +777,6 @@ input[type=range]::-moz-range-track {
     background: #c5c5c5;
 }
 
-.popup.container {
-    display: flex;
-    align-items: center;
-    flex-direction: column;
-}
 
 .innerContainer {
     position: static;
@@ -896,6 +895,37 @@ span.position {
     left: min(2rem, 1vw);
     right: unset;
 }
+
+.remove {
+    position: absolute;
+    color: inherit;
+    right: 0;
+    top: 0;
+    opacity: 0.7;
+    cursor: pointer;
+    transition: opacity 250ms;
+}
+
+.remove:hover {
+    opacity: 1;
+}
+
+:is(.remove, .coverPlay):not(.leftAlign :is(.remove, .coverPlay)) {
+    display: none;
+    animation: coverItemsOut 250ms;
+}
+
+@keyframes coverItemsOut {
+    0% {
+        opacity: 0.7;
+        display: block;
+    }
+    100% {
+        opacity: 0;
+        display: block;
+    }
+}
+
 .info .author {
     font-weight: 600;
     opacity: 0.5;
@@ -942,6 +972,15 @@ span.position {
     display: flex;
     align-items: center;
     flex-direction: row;
+    transition: opacity 250ms;
+}
+.coverActions :is(.bxs-dislike, .bxs-like) {
+    cursor: default;
+    pointer-events: none;
+}
+
+.coverActions:hover {
+    opacity: 1;
 }
 
 .coverActions > * {

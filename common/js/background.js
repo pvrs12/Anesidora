@@ -149,14 +149,6 @@ async function nextSong(depth=1, prev_station=undefined) {
             };
             xhr2.send(null);
         }
-
-        callbacks.updatePlayer.forEach((e) => {
-            try {
-                e();
-            } catch(b) {
-                callbacks.updatePlayer.splice(callbacks.updatePlayer.indexOf(e), 1);
-            }
-        });
     };
     xhr.send();
 }
@@ -219,12 +211,14 @@ function update_mediasession() {
     if (!metadata || (
         metadata.title != currentSong.songName ||
         metadata.artist != currentSong.artistName ||
+        !metadata.artwork ||
+        metadata.artwork.length === 0 ||
         metadata.artwork[0].src != currentSong.albumArtUrl)
     ) { 
         navigator.mediaSession.metadata = new window.MediaMetadata({
             title: currentSong.songName,
             artist: currentSong.artistName,
-            artwork: [{ src: currentSong.albumArtUrl, sizes: "500x500", type: "image/jpeg" }]
+            artwork: currentSong.albumArtUrl ? [{ src: currentSong.albumArtUrl, sizes: "500x500", type: "image/jpeg" }] : []
         });
     }
 

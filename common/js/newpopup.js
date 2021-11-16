@@ -1,5 +1,7 @@
-
 /*globals get_browser */
+
+const SMOOTH_SCROLL_TIME = 1000;
+// No real downside to getting it too high.
 
 //https://stackoverflow.com/questions/10073699/pad-a-number-with-leading-zeros-in-javascript#answer-10074204
 function zeroPad(num) {
@@ -68,7 +70,7 @@ function initTabs() {
 }
 
 function clearHistory() {
-    const historyDiv = document.getElementById("historyDiv");
+    const historyDiv = document.getElementById("historyPanel");
     while (historyDiv.hasChildNodes()) {
         historyDiv.removeChild(historyDiv.firstChild);
     }
@@ -89,7 +91,7 @@ function downloadSong(url, title) {
 
 function updateHistory() {
     clearHistory();
-    const historyDiv = document.getElementById("historyDiv");
+    const historyDiv = document.getElementById("historyPanel");
     // do not sort in place
     [...background.prevSongs].reverse().forEach(function (song, i) {
         let historyElem = document.createElement("div");
@@ -287,14 +289,17 @@ function adaptSchema(song) {
         likeStatus: song.songRating,
         songLink: wipeTrackers(song.songDetailUrl),
         songTitle: song.songName,
-        coverSrc: song.albumArtUrl
+        coverSrc: song.albumArtUrl,
+        trackToken: song.trackToken
     };
 }
+
+let tryingToPlay = false;
 
 /**
  * @returns {HTMLDivElement}
  * @param where {number} Position of cover. - left of center, 0 center, + right of center.
- * @param info {{authorName: string, authorLink: string, songTitle: string, songLink: string, albumTitle: string, albumLink: string, downloadLink: string, likeStatus: number, coverSrc?: string}}
+ * @param info {{trackToken: string, authorName: string, authorLink: string, songTitle: string, songLink: string, albumTitle: string, albumLink: string, downloadLink: string, likeStatus: number, coverSrc?: string}}
  * @description
  * Creates cover structure for centerfold and returns it. 
  */
@@ -304,6 +309,7 @@ function generateCover(where, info) {
      * 
      * <div.{current?}>
      *   <div.info>
+     *     <button.remove><i.bx.bx-x /></button.remove>
      *     <span.position>Coming in 5 songs | 5 songs ago</span.position>
      *     <span.author>Author Name</span.author>
      *     <span.songTitle>Song Title</span.songTitle>
@@ -312,6 +318,7 @@ function generateCover(where, info) {
      *       <button><i.bx.bx{s?}-like /></button>
      *       <a><i.bx.bx{s?}-download /></a>
      *       <button><i.bx.bx{s?}-dislike /></button>
+     *       <button><i.bx.bx-play /></button>
      *     </div.coverActions>
      *   </div.info>
      *   <img.actualCover />
@@ -323,6 +330,7 @@ function generateCover(where, info) {
         r: document.createElement("div"),
         info: {
             r: document.createElement("div"),
+            remove: document.createElement("button"),
             position: document.createElement("span"),
             author: document.createElement("a"),
             songTitle: document.createElement("a"),
@@ -340,13 +348,20 @@ function generateCover(where, info) {
                 dislike: {
                     r: document.createElement("button"),
                     i: document.createElement("i")
+                },
+                play: {
+                    r: document.createElement("button"),
+                    i: document.createElement("i")
                 }
             }
         },
         actualCover: document.createElement("img")
     };
+    tree.r.setAttribute("data-where", where);
 
     tree.r.appendChild(tree.info.r);
+    tree.info.r.appendChild(tree.info.remove);
+    tree.info.r.appendChild(tree.info.position);
     tree.info.r.appendChild(tree.info.position);
     tree.info.r.appendChild(tree.info.author);
     tree.info.r.appendChild(tree.info.songTitle);
@@ -358,10 +373,13 @@ function generateCover(where, info) {
     tree.info.coverActions.download.r.appendChild(tree.info.coverActions.download.i);
     tree.info.coverActions.r.appendChild(tree.info.coverActions.dislike.r);
     tree.info.coverActions.dislike.r.appendChild(tree.info.coverActions.dislike.i);
+    tree.info.coverActions.r.appendChild(tree.info.coverActions.play.r);
+    tree.info.coverActions.play.r.appendChild(tree.info.coverActions.play.i);
     tree.r.appendChild(tree.actualCover);
 
     //tree.r.style.transform = `translateX(${where}00%) scale(0.9)`;
     tree.actualCover.classList.add("actualCover");
+    tree.info.remove.classList.add("remove", "bx", "bx-x");
     tree.info.r.classList.add("info");
     tree.info.position.classList.add("position");
     tree.info.author.classList.add("author");
@@ -380,6 +398,57 @@ function generateCover(where, info) {
         "bx", "hoverImg", "icon",
         info.likeStatus === -1 ? "bxs-dislike" : "bx-dislike"
     );
+
+    tree.info.coverActions.play.r.classList.add("coverPlay");
+    tree.info.coverActions.play.i.classList.add(
+        "bx", "hoverImg", "icon",
+        "bx-play"
+    );
+    tree.info.coverActions.play.r.addEventListener("click", async () => {
+        const where = parseInt(tree.r.getAttribute("data-where") || 0);
+        if (!where || where <= 0 || tryingToPlay) { return; }
+        tryingToPlay = true;
+
+        if (where !== 1) {
+            if (where > 2) {
+                background.currentPlaylist.splice(0, where - 2);
+            }
+            background.comingSong = background.currentPlaylist.shift();
+        }
+
+        await background.nextSong();
+        updateCovers();
+        tryingToPlay = false;
+    });
+
+    let tryingToLike = false;
+    tree.info.coverActions.like.r.addEventListener("click", () => {
+        if (tryingToLike) { return; }
+        tryingToLike = true;
+        background.addFeedbackFromToken(info.trackToken, false).then(() => {
+            tryingToLike = false;
+            tree.info.coverActions.like.i.classList.add("bxs-like");
+            tree.info.coverActions.like.i.classList.remove("bx-like");
+        }).catch(() => {
+            tree.info.coverActions.like.i.style.color = "red";
+            tryingToLike = false;
+        });
+    });
+
+    let tryingToDislike = false;
+    tree.info.coverActions.dislike.r.addEventListener("click", () => {
+        if (tryingToDislike) { return; }
+        tryingToDislike = true;
+        background.addFeedbackFromToken(info.trackToken, false).then(() => {
+            tryingToDislike = false;
+            tree.info.coverActions.dislike.i.classList.add("bxs-dislike");
+            tree.info.coverActions.dislike.i.classList.remove("bx-dislike");
+        }).catch(() => {
+            tree.info.coverActions.dislike.i.style.color = "red";
+            tryingToDislike = false;
+        });
+    });
+
     if (info.coverSrc) {
         tree.actualCover.src = info.coverSrc;
     } else {
@@ -398,11 +467,32 @@ function generateCover(where, info) {
     tree.info.songTitle.href = info.songLink;
     tree.info.albumTitle.innerText = info.albumTitle;
     tree.info.albumTitle.href = info.albumLink;
+
+    tree.info.remove.addEventListener("click", async () => {
+        const where = parseInt(tree.r.getAttribute("data-where") || 0);
+        if (!where || where <= 0) { return; }
+
+        if (where === 1) {
+            if (background.currentPlaylist.length === 0) {
+                // nothing to shift
+                await background.getPlaylist(localStorage.lastStation);
+            }
+            background.comingSong = background.currentPlaylist.shift();
+        } else {
+            background.currentPlaylist.splice(where - 2, 1);
+        }
+        tree.r.parentElement.removeChild(tree.r);
+        updateCovers();
+    });
+
     return tree.r;
 }
-// Edge case that needs covering: Same song appears multiple time in feed
+
+
 function updateCovers() {
     const covers = document.getElementById("covers");
+
+    /** @type {HTMLDivElement[]} */
     const children = [...covers.children];
     const feed = [
         ...(background.prevSongs || []),
@@ -410,7 +500,7 @@ function updateCovers() {
         background.comingSong,
         ...(background.currentPlaylist || [])
     ].filter(e => !!e); // if any of currentSong | comingSong | currentPlaylist is undefined, pop em'
-    
+
     const prevSongsLength = (background.prevSongs || []).length;
     feed.forEach((song, i) => {
         let elem;
@@ -425,19 +515,15 @@ function updateCovers() {
             covers.appendChild(elem);
         } else {
             //elem.style.transform = `translateX(${where}00%) scale(0.9)`;
-            elem.children[0].children[0].innerText = (where < 0 ?
+            elem.children[0].children[1].innerText = (where < 0 ?
                 (where === -1 ? "Previous song" : `${Math.abs(where)} songs ago`) :
                 (where ===  1 ? "Next song" : `Coming in ${where} songs`)
             );
+            elem.setAttribute("data-where", where);
         }
 
         if (where === 0) {
             elem.classList.add("current");
-            if (doReturn) {
-                requestAnimationFrame(() => {
-                    covers.scrollLeft += (elem.getBoundingClientRect().left - ((window.innerWidth - elem.clientWidth) / 2));
-                });
-            }
         } else {
             elem.classList.remove("current");
         }
@@ -448,12 +534,37 @@ function updateCovers() {
         }
     });
     const feedIds = feed.map(e => e.musicId);
-    children.forEach(cover => {
-        if (!feedIds.includes(cover.id)) {
-            covers.removeChild(cover);
-            // If switching a playlist or something
-        }
+    const toRemove = children.filter(e => !feedIds.includes(e.id));
+    toRemove.forEach(e => {
+        covers.scrollLeft -= e.clientWidth;
+        e.parentElement && e.parentElement.removeChild(e);
     });
+
+    if (autoScroll && document.querySelector(".current")) {
+        // janky as hell
+        // but it doesn't work without two
+        // look I don't know why either
+        ignoreAutoScroll = true;
+        setTimeout(() => {
+            ignoreAutoScroll = true;
+            document.querySelector(".current").scrollIntoView({
+                behavior: "smooth",
+                block: "center",
+                inline: "center"
+            });
+        }, 100);
+        setTimeout(() => {
+            ignoreAutoScroll = true;
+            document.querySelector(".current").scrollIntoView({
+                behavior: "smooth",
+                block: "center",
+                inline: "center"
+            });
+            setTimeout(() => {
+                ignoreAutoScroll = false;
+            }, SMOOTH_SCROLL_TIME);
+        }, 1000);
+    }
 }
 
 function updatePlayer() {
@@ -523,9 +634,11 @@ function updatePlayer() {
 }
 
 let likeStatus = "unrated";
-
+let autoScroll = true;
+let ignoreAutoScroll = true;
 
 function drawPlayer() {
+    
     var curMinutes = Math.floor((background.mp3Player.currentTime) / 60),
         curSecondsI = (
             (
@@ -735,34 +848,63 @@ document.addEventListener("DOMContentLoaded", async function () {
         handleSwitch();
     });
     updateHistory();
-    if (background.currentSong) {
-        updateCovers();
-    }
-    setTimeout(() => {
-        covers.style.scrollBehavior = "smooth";
-    }, 50);
+    requestAnimationFrame(() => {
+        const curr = document.querySelector(".current");
+        if (!curr) { return; }
+
+        covers.addEventListener("scroll", () => {
+            ignoreAutoScroll = false;
+        }, { once: true, passive: true });
+
+        requestAnimationFrame(() => {
+            curr.scrollIntoView({
+                behavior: "auto",
+                block: "center",
+                inline: "center"
+            });
+        });
+    });
     covers.addEventListener("scroll", () => {
+        if (ignoreAutoScroll) { return; }
+        console.log("yeet");
+        const curr = document.querySelector(".current");
+        if (!curr) { return; }
+
         if (
             Math.abs(
-                document.querySelector(".current").getBoundingClientRect().left - 
-                    (window.innerWidth - document.querySelector(".current").clientWidth) / 2
+                curr.getBoundingClientRect().left - 
+                (window.innerWidth - (curr.clientWidth / 2))
             )
-                < 50
+            > 50
         ) {
-            back.classList.add("out");
-            return;
+            autoScroll = false;
+            back.classList.remove("out");
+        } else {
+            autoScroll = true;
+            back.classList.remove("add");
         }
-        doReturn = false;
-        back.classList.remove("out");
     }, { passive: true });
 
     back.addEventListener("click", () => {
-        doReturn = true;
-        covers.scrollLeft += (document.querySelector(".current").getBoundingClientRect().left - ((window.innerWidth - document.querySelector(".current").clientWidth) / 2));
+        autoScroll = true;
+        back.classList.add("out");
+        ignoreAutoScroll = true;
+        requestAnimationFrame(() => {
+            let curr = document.querySelector(".current");
+            if (!curr) { return; }
+            
+            curr.scrollIntoView({
+                behavior: "smooth",
+                block: "center",
+                inline: "center"
+            });
+
+            setTimeout(() => {
+                ignoreAutoScroll = false;
+            }, SMOOTH_SCROLL_TIME);
+        });
     });
 });
-
-let doReturn = true;
 
 function handleSwitch() {
     if (panelOn <= 0) {
