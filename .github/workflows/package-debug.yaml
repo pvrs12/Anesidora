@@ -34,11 +34,11 @@ jobs:
       - name: Upload Firefox
         uses: actions/upload-artifact@v2
         with:
-          name: anesidora-firefox-debug_${{ env.GITHUB_JOB }}
+          name: anesidora-firefox-debug_${{ env.GITHUB_RUN_NUMBER }}
           path: firefox_build/
 
       - name: Upload Chrome
         uses: actions/upload-artifact@v2
         with:
-          name: anesidora-chrome-debug_${{ env.GITHUB_JOB }}
+          name: anesidora-chrome-debug_${{ env.GITHUB_RUN_NUMBER }}
           path: chrome_build/
