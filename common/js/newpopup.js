@@ -110,7 +110,8 @@ function updateHistory() {
     background.prevSongs.reverse().forEach(function (song, i) {
         let historyElem = document.createElement("div");
         historyElem.classList.add("historyItem");
-        let cover = document.createElement("a");
+        let cover = document.createElement("img");
+        cover.loading = "lazy"
         cover.href = song.songDetailUrl;
         cover.classList.add("historyCover");
         cover.classList.add("icon");
@@ -134,7 +135,8 @@ function updateHistory() {
         historyDiv.appendChild(historyElem);
         historyElem.appendChild(holder);
         if (song.albumArtUrl && song.albumArtUrl !== '') {
-            cover.style.background = `url("${song.albumArtUrl}")`;
+            // cover.style.background = `url("${song.albumArtUrl}")`;
+            cover.src = song.albumArtUrl;
         } else {
             cover.style.background = "";
             let icon = document.createElement('i');
@@ -225,7 +227,8 @@ function addStations() {
     }).forEach(function (station) {
         let stationElem = document.createElement("div");
         stationElem.classList.add("historyItem");
-        let cover = document.createElement("div");
+        let cover = document.createElement("img");
+        cover.loading = "lazy"
         cover.classList.add("historyCover");
         let overlay = document.createElement("div");
         overlay.classList.add("historyOverlay");
@@ -246,10 +249,11 @@ function addStations() {
             cover.appendChild(icon);
             cover.style.background = "";
         } else {
-	    cover.classList.remove("icon");
-	    cover.children[0] && cover.children[0].classList.remove('bx', 'bx-album', 'stationIcon');
-	    cover.style.background = "url('"+background.stationImgs[station.stationId]+"')";
-	}
+            cover.classList.remove("icon");
+            cover.children[0] && cover.children[0].classList.remove('bx', 'bx-album', 'stationIcon');
+            // cover.style.background = "url('"+background.stationImgs[station.stationId]+"')";
+            cover.src = background.stationImgs[station.stationId]
+        }
         holder.appendChild(overlay);
 	holder.appendChild(cover);
         overlay.appendChild(actions);
@@ -286,7 +290,8 @@ function addStations() {
             } else {
                 cover.classList.remove("icon");
                 cover.children[0] && cover.children[0].classList.remove('bx', 'bx-album');
-                cover.style.background = `url("${background.stationImgs[thisStation.stationId]}")`;
+                // cover.style.background = `url("${background.stationImgs[thisStation.stationId]}")`;
+                cover.src = background.stationImgs[thisStation.stationId];
             }
         });
     });
