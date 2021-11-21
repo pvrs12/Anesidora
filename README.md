@@ -4,9 +4,20 @@ Anesidora
 Anesidora - unofficial Pandora extension for Firefox and Chrome.
 
 <h3><a href="https://addons.mozilla.org/en-US/firefox/addon/anesidora/">Download/Install Firefox</a></h3>
+<br>
+<h3><a href="https://nightly.link/pvrs12/Anesidora/workflows/package.yaml/master/anesidora-chrome.zip">Chrome Nightly Build</a></h3>
+<h3><a href="https://nightly.link/pvrs12/Anesidora/workflows/package.yaml/master/anesidora-chrome.zip">Firefox Nightly Build</a></h3>
 
 <br>
 <br>
+
+Chrome Installation:
+-----
+Download the **Chrome Nightly Build** and extract the ZIP file. Go to `chrome://extensions/` and click `Developer mode` in the top right. Click `Load unpacked` in the top left and navigate to the directory in which you extracted the ZIP file.
+
+Firefox Installation:
+------
+Download the **Firefox Nightly Build**. Do _Not_ extract the ZIP file. Go to `about:debugging#/runtime/this-firefox` and click `Load Temporary Add-on...`. Navigate to the ZIP file you downloaded and select it.
 
 Developing:
 ------------
