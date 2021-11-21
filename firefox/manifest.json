@@ -45,7 +45,7 @@
             }
         }
     },
-    "version": "2.2.1_revert2",
+    "version": "2.2.3",
     "options_ui": {
         "page": "options.htm",
         "browser_style": true
