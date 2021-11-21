@@ -11,6 +11,14 @@ Anesidora - unofficial Pandora extension for Firefox and Chrome.
 <br>
 <br>
 
+Chrome Installation:
+-----
+Download the **Chrome Nightly Build** and extract the ZIP file. Go to `chrome://extensions/` and click `Developer mode` in the top right. Click `Load unpacked` in the top left and navigate to the directory in which you extracted the ZIP file.
+
+Firefox Installation:
+------
+Download the **Firefox Nightly Build**. Do _Not_ extract the ZIP file. Go to `about:debugging#/runtime/this-firefox` and click `Load Temporary Add-on...`. Navigate to the ZIP file you downloaded and select it.
+
 Developing:
 ------------
 In order to develop this for Firefox and Chrome, the majority of the code which you will modify is located in `common/`. Within the `firefox/` and `chrome/` directories are the browser specific functions. I've attempted to keep the majority of the code as browser agnostic as possible. To test changes that you've made locally, you'll want to run `package.bash debug` to generate the "debug" versions of the extension for Firefox and Chrome (different colored icon). For Chrome, you'll then need to extract the zip file before you can load/test it within Chrome. Firefox will work with just the XPI file.
