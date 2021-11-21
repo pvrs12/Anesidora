@@ -36,11 +36,11 @@ jobs:
       - name: Upload Firefox
         uses: actions/upload-artifact@v2
         with:
-          name: anesidora-firefox_${{ github.run_number }}
+          name: anesidora-firefox
           path: firefox_build/
 
       - name: Upload Chrome
         uses: actions/upload-artifact@v2
         with:
-          name: anesidora-chrome_${{ github.run_number }}
+          name: anesidora-chrome
           path: chrome_build/
