@@ -162,18 +162,26 @@ async function nextSong(depth=1, prev_station=undefined) {
 }
 
 function setup_commands() {
-    if (!is_android()) {
-        get_browser().commands.onCommand.addListener(function(command) {
-            if (command === "pause_play") {
-                if (!mp3Player.paused) {
-                    mp3Player.pause();
-                } else {
-                    play(localStorage.lastStation);
-                }
-            } else if(command === "skip_song") {
-                nextSong();
+    try {
+        if (!is_android()) {
+            try {
+                get_browser().commands.onCommand.addListener(function(command) {
+                    if (command === "pause_play") {
+                        if (!mp3Player.paused) {
+                            mp3Player.pause();
+                        } else {
+                            play(localStorage.lastStation);
+                        }
+                    } else if(command === "skip_song") {
+                        nextSong();
+                    }
+                });
+            } catch (TypeError) {
+                
             }
-        });
+        }
+    } catch (TypeError) {
+        // android detection isn't working
     }
 }
 
@@ -241,7 +249,7 @@ function update_mediasession() {
 
 document.addEventListener('DOMContentLoaded', function () {
     mp3Player = document.getElementById('mp3Player');
-    
+
     if (localStorage.volume) {
         mp3Player.volume = localStorage.volume;
     } else {
@@ -259,7 +267,7 @@ document.addEventListener('DOMContentLoaded', function () {
     mp3Player.addEventListener("play", function () {
         try {
             //check if the window exists
-            document.getElementById('mp3Player').yep = 'thisexists'        
+            document.getElementById('mp3Player').yep = 'thisexists'
             callbacks.updatePlayer.forEach((e) => {
                 try {
                     e();
