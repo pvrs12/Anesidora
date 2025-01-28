@@ -91,18 +91,15 @@ function clearHistory() {
     }
 }
 
-function downloadSong(url, title) {
-    //making an anchor tag and clicking it allows the download dialog to work and save the file with the song"s name
-
-    //trim the title of the song to 15 characters... not a perfect solution, but there were issues with it at full length
-    title = title.substring(0, 15);
+function setupDownload(url, filename) {
     let a = document.createElement('a');
     a.href = url;
-    a.download = `${title.replace(/ /g, '_')}.mp4`
+    a.download = filename
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
 }
+
 
 function updateHistory() {
     clearHistory();
@@ -123,10 +120,19 @@ function updateHistory() {
         actions.classList.add("actions");
         let likeAction = document.createElement("div");
         likeAction.classList.add("hoverImg", "icon", "bx", "bx-like");
-        let downloadAction = document.createElement("a");
+        let downloadAction = document.createElement("div");
         downloadAction.classList.add("bx-download", "hoverImg", "icon", "bx");
-        downloadAction.href  = song.audioUrlMap.highQuality.audioUrl;
-        downloadAction.download = `${song.songName.replace(/ /g, '_')}.mp4`;
+        downloadAction.addEventListener('click', () => {
+            if (downloadAction.classList.contains('active')) {
+                return;
+            }
+            downloadAction.classList.add('active');
+
+            background.getSongBlobURL(song).then(([url, filename]) => {
+                setupDownload(url, filename);
+                downloadAction.classList.remove('active');
+            })
+        })
 
         let dislikeAction = document.createElement("div");
         dislikeAction.classList.add("hoverImg", "icon", "bx", "bx-dislike");
@@ -318,9 +324,6 @@ function updatePlayer() {
         artistLink.href = wipeTrackers(background.currentSong.artistDetailUrl);
         artistLink.innerText = background.currentSong.artistName;
 
-        downloadButton.href = background.currentSong.audioUrlMap.highQuality.audioUrl;
-        downloadButton.download = background.currentSong.songName.replace(/ /g, '_') + '.mp4';
-
         if (background.currentSong.songRating === 1) {
             tUpButton.children[0] && tUpButton.children[0].classList.add("bxs-like");
             tUpButton.children[0] && tUpButton.children[0].classList.remove("bx-like");
@@ -439,6 +442,18 @@ document.addEventListener('DOMContentLoaded', async function () {
             background.addFeedback(-1, true);
         }
     });
+
+    downloadButton.addEventListener('click', () => {
+        if (downloadButton.classList.contains('active')) {
+            return;
+        }
+        downloadButton.classList.add('active');
+        
+        background.getSongBlobURL(background.currentSong).then(([url, filename]) => {
+            setupDownload(url, filename);
+            downloadButton.classList.remove('active');
+        })
+    });
     tDownButton.addEventListener("click", async function () {
         await background.addFeedback(-1, false);
         background.nextSong();
@@ -513,7 +528,6 @@ document.addEventListener('DOMContentLoaded', async function () {
     });
 
     if (background.mp3Player.src !== "") {
-        downloadButton.src = background.mp3Player.src;
         if (background.mp3Player.currentTime > 0) {
             updatePlayer();
             drawPlayer();
@@ -572,7 +586,7 @@ function play_audio () {
     playButton.style.display = "none";
 }
 
-background.setCallbacks(updatePlayer, drawPlayer, downloadSong);
+background.setCallbacks(updatePlayer, drawPlayer);
 
 if (localStorage.username && localStorage.password && !background.userAuthToken) {
     background.partnerLogin();

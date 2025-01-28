@@ -1,6 +1,6 @@
 "use strict"
 /*global partnerLogin, getPlaylist, currentPlaylist, platform_specific, get_browser, is_android*/
-/*exported setCallbacks, play, downloadSong, nextSongStation, mp3Player*/
+/*exported setCallbacks, play, nextSongStation, mp3Player*/
 
 let mp3Player = document.getElementById('mp3Player');
 
@@ -25,8 +25,7 @@ get_browser().webRequest.onBeforeSendHeaders.addListener(
 
 var callbacks = {
     updatePlayer: [],
-    drawPlayer: [],
-    downloadSong: []
+    drawPlayer: []
 };
 var currentSong;
 var comingSong;
@@ -35,10 +34,9 @@ var stationImgs = (localStorage.stationImgs && JSON.parse(localStorage.stationIm
 
 };
 
-function setCallbacks(updatePlayer,drawPlayer,downloadSong){
+function setCallbacks(updatePlayer,drawPlayer){
     callbacks.updatePlayer.push(updatePlayer);
     callbacks.drawPlayer.push(drawPlayer);
-    callbacks.downloadSong.push(downloadSong);
 }
 
 async function play(stationToken) {
