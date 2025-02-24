@@ -41,7 +41,7 @@
             }
         }
     },
-    "version": "2.2.3",
+    "version": "2.2.4",
     "options_ui": {
         "page": "options.htm",
         "chrome_style": true
