@@ -1,6 +1,6 @@
 "use strict"
 /*globals $, encrypt, decrypt, currentSong, play, prevSongs*/
-/*exported addFeedback, explainTrack, search, createStation, sleepSong, setQuickMix, deleteStation */
+/*exported addFeedback, explainTrack, search, createStation, sleepSong, setQuickMix, deleteStation, getSongBlobURL */
 
 let dontRetryPartnerLogin = false;
 
@@ -324,6 +324,31 @@ async function explainTrack() {
         "syncTime": getSyncTime(syncTime)
     });
     return await sendRequest(false, true, "track.explainTrack", request);
+}
+
+
+async function getSongBlobURL(track) {
+    let audioPath;
+    if (track.additionalAudioUrl && (track.additionalAudioUrl instanceof Array) && ('0' in track.additionalAudioUrl)) {
+        audioPath = track.additionalAudioUrl[0];
+    } else {
+        audioPath = (
+            track.audioUrlMap.highQuality?.audioUrl ?? 
+            track.audioUrlMap.mediumQuality?.audioUrl ?? 
+            track.audioUrlMap.lowQuality?.audioUrl
+        );
+    }
+
+    let audioRequest = await fetch(audioPath);
+    let audioBuffer = await audioRequest.arrayBuffer();
+    
+    // Create blob
+    let richSongBytes = new Uint8Array(audioBuffer);
+
+    return [
+        URL.createObjectURL(new Blob([richSongBytes], { type: 'audio/aac' })),
+        track.songName.replace(/[^a-z ]/gi, '').substring(0, 29) + '.aac'
+    ]
 }
 
 if (localStorage.username !== "" && localStorage.password !== "") {

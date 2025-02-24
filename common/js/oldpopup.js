@@ -446,4 +446,4 @@ function play_audio () {
     $("#playButton").hide();
 }
 
-background.setCallbacks(updatePlayer, drawPlayer, downloadSong);
+background.setCallbacks(updatePlayer, drawPlayer);
