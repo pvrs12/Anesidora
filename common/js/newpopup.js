@@ -477,7 +477,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
 		const trackIsAdvertisement = !!currentTrack.clickThroughUrl;
 
-
 		const sleepButton = playerScreen.querySelector('.tired-of-song');
 		if (sleepButton) {
 			sleepButton.disabled = trackIsAdvertisement;

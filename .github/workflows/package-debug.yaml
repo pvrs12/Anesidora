@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       - name: Get JQuery
         run: |
@@ -32,13 +32,13 @@ jobs:
           cp -rf chrome/* chrome_build
 
       - name: Upload Firefox
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: anesidora-firefox-debug_${{ github.run_number }}
           path: firefox_build/
 
       - name: Upload Chrome
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: anesidora-chrome-debug_${{ github.run_number }}
           path: chrome_build/
