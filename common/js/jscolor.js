@@ -1214,12 +1214,14 @@ var jsc = {
 		var callback = null;
 
 		if (typeof thisObj[prop] === 'string') {
-			// string with code
-			try {
-				callback = new Function (thisObj[prop]);
-			} catch (e) {
-				console.error(e);
-			}
+			// // string with code
+			// try {
+			// 	callback = new Function (thisObj[prop]);
+			// } catch (e) {
+			// 	console.error(e);
+			// }
+            // i don't need this functionality
+            // and it tends to make AMO reviewers paranoid
 		} else {
 			// function
 			callback = thisObj[prop];
@@ -2324,7 +2326,8 @@ var jsc = {
 				if (jsc.nodeName(this.valueElement) === 'input') {
 					this.valueElement.value = str;
 				} else {
-					this.valueElement.innerHTML = str;
+					// this.valueElement.innerHTML = str;
+                    this.valueElement.innerText = str;
 				}
 			}
 		};
@@ -2335,7 +2338,8 @@ var jsc = {
 				if (jsc.nodeName(this.alphaElement) === 'input') {
 					this.alphaElement.value = str;
 				} else {
-					this.alphaElement.innerHTML = str;
+					// this.alphaElement.innerHTML = str;
+                    this.alphaElement.innerText = 'str';
 				}
 			}
 		};

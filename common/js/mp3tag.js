@@ -311,7 +311,7 @@ SOFTWARE.
   // eslint-disable-next-line no-new-func -- fallback
   function () {
     return this;
-  }() || commonjsGlobal || Function('return this')();
+  }() || commonjsGlobal;// || Function('return this')();
 
   var objectGetOwnPropertyDescriptor = {};
 
@@ -1332,7 +1332,7 @@ SOFTWARE.
 
   // Create object with fake `null` prototype: use ActiveX Object with cleared prototype
   var NullProtoObjectViaActiveX = function (activeXDocument) {
-    activeXDocument.write(scriptTag(''));
+    activeXDocument.write('<script></script>');
     activeXDocument.close();
     var temp = activeXDocument.parentWindow.Object;
     activeXDocument = null; // avoid memory leak
@@ -1351,7 +1351,7 @@ SOFTWARE.
     iframe.src = String(JS);
     iframeDocument = iframe.contentWindow.document;
     iframeDocument.open();
-    iframeDocument.write(scriptTag('document.F=Object'));
+    iframeDocument.write(scriptTag('<script>document.F=Object</script>'));
     iframeDocument.close();
     return iframeDocument.F;
   };
