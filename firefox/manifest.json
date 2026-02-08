@@ -31,6 +31,10 @@
     "browser_specific_settings":{
         "gecko":{
             "id":"pvrs12@gmail.com"
+        },
+        "data_collection_permissions": {
+            "required": [],
+            "optional": []
         }
     },
     "commands": {

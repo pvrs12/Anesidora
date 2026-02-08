@@ -6,7 +6,7 @@
 var DEFAULTS = /** @type {const} */ ({
 	skipAfterDislike: true,
 	playAds: false,
-	registerAds: true,
+	registerAds: false,
 	pauseAfterInactivity: true,
 	tagDownloads: true,
 	renameDownloads: true,
