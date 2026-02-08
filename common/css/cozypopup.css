@@ -9,6 +9,52 @@
 		stroke-linejoin: round;
 	}
 
+	.cozy input[type="range"] {
+		border-radius: 4px;
+		accent-color: var(--bar-active, var(--icon-default-stroke));
+		border: solid 1px var(--bar-active, var(--icon-default-stroke));
+		appearance: none;
+		overflow: hidden;
+		overflow: clip;
+        line-height: 0;
+        background: transparent;
+	}
+		/*
+			For future reference, styling cross-browser range inputs is utterly cursed.
+
+			`background: transparent` only works if `appearance: none` is set, and
+			there's *no* equivalent to ::-moz-range-progress in webkit so I just have to set
+			a gigantic box shadow on the thumb. what??
+
+			Also, there's a different way of making a vertical input for every engine.
+			I gave up and just used a wrapped transform. Because of course.
+		*/
+		.cozy input[type="range"]:focus-visible {
+			outline: solid 1px var(--icon-active-stroke);
+		}
+		.cozy input[type="range"]::-moz-range-track {
+			background: transparent;
+		}
+		.cozy input[type="range"]::-webkit-slider-runnable-track {
+			background: transparent;
+		}
+		.cozy input[type="range"]::-moz-range-progress {
+			height: 100%;
+			background: var(--bar-active, var(--icon-default-stroke));
+		}
+		.cozy input[type="range"]::-moz-range-thumb {
+			height: 100%;
+			border: none;
+			background-color: var(--bar-active, var(--icon-default-stroke));
+		}
+		.cozy input[type="range"]::-webkit-slider-thumb {
+			height: 100%;
+			border: none;
+			background-color: var(--bar-active, var(--icon-default-stroke));
+			box-shadow: -500px 0 0 500px var(--bar-active, var(--icon-default-stroke));
+		}
+
+
 	.cozy .search {
 		display: flex;
 		flex-flow: row nowrap;
@@ -226,6 +272,8 @@
 								width: 4.6875rem; /* 75px */
 								height: 4.6875rem; /* 75px */
 								flex-shrink: 0;
+                                object-fit: cover;
+                                object-position: contain;
 							}
 							.cozy > main > .history > ul > .history-item > .vwrap {
 								display: flex;
@@ -310,17 +358,63 @@
 
 				}
 				/* #region section.player */
-					.cozy > main > .player > .cover {
-						height: 0;
-						flex-grow: 20;
-						max-height: var(--player-cover-max-size);
+                    .cozy > main > .player > .coverHolder {
+						flex-shrink: 20;
+						height: calc(var(--player-cover-max-size) * var(--viewport-width));
+                        display: grid;
+                        grid-template-columns: auto auto auto;
+                        grid-template-rows: auto minmax(0, 1fr) auto;
+                        grid-template-areas: ".  top   .  " "left cover right" ". bottom .";
+                        gap: 0.5rem;
+                    }
+                        .cozy > main > .player > .coverHolder > .cover {
+                            height: 100%;
+                            box-shadow: 0px 0.3125rem /* 5px */ 3.125rem /* 50px */ rgba(165, 192, 203, 0.25);
+                            border-radius: var(--player-cover-corner-radius, 15px);
+                            grid-area: cover;
+                        }
+                        .cozy > main > .player > .coverHolder > .volumewrap {
+                            --primary-axis: calc(100% * var(--volume-bar-size, 0.9));
+                            --cross-axis: 0.5rem;
+                            height: var(--cross-axis);
+                            width: var(--primary-axis);
+                            grid-area: var(--volume-bar-position, "right");
+                            line-height: 0;
+                            place-self: center;
+                        }
+                            .cozy > main > .player > .coverHolder > .volumewrap > .volume {
+                                height: var(--cross-axis);
+                                width: 100%;
+                                --bar-active: var(--volume-bar-color, var(--icon-default-stroke))
+                            }
+                            .cozy > main > .player > .coverHolder > .volumewrap[data-is-vertical] {
+                                --primary-axis: calc(min(calc(var(--player-cover-max-size) * var(--viewport-width)), var(--viewport-height) * 0.7) * var(--volume-bar-size, 0.9));
+                                position: relative;
+                                height: var(--primary-axis);
+                                width: var(--cross-axis);
+                            }
+                            .cozy > main > .player > .coverHolder > .volumewrap[data-is-vertical] > .volume {
+                                width: var(--primary-axis);
+                                height: var(--cross-axis);
+                                transform: rotate(90deg);
+                                transform-origin: top left;
+                                direction: rtl;
+                                position: absolute;
+                                top: 0;
+                                left: 100%;
+                            }
+                            .cozy > main > .player > .coverHolder > .volumewrap[data-is-vertical] > .volume::-webkit-slider-thumb {
+                                box-shadow: 500px 0 0 500px var(--volume-bar-color, var(--icon-default-stroke));
+                            }
 
-						box-shadow: 0px 0.3125rem /* 5px */ 3.125rem /* 50px */ rgba(165, 192, 203, 0.25);
-						border-radius: var(--player-cover-corner-radius, 15px);
-					}
+                    .cozy > main > .player > .seekBar {
+                        height: 0.5rem;
+                        width: calc(min(calc(var(--player-cover-max-size) * var(--viewport-width)), calc(min(var(--viewport-height), var(--viewport-width)) * 0.75)) * var(--seek-bar-size, 0.9));
+                        --bar-active: var(--seek-bar-color, var(--icon-default-stroke));
+                    }
 					
 					.cozy > main > .player > .infoline {
-						max-width: var(--player-cover-max-size);
+						max-width: calc(var(--player-cover-max-size) * var(--viewport-width));
 						display: block;
 						overflow: hidden;
 						white-space: nowrap;
@@ -355,11 +449,11 @@
 					}
 					.cozy > main > .player > .actions {
 						display: flex;
-						flex-grow: 1;
+						flex-grow: 0;
 						flex-flow: column nowrap;
 						justify-content: center;
 						align-items: center;
-						padding: 0;
+						padding: 0.5rem;
 						gap: 0.625rem; /* 10px */
 					}
 						.cozy > main > .player > .actions > .row {
@@ -475,6 +569,8 @@
 							height: 2.3rem;
 							width: 2.3rem;
 							grid-area: 1/1;
+                            object-fit: cover;
+                            object-position: center;
 						}
 						.cozy > main > .stations > ul > .station > .coverholder > .feather-play {
 							fill: var(--icon-hover-stroke);

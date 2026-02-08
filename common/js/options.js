@@ -141,12 +141,13 @@ if (behaviorSection) {
 		'httpsOnlyAssets',
 		'stripTrackingParams',
 		'doRewinds',
-		'rewindDuration'
+		'rewindDuration',
+        'cacheAlbumArt',
 	].forEach(e => setupPrimitiveInput(e));
 
 	[
 		'pauseAfterInactivity',
-		'inactivityDuration'
+		'inactivityDuration',
 	].forEach(e => setupPrimitiveInput(e, background.interactionHappened));
 }
 
@@ -156,6 +157,7 @@ if (appearanceSection) {
 	/** @type {HTMLIFrameElement} */
 	const previewElement = document.getElementById('preview');
 	const presetsContainer = appearanceSection.querySelector('#selectedPresetContainer');
+    let previewHolder = appearanceSection.querySelector('.previewHolder');
 	
     /** @type {Array<(preset: typeof DEFAULTS.presets[number]) => void>} */
     const settingsUpdateCBs = [];
@@ -166,20 +168,31 @@ if (appearanceSection) {
 
 	let prevPlayerType = null;
 	function updatePreviewType() {
-		let currPlayerType = getEffectivePreset().playerType;
+        let effectivePreset = getEffectivePreset();
+		let currPlayerType = effectivePreset.playerType;
+
+        let w = effectivePreset.cssVariables['viewport-width'], h = effectivePreset.cssVariables['viewport-height'];
+
+        previewHolder.style.width = w;
+        previewHolder.style.height = h;
+
 		if (prevPlayerType === currPlayerType) {
 			return;
 		}
 		prevPlayerType = currPlayerType;
 		disableDimensionChanges = true;
 		previewElement.src = currPlayerType + '.htm?settingsPreview=true';
+
+        background.updatePopupUrl();
+
 		setTimeout(() => {
+            updatePreviewVolBar(mainForm.elements.namedItem('volume-bar-position').value);
 			disableDimensionChanges = false;
 		}, 300);
 	}
     updatePreviewType();
 	{
-		let prefersLight = matchMedia(`(prefers-color-scheme: light)`);
+		let prefersLight = background.prefersLightMedia;
 	
 		prefersLight.addEventListener('change', () => {    
 			updatePreviewType();
@@ -653,6 +666,38 @@ if (appearanceSection) {
 	setupGenericInput('icon-hover-stroke');
 
 	setupGenericInput('player-play-icon-stroke');
+	setupGenericInput('seek-bar-color');
+	setupGenericInput('volume-bar-color');
+	setupGenericInput('volume-bar-position'); // definitely a color
+    const updatePreviewVolBar = (volPos) => {
+        let volumeBar = previewElement.contentDocument?.querySelector?.('.volume');
+        if (!volumeBar) {
+            return;
+        }
+        if (volPos === 'none') {
+            volumeBar.parentElement.style.display = 'none';
+            volumeBar.parentElement.parentElement.style.rowGap = '0';
+        } else {
+            volumeBar.parentElement.style.display = '';
+            volumeBar.parentElement.parentElement.style.rowGap = '';
+        }
+        if (volPos === 'left' || volPos === 'right') {
+            volumeBar.parentElement.parentElement.style.padding = '0';
+            volumeBar.parentElement.dataset.isVertical = true;
+        } else {
+            volumeBar.parentElement.parentElement.style.padding = '';
+            volumeBar.parentElement.removeAttribute('data-is-vertical');
+        }
+    };
+    settingsUpdateCBs.push((preset) => {
+        updatePreviewVolBar(preset.cssVariables['volume-bar-position']);
+    });
+    mainForm.elements.namedItem('volume-bar-position').addEventListener('change', (e) => {
+        updatePreviewVolBar(e.target.value);
+    });
+	setupGenericInput('volume-bar-size');
+	setupGenericInput('seek-bar-size');
+    
 	setupGenericInput('player-play-icon-fill');
 	setupGenericInput('player-main-icons-stroke');
 	setupGenericInput('player-main-icons-fill');
@@ -707,7 +752,6 @@ if (appearanceSection) {
 
 	let updateDimensions = () => {};
 	{
-		let previewHolder = appearanceSection.querySelector('.previewHolder');
 		// Player dimensions
 		let currentPreset = getEffectivePreset();
 		let playerType = currentPreset.playerType;

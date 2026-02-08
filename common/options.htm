@@ -92,6 +92,10 @@
 					</div>
 					of the start of the song.
 				</label>
+				<label>
+					<input type="checkbox" name="cacheAlbumArt">
+					Cache album art
+				</label>
 			</section>
 
 			<h2>Ads</h2>
@@ -272,7 +276,7 @@
 								<input data-jscolor="{}" name="icon-hover-fill">
 							</label>
 						</div>
-						<h3>Player colors</h3>
+						<h3>Player</h3>
 						<div class="colors">
 							<label>
 								<div class="labeltext">Player main icons stroke<span class="separator"></span><code>player-main-icons-stroke</code></div>
@@ -297,6 +301,32 @@
 							<label>
 								<div class="labeltext">Player minor icons fill<span class="separator"></span><code>player-minor-icons-fill</code></div>
 								<input data-jscolor="{}" name="player-minor-icons-fill">
+							</label>
+							<label>
+								<div class="labeltext">Seek bar color<span class="separator"></span><code>seek-bar-color</code></div>
+								<input data-jscolor="{}" name="seek-bar-color">
+							</label>
+							<label>
+								<div class="labeltext">Volume bar color<span class="separator"></span><code>volume-bar-color</code></div>
+								<input data-jscolor="{}" name="volume-bar-color">
+							</label>
+                            <label>
+                                <div class="labeltext">Volume bar position</div>
+                                <select name="volume-bar-position">
+                                    <option value="none">None</option>
+                                    <option value="left">Left</option>
+                                    <option value="right">Right</option>
+                                    <option value="top">Top</option>
+                                    <option value="bottom">Bottom</option>
+                                </select>
+                            </label>
+							<label>
+								<div class="labeltext">Volume size</div>
+								<input name="volume-bar-size" type="range" max="1" min="0.1" step="0.01" list="usual-opacities">
+							</label>
+							<label>
+								<div class="labeltext">Seek bar size</div>
+								<input name="seek-bar-size" type="range" max="1" min="0.1" step="0.01" list="usual-opacities">
 							</label>
 						</div>
 						<h3>Misc. Colors</h3>
@@ -382,7 +412,7 @@
 						<div class="colors">
 							<label>
 								<div class="labeltext">Album cover size<span class="separator"></span><code>player-cover-max-size</code></div>
-								<input name="player-cover-max-size">
+								<input name="player-cover-max-size" type="range" max="1" min="0" step="any" list="usual-opacities">
 							</label>
 						</div>
 						<h3>Album cover background</h3>
@@ -421,8 +451,11 @@
 					</div>
 					<div class="shown-if-match">
 						<p>
-							The system preset switches between the configured dark and light presets, based on your operating system's color scheme.
+							The system preset switches between the configured dark and light presets, based on your browser's color scheme.
 						</p>
+                        <p>
+                            On Firefox, this is <a href="https://bugzilla.mozilla.org/show_bug.cgi?id=1780028" target="_blank">based on what theme you have enabled</a>, <em>not</em> on the color scheme for website appearance.
+                        </p>
 						<h3>Dark mode preset</h3>
 						<div class="quick-preset-select" id="darkPresetSelection"></div>
 						<h3>Light mode preset</h3>

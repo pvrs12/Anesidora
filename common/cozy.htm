@@ -122,7 +122,14 @@
                 <ul></ul>
             </section>
             <section class="player" aria-label="Now playing">
-                <img class="cover" src="./images/default_cover.svg" alt="" />
+                <div class="spacer"></div>
+                <div class="coverHolder">
+                    <div class="volumewrap">
+                        <input aria-label="Volume" class="volume" type="range" min="0" max="100" value="0" step="any" />
+                    </div>
+                    <img class="cover" src="./images/default_cover.svg" alt="" />
+                </div>
+                <input aria-label="Seek" class="seekBar" type="range" min="0" max="100" value="0" step="any" />
                 <div class="spacer"></div>
                 <div class="infoline" tabindex="0">
                     <div class="infoline-content">
@@ -190,6 +197,7 @@
                         </button>
                     </ul>
                 </div>
+                <div class="spacer"></div>
             </section>
             <section class="stations" aria-label="Stations">
                 <template class="station-template">
@@ -256,7 +264,7 @@
 
                 <template class="account-template">
                     <button class="real-account logout-button">
-                        <img class="avatar" src="" alt="">
+                        <img class="avatar" src="" alt="" loading="lazy">
                         <div class="valign">
                             <span class="username">[ This text should not appear ]</span>
                             <div class="logout-button">

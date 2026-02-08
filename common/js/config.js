@@ -17,10 +17,11 @@ var DEFAULTS = /** @type {const} */ ({
     rewindDuration: 5,
 	httpsOnlyAssets: true,
 	stripTrackingParams: true,
+    cacheAlbumArt: true,
 	selectedPreset: 'match',
 	selectedMatchPresets: {
-		dark: 'dark',
-		light: 'light'
+		dark: 'cozy-dark',
+		light: 'cozy-light'
 	},
 	currentScreen: 'account',
 	playerPreferences: {
@@ -46,7 +47,7 @@ var DEFAULTS = /** @type {const} */ ({
           cssVariables: {}
         },
         {
-          id: "dark",
+          id: "cozy-dark",
           name: "Cozy Dark",
           playerType: "cozy",
           customCSS: "",
@@ -67,7 +68,7 @@ var DEFAULTS = /** @type {const} */ ({
             "icon-hover-stroke": "var(--text-color)",
             "history-icon-size": "18px",
             "alternating-row-background": "rgba(128, 128, 128, 0.1)",
-            "player-cover-max-size": "calc(0.8 * var(--viewport-width))",
+            "player-cover-max-size": "0.7",
             "player-cover-corner-radius": "15px",
             "player-play-icon-stroke": "var(--text-color)",
             "player-play-icon-fill": "#000000",
@@ -78,6 +79,11 @@ var DEFAULTS = /** @type {const} */ ({
             "player-small-icon-size": "18px",
             "player-minor-icons-stroke": "#C5C5C5",
             "player-minor-icons-fill": "var(--icon-default-fill)",
+            "seek-bar-color": "var(--icon-default-stroke)",
+            "volume-bar-color": "var(--icon-default-stroke)",
+            "volume-bar-position": "none",
+            "volume-bar-size": "0.9",
+            "seek-bar-size": "0.9",
             "stations-play-background-color": "rgba(0, 0, 0, 0.5)",
             "stations-active-station-background": "rgba(255, 157, 0, 0.1)",
             "stations-active-station-color": "#ffffff",
@@ -90,7 +96,7 @@ var DEFAULTS = /** @type {const} */ ({
           maxHistoryEntries: 20
         },
         {
-          id: "light",
+          id: "cozy-light",
           name: "Cozy Light",
           playerType: "cozy",
           customCSS: "",
@@ -111,7 +117,7 @@ var DEFAULTS = /** @type {const} */ ({
             "icon-hover-stroke": "var(--icon-active-stroke)",
             "history-icon-size": "17px",
             "alternating-row-background": "rgba(128, 128, 128, 0.1)",
-            "player-cover-max-size": "calc(0.8 * var(--viewport-width))",
+            "player-cover-max-size": "0.7",
             "player-cover-corner-radius": "15px",
             "player-play-icon-stroke": "var(--icon-default-stroke)",
             "player-play-icon-fill": "var(--icon-default-fill)",
@@ -122,6 +128,11 @@ var DEFAULTS = /** @type {const} */ ({
             "player-small-icon-size": "18px",
             "player-minor-icons-stroke": "var(--icon-default-stroke)",
             "player-minor-icons-fill": "var(--icon-default-fill)",
+            "seek-bar-color": "var(--icon-default-stroke)",
+            "volume-bar-color": "var(--icon-default-stroke)",
+            "volume-bar-position": "none",
+            "volume-bar-size": "0.9",
+            "seek-bar-size": "0.9",
             "stations-play-background-color": "rgba(0, 0, 0, 0.5)",
             "stations-active-station-background": "#4a90d9",
             "stations-active-station-color": "#ffffff",
@@ -134,10 +145,10 @@ var DEFAULTS = /** @type {const} */ ({
           maxHistoryEntries: 20
         },
         {
-          id: "old",
+          id: "compact-dark",
           name: "Compact Dark",
           playerType: "compact",
-          customCSS: ".cover {\\n  border-color: color-mix(in srgb, var(--text-color) 50%, transparent 50%);\\n}\\nsvg.icon.anesidora-thumbs-up .check {\\n  fill: #095EFF;\\n}",
+          customCSS: ".cover {\n  border-color: color-mix(in srgb, var(--text-color) 50%, transparent 50%);\n}\nsvg.icon.anesidora-thumbs-up .check {\n  fill: #095EFF;\\n}",
           cssVariables: {
             "tab-navigation-background-color": "var(--icon-default-fill)",
             "tab-navigation-text-color": "var(--icon-default-stroke)",
@@ -155,7 +166,7 @@ var DEFAULTS = /** @type {const} */ ({
             "icon-hover-stroke": "#ee852b",
             "history-icon-size": "17px",
             "alternating-row-background": "rgba(128,128,128,0.04)",
-            "player-cover-max-size": "calc(0.8 * var(--viewport-height))",
+            "player-cover-max-size": "0.8",
             "player-cover-corner-radius": "4px",
             "player-play-icon-stroke": "var(--player-main-icons-stroke)",
             "player-play-icon-fill": "var(--player-main-icons-fill)",
@@ -166,6 +177,11 @@ var DEFAULTS = /** @type {const} */ ({
             "player-small-icon-size": "17px",
             "player-minor-icons-stroke": "var(--player-main-icons-stroke)",
             "player-minor-icons-fill": "var(--player-main-icons-fill)",
+            "seek-bar-color": "var(--icon-default-stroke)",
+            "volume-bar-color": "var(--icon-default-stroke)",
+            "volume-bar-position": "right",
+            "volume-bar-size": "0.9",
+            "seek-bar-size": "0.95",
             "stations-play-background-color": "rgba(0, 0, 0, 0.5)",
             "stations-active-station-background": "#A3B3FF",
             "stations-active-station-color": "#000000",
@@ -178,7 +194,7 @@ var DEFAULTS = /** @type {const} */ ({
           maxHistoryEntries: 10
         },
         {
-          id: "user-created-preset-4-1d2bb",
+          id: "compact-light",
           name: "Compact Light",
           playerType: "compact",
           customCSS: "",
@@ -199,7 +215,7 @@ var DEFAULTS = /** @type {const} */ ({
             "icon-hover-stroke": "#ee852b",
             "history-icon-size": "17px",
             "alternating-row-background": "rgba(128, 128, 128, 0.1)",
-            "player-cover-max-size": "calc(0.8 * var(--viewport-height))",
+            "player-cover-max-size": "0.8",
             "player-cover-corner-radius": "4px",
             "player-play-icon-stroke": "#8397aa",
             "player-play-icon-fill": "#ffffff",
@@ -210,6 +226,11 @@ var DEFAULTS = /** @type {const} */ ({
             "player-small-icon-size": "17px",
             "player-minor-icons-stroke": "#8397aa",
             "player-minor-icons-fill": "#fcfcfd",
+            "seek-bar-color": "var(--icon-default-stroke)",
+            "volume-bar-color": "var(--icon-default-stroke)",
+            "volume-bar-position": "right",
+            "volume-bar-size": "0.9",
+            "seek-bar-size": "0.95",
             "stations-play-background-color": "rgba(0, 0, 0, 0.5)",
             "stations-active-station-background": "#4a90d9",
             "stations-active-station-color": "#ffffff",
@@ -244,6 +265,7 @@ var config = (() => {
         saveTimeouts[key] = window.setTimeout(() => {
             if (cache[key] !== undefined) {
                 console.group('SERIALIZING SAVE');
+                console.log(key, cache[key]);
                 USED_STORAGE.setItem(key, JSON.stringify(cache[key]));
                 console.groupEnd();
             } else {

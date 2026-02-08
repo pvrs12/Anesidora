@@ -95,36 +95,23 @@ async function replaySong(track, pushForwards=false) {
         prevSongs.splice(prevIndex, 1);
     }
     
-    let song_url;
-    if (currentSong.additionalAudioUrl != null && ('0' in currentSong.additionalAudioUrl)) {
-        song_url = currentSong.additionalAudioUrl[0];
-    } else {
-        song_url = currentSong.audioUrlMap.highQuality.audioUrl;
-    }
-    mp3Player.src = song_url;
+    mp3Player.src = currentSong.audioUrl;
     mp3Player.play();
-
-    if (currentPlaylist[0]?.albumArtUrl) {
-        let preloadImage = new Image();
-        let fullImage = toHTTPS(currentPlaylist[0].albumArtUrl);
-        let smallImage = fullImage.replace('1080W_1080H', '500W_500H');
-        preloadImage.addEventListener("error", () => {
-            preloadImage.src = fullImage;
-        }, { once: true });
-        preloadImage.src = smallImage;
-    }
 
     updatePlayers();
 }
 
+let awaitingNewStation = false;
 async function playStation(stationToken) {
-    if (stationToken === currentStationToken) {
+    if (awaitingNewStation || stationToken === currentStationToken) {
         return;
     }
+    awaitingNewStation = true;
     localStorage.setItem('lastStation', stationToken);
     currentStationToken = stationToken;
     currentPlaylist = [];
-    await getPlaylist(stationToken);
+    currentPlaylist.push(...await singletonGetPlaylist(stationToken));
+    awaitingNewStation = false;
     await nextSong();
 }
 
@@ -169,6 +156,11 @@ async function nextSong(depth=1) {
                     if (removedTrack.adToken) {
                         delete registeredAds[removedTrack.adToken];
                     }
+
+                    // release art blob
+                    if ('artBlobUrl' in removedTrack && removedTrack.artBlobUrl) {
+                        URL.revokeObjectURL(removedTrack.artBlobUrl);
+                    }
                 }
             }
         }
@@ -177,35 +169,25 @@ async function nextSong(depth=1) {
         currentStationToken = localStorage.getItem('lastStation');
     }
 
-    if (currentPlaylist.length < 2) {
-        // Want one for "next" (soon to be this) song,
-        // and one to preload one after that 
-        await getPlaylist(currentStationToken);
+    
+    // if there'll be one song left after this one,
+    // preload it (but don't block on it)
+    // if they skip before it's finished preloading (and populating the currentPlaylist),
+    // THEN block on it
+    if (currentPlaylist.length === 2) {
+        singletonGetPlaylist(currentStationToken).then(e => currentPlaylist.push(...e));
+    } else if (currentPlaylist.length < 2) {
+        let songs = await singletonGetPlaylist(currentStationToken);
+        if (!currentPlaylist.includes(songs[0])) {
+            currentPlaylist.push(...songs);
+        }
     }
 
     currentSong = currentPlaylist.shift();
-    
 
-    let song_url;
-    if (currentSong.additionalAudioUrl != null && ('0' in currentSong.additionalAudioUrl)) {
-        song_url = currentSong.additionalAudioUrl[0];
-    } else {
-        song_url = currentSong.audioUrlMap.highQuality.audioUrl;
-    }
-    mp3Player.src = song_url;
+    mp3Player.src = currentSong.audioUrl;
     mp3Player.play();
 	registerAds(currentSong);
-
-
-    if (currentPlaylist[0]?.albumArtUrl) {
-        let preloadImage = new Image();
-        let fullImage = toHTTPS(currentPlaylist[0].albumArtUrl);
-        let smallImage = fullImage.replace('1080W_1080H', '500W_500H');
-        preloadImage.addEventListener("error", () => {
-            preloadImage.src = fullImage;
-        }, { once: true });
-        preloadImage.src = smallImage;
-    }
 
     updatePlayers();
 }
@@ -251,12 +233,12 @@ function update_mediasession() {
     if (!metadata || (
         metadata.title != currentSong.songName ||
         metadata.artist != currentSong.artistName ||
-        metadata.artwork[0].src != currentSong.albumArtUrl)
+        metadata.artwork[0].src != (currentSong.artBlobUrl ?? currentSong.albumArtUrl))
         ) {
         navigator.mediaSession.metadata = new MediaMetadata({
             title: currentSong.songName,
             artist: currentSong.artistName,
-            artwork: [{ src: currentSong.albumArtUrl, sizes: '500x500', type: 'image/jpeg' }]
+            artwork: [{ src: (currentSong.artBlobUrl ?? currentSong.albumArtUrl), sizes: '500x500', type: 'image/jpeg' }]
         });
     }
 
@@ -322,24 +304,25 @@ document.addEventListener('DOMContentLoaded', function () {
     mp3Player.addEventListener("error", errorResponseFunc);
 });
 
-// Switch used popup when color scheme changes.
-// If 'match' is not selected, this will have no effect.
-const updatePopupUrl = () => {    
+function updatePopupUrl() {
+    browserThemeIsLight = prefersLightMedia.matches;
     let usedPopup = getEffectivePreset().playerType + '.htm';
     get_browser().browserAction.setPopup({
         popup: usedPopup
     });
 }
-let prefersLight = matchMedia(`(prefers-color-scheme: light)`);
-prefersLight.addEventListener('change', updatePopupUrl);
-
-setInterval(updatePopupUrl, 60 * 1000);
-// I have to have this on an interval, because
-// - at least in Firefox - the matchMedia listener
-// NEVER FIRES. Apparently it doesn't fire for background pages?
-// It fires on normal pages just fine.
-// Oh well.
+// On firefox, this matches the browser chrome's UI theme
+// not the user's preferred website content theme.
+// figures
+// there's no good way around this, so I'll just note it down
+var prefersLightMedia = matchMedia(`(prefers-color-scheme: light)`);
+prefersLightMedia.addEventListener('change', updatePopupUrl);
 updatePopupUrl();
+
+// why does this exist? because the popup doesn't "take" the first time.
+// love race conditions.
+setTimeout(updatePopupUrl, 150);
+var browserThemeIsLight = prefersLightMedia.matches;
 
 let timeoutIdentifier = null;
 function interactionHappened() {

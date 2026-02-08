@@ -75,7 +75,7 @@ const getEffectivePreset = () => {
 /**
  * @type {<K extends keyof typeof DEFAULTS.playerPreferences[keyof typeof DEFAULTS.playerPreferences]>(key: K, preset: typeof DEFAULTS.presets[number]) => typeof DEFAULTS.playerPreferences[keyof typeof DEFAULTS.playerPreferences][K]}
  */
-const getPresetMetaVariable = (key, preset = getPreset()) => {
+const getPresetMetaVariable = (key, preset = getEffectivePreset()) => {
 	if (preset[key]) {
 		return preset[key];
 	}
@@ -108,7 +108,7 @@ function getSelectedMatchPresets() {
 function getMatchPreset(colorScheme) {
 	if (colorScheme !== 'light' && colorScheme !== 'dark') {
 		let prefersLight = matchMedia(`(prefers-color-scheme: light)`);
-		colorScheme = prefersLight.matches ? 'light' : 'dark';
+		colorScheme = (background.prefersLightMedia?.matches ?? prefersLight.matches) ? 'light' : 'dark';
 	}
 
 	return getPreset(getSelectedMatchPresets()[colorScheme]);
@@ -183,9 +183,9 @@ function updateCustomCSS() {
 }
 
 function subscribeToUpdateCustomCSS() {
-    let prefersLight = matchMedia(`(prefers-color-scheme: light)`);
+    let prefersLight = background.prefersLightMedia;
 
-    prefersLight.addEventListener('change', () => {    
+    prefersLight?.addEventListener?.('change', () => {    
         updateCSSVariables();
         updateCustomCSS();
     });

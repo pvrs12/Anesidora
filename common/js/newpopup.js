@@ -40,6 +40,12 @@ const fuzzyStringSearch = (haystack, needle) => {
 };
 
 document.addEventListener('DOMContentLoaded', () => {
+    if (Math.abs(document.documentElement.clientWidth - document.body.clientWidth) > 10) {
+        // We're in a mobile context, or otherwise on a separate page
+        document.documentElement.style.setProperty('--viewport-width', '100vw');
+        document.documentElement.style.setProperty('--viewport-height', '100vh');
+    }
+
     const initializeNavigation = () => {
         const navigationScrollItems = document.querySelector('.navigation-scroll-items');
         const mainElement = document.getElementsByTagName('main')[0];
@@ -275,19 +281,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     titleElement.href = processURL(item.songDetailUrl);
                 }
             }
-            if (artistElement) { artistElement.innerText = item.artistName; }
-
-            let fullSizeImage = item.albumArtUrl;
-            let usedImage = fullSizeImage;
-            if (fullSizeImage) {
-                usedImage = toHTTPS(fullSizeImage).replace('1080W_1080H', '500W_500H');
-                coverElement.addEventListener("error", () => {
-                    coverElement.src = fullSizeImage;
-                }, { once: true });
-            } else {
-                usedImage = DEFAULT_ALBUM_IMAGE;
+            if (artistElement) {
+                artistElement.innerText = item.artistName;
             }
-            coverElement.src = usedImage;
+
+            coverElement.src = item.artBlobUrl || item.albumArtUrl || DEFAULT_ALBUM_IMAGE;
 
             if (item.songRating === 1) {
                 thumbsUpButton?.classList.add('active');
@@ -418,6 +416,15 @@ document.addEventListener('DOMContentLoaded', () => {
         let volumeBar = playerScreen.querySelector('.volume');
         if (volumeBar && background.mp3Player && volumeBar instanceof HTMLInputElement) {
             volumeBar.value = background.mp3Player.volume * 100;
+            let volPos = document.documentElement.style.getPropertyValue('--volume-bar-position');
+            if (volPos === 'none') {
+                volumeBar.parentElement.style.display = 'none';
+                volumeBar.parentElement.parentElement.style.rowGap = '0';
+            }
+            if (volPos === 'left' || volPos === 'right') {
+                volumeBar.parentElement.parentElement.style.padding = '0';
+                volumeBar.parentElement.dataset.isVertical = true;
+            }
             volumeBar.addEventListener('input', (e) => {
                 if (background?.mp3Player) {
                     background.mp3Player.volume = (parseFloat(e.target.value) / 100);
@@ -426,7 +433,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    let previousImageErrorListener = null;
     let trackAsOfPreviousUpdate = null;
     const updatePlayer = () => {
         if (!playerScreen) { return; }
@@ -490,25 +496,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         let coverElement = playerScreen.querySelector('.cover');
         let backgroundImageElement = document.querySelector('.background-blur');
-        let fullSizeImage = toHTTPS(currentTrack.albumArtUrl);
-        let usedImage = fullSizeImage;
-        if (previousImageErrorListener) {
-            coverElement?.removeEventListener("error", previousImageErrorListener, { once: true })
-        }
-        if (fullSizeImage) {
-            usedImage = fullSizeImage.replace('1080W_1080H', '500W_500H');
-            previousImageErrorListener = () => {
-                coverElement.src = fullSizeImage || DEFAULT_ALBUM_IMAGE;
-                backgroundImageElement.src = fullSizeImage || DEFAULT_ALBUM_IMAGE;
-            };
 
-            coverElement?.addEventListener("error", previousImageErrorListener, { once: true });
-        } else {
-            usedImage = DEFAULT_ALBUM_IMAGE;
-        }
-        coverElement.src = usedImage;
         backgroundImageElement.classList.remove('loaded');
-        backgroundImageElement.src = usedImage;
+        coverElement.src = backgroundImageElement.src = currentTrack.artBlobUrl || currentTrack.albumArtUrl || DEFAULT_ALBUM_IMAGE;
 
         let titleElement = playerScreen.querySelector('.title');
         let artistElement = playerScreen.querySelector('.artist');
@@ -619,17 +609,7 @@ document.addEventListener('DOMContentLoaded', () => {
             let coverElement = newStation.querySelector('.cover');
 
             if (coverElement) {
-                let fullSizeImage = toHTTPS(station.artUrl);
-                let usedImage = fullSizeImage;
-                if (fullSizeImage) {
-                    usedImage = fullSizeImage.replace('1080W_1080H', '500W_500H');
-                    coverElement.addEventListener("error", () => {
-                        coverElement.src = fullSizeImage || DEFAULT_ALBUM_IMAGE;
-                    }, { once: true });
-                } else {
-                    usedImage = DEFAULT_ALBUM_IMAGE;
-                }
-                coverElement.src = usedImage;
+                coverElement.src = station.artBlobUrl || station.artUrl || DEFAULT_ALBUM_IMAGE;
             }
 
             if (station.stationToken === background?.currentStationToken) {

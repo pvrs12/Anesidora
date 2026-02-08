@@ -319,7 +319,7 @@ section.appearance .previewHolder {
 section.appearance {
     margin-bottom: 1rem;
 
-    gap: 1rem;
+    gap: 3rem 1rem;
 
 	padding: 1rem 0;
 
@@ -327,15 +327,22 @@ section.appearance {
     grid-column: 1 / -1;
 
 	display: flex;
-	flex-flow: row wrap;
+	flex-flow: row nowrap;
+}
+
+@media (max-width: 800px) {
+    section.appearance {
+        flex-flow: column nowrap;
+    }
+    section.appearance .previewHolder {
+        position: relative;
+    }
 }
 
 section.appearance .controls {
 	z-index: 3;
 	position: relative;
 
-	width: min-content;
-	flex-grow: 1;
     max-width: 100%;
 
     padding: 1.1rem 1.1rem;
@@ -348,6 +355,10 @@ section.appearance .controls {
 }
 .appearance .controls.preset-match .shown-if-match {
 	display: block;
+}
+.appearance .controls.preset-match .shown-if-match p {
+	line-height: 1.5;
+    margin-bottom: 0.5rem;
 }
 .appearance .controls:not(.preset-match) .hidden-if-match {
 	display: block;
@@ -461,7 +472,7 @@ section.appearance .controls {
 .appearance .controls .colors label .labeltext code {
 	font-weight: 500;
 }
-.appearance .controls .colors label input {
+.appearance .controls .colors label :is(input, select) {
 	width: 100%;
 }
 .appearance .controls label {
@@ -481,7 +492,7 @@ section.appearance .controls {
     font-weight: 550;
 }
 
-.appearance .controls input:not([type="range"], [type="checkbox"]) {
+.appearance .controls :is(input, select):not([type="range"], [type="checkbox"]) {
     border: solid 1px rgba(128, 128, 128, 0.1);
     background-color: rgba(128, 128, 128, 0.1);
     padding: 0.3rem 0.2rem;
@@ -491,11 +502,11 @@ section.appearance .controls {
 
     transition: border-color 150ms;
 }
-.appearance .controls input:not([type="range"], [type="checkbox"]):disabled {
+.appearance .controls :is(input, select):not([type="range"], [type="checkbox"]):disabled {
     opacity: 0.8;
     cursor: not-allowed;
 }
-.appearance .controls input:not([type="range"], [type="checkbox"]):not(:disabled):hover {
+.appearance .controls :is(input, select):not([type="range"], [type="checkbox"]):not(:disabled):hover {
     border-color: rgba(128, 128, 128, 0.7);
 }
 

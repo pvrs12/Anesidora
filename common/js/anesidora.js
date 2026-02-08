@@ -284,7 +284,23 @@ async function refreshStationsList() {
         };
     }
 
-    stationsArray = request.response.result.stations;
+    let unprocessedStations = request.response.result.stations;
+    for (let removedStation of stationsArray) {
+        let next = unprocessedStations(e => e.stationId === removedStation.stationId);
+
+        if (removedStation.artBlobUrl && next) {
+            next.artBlobUrl = removedStation.artBlobUrl;
+        } else if (removedStation.artBlobUrl) {
+            URL.revokeObjectURL(removedTrack.artBlobUrl);
+        }
+    }
+    for (let item of unprocessedStations) {
+        loadStationArtIntoCache(item);
+        if (item.artUrl) {
+            item.artUrl = toHTTPS(item.artUrl);
+        }
+    }
+    stationsArray = unprocessedStations;
     stationsByToken = {};
     stationsArray.forEach(e => {
         stationsByToken[e.stationToken] = e;
@@ -461,6 +477,15 @@ async function partnerLogin() {
     return { ok: true };
 }
 
+let runningGetPlaylistCall = null;
+async function singletonGetPlaylist(stationToken) {
+    runningGetPlaylistCall ??= getPlaylist(stationToken);
+
+    let actualResult = await runningGetPlaylistCall;
+    runningGetPlaylistCall = null;
+    return actualResult;
+}
+
 async function getPlaylist(stationToken) {
     let audioFormats = [
         "HTTP_128_MP3",
@@ -497,9 +522,9 @@ async function getPlaylist(stationToken) {
 			if ('adToken' in item) {
 				// If any of the promises error, this will cause
 				// the ads to be out of order or undefined.
-				// Frankly, this is fine. It's internet radio, not on-demand.
+				// Frankly, out of order is fine. It's internet radio, not on-demand.
 				// But we don't want undefined items in the queue, so filter
-				// them out after
+				// those out after
 				return fakeItems.shift();
 			} else {
 				return item;
@@ -507,17 +532,85 @@ async function getPlaylist(stationToken) {
 		}).filter(e => !!e);
 	}
 
+    if (config.cacheAlbumArt) {
+        for (let item of responseItems) {
+            if ('albumArtUrl' in item) {
+                loadAlbumArtIntoCache(item);
+            }
+        }
+    }
+    
 	if (config.httpsOnlyAssets) {
 		responseItems = responseItems.map(remapAudioUrlsToHTTPS);
 	}
 
-    currentPlaylist.push(...responseItems);
+    for (let item of responseItems) {
+        let audioUrl;
+        if (item.additionalAudioUrl != null && ('0' in item.additionalAudioUrl)) {
+            audioUrl = item.additionalAudioUrl[0];
+        } else {
+            audioUrl = (
+                item.audioUrlMap.highQuality?.audioUrl || 
+                item.audioUrlMap.mediumQuality?.audioUrl || 
+                item.audioUrlMap.lowQuality?.audioUrl
+            );
+        }
+
+        if (audioUrl) {
+            item.audioUrl = audioUrl;
+        }
+    }
+
+    return responseItems;
+}
+
+async function tryGettingBlobUrl(artUrl) {
+    if (!artUrl) {
+        return;
+    }
+
+    artUrl = toHTTPS(artUrl);
+
+    // This method is identifiably different from using new Image(), because
+    // the request headers are fetch-specific rather than image-specific.
+    // i.e., the Accept: header is set to generic rather than image/jpeg, etc
+    // This shouldn't matter until they actually check that.
+
+    let imageBlob;
+    try {
+        // Try fetching a small version
+        let imageResponse = await fetch(artUrl.replace('1080W_1080H', '500W_500H'));
+        imageBlob = await imageResponse.blob();
+    } catch(e) {
+        // Alright, just use the full version then.
+        let imageResponse = await fetch(artUrl);
+        imageBlob = await imageResponse.blob();
+    }
+    
+    return URL.createObjectURL(imageBlob);
+}
+
+async function loadStationArtIntoCache(item) {
+    let artUrl = item.artUrl;
+    if (!artUrl) {
+        return;
+    }
+    
+    item.artBlobUrl = await tryGettingBlobUrl(artUrl);
+}
+async function loadAlbumArtIntoCache(item) {
+    let artUrl = item.albumArtUrl;
+    if (!artUrl) {
+        return;
+    }
+    
+    item.artBlobUrl = await tryGettingBlobUrl(artUrl);
 }
 
 async function getAdInformationAsFakeTrack(ad) {
 	if (!('adToken' in ad)) {
 		console.group('getAdInformationAsFakeTrack()');
-		console.trace("Something's wrong here.");
+		console.trace("Something's wrong here: No adToken in ad.");
 		console.error(ad);
 		console.groupEnd();
 		return ad;
@@ -686,19 +779,9 @@ function generateTrackFilename(track) {
 
 function downloadRawSong(track) {
     // Fallback, in case rich doesn't work
-    let audioPath;
-    if (track.additionalAudioUrl != null && ('0' in track.additionalAudioUrl)) {
-        audioPath = track.additionalAudioUrl[0];
-    } else {
-        audioPath = (
-            track.audioUrlMap.highQuality?.audioUrl || 
-            track.audioUrlMap.mediumQuality?.audioUrl || 
-            track.audioUrlMap.lowQuality?.audioUrl
-        );
-    }
 
     return [
-        audioPath,
+        track.audioUrl,
         generateTrackFilename(track)
     ]
 }
@@ -710,20 +793,10 @@ async function downloadRichSong(track) {
     if (!config.tagDownloads || !MP3Tag) {
         return downloadRawSong(track);
     }
-    const artworkPath = track.albumArtUrl
+    const artworkPath = track.artBlobUrl || track.albumArtUrl;
 
     const audioBufferPromise = async () => {
-        let audioPath;
-        if (track.additionalAudioUrl != null && ('0' in track.additionalAudioUrl)) {
-            audioPath = track.additionalAudioUrl[0];
-        } else {
-            audioPath = (
-                track.audioUrlMap.highQuality?.audioUrl || 
-                track.audioUrlMap.mediumQuality?.audioUrl || 
-                track.audioUrlMap.lowQuality?.audioUrl
-            );
-        }
-        let audioRequest = await fetch(audioPath);
+        let audioRequest = await fetch(track.audioUrl);
         return await audioRequest.arrayBuffer();
     }
 
