@@ -366,6 +366,7 @@
                         grid-template-rows: auto minmax(0, 1fr) auto;
                         grid-template-areas: ".  top   .  " "left cover right" ". bottom .";
                         gap: 0.5rem;
+                        place-items: center;
                     }
                         .cozy > main > .player > .coverHolder > .cover {
                             height: 100%;
