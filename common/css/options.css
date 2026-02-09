@@ -328,6 +328,8 @@ section.appearance {
 
 	display: flex;
 	flex-flow: row nowrap;
+
+    justify-self: center;
 }
 
 @media (max-width: 800px) {
@@ -548,3 +550,20 @@ details.advanced h3 {
 
 /* #endregion section.appearance */
 
+section.help {
+    line-height: 1.5;
+}
+
+section.help p {
+    margin-bottom: 0.5rem;
+}
+
+section.help .debuginfo {
+    display: block;
+    background-color: rgba(0, 0, 0, 0.3);
+
+    padding: 1rem;
+
+    user-select: all;
+    white-space: pre-wrap;
+}

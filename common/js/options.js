@@ -850,3 +850,58 @@ jscolor.presets.default = {
 	alphaChannel: true,
 	format: 'any'
 };
+
+const helpSection = document.querySelector('section.help');
+if (helpSection) {
+    (async() => {
+        let helpInfoBox = helpSection.querySelector('#debugInfo');
+
+        
+        let ua = navigator.userAgent;
+        let isChrome = is_chrome();
+        let versionNumber = null;
+        if (isChrome) {
+            const match = /\bChrom(?:e|ium)\/(\d+)/.exec(ua);
+            versionNumber = match && parseInt(match[1], 10) || 120;
+        } else {
+            const match = /Firefox\/(\d+)/.exec(ua);
+            versionNumber = match && parseInt(match[1], 10) || 115;
+        }
+
+        await get_is_android();
+
+        let configDifferences = [];
+        const diffObj = (currObj, defaultObj, combinedKey, level=0) => {
+            for (let key in currObj) {
+                if (typeof defaultObj[key] === 'undefined') {
+                    configDifferences.push(`${'   '.repeat(level)} + ${combinedKey + '.' + key}: ${JSON.stringify(currObj[key], null, 4).split('\n').join('\n' + ' '.repeat((level*4)))}`)
+                    continue;
+                }
+
+                if (JSON.stringify(currObj[key]) !== JSON.stringify(defaultObj[key])) {
+                    if (typeof currObj[key] === 'object') {
+                        diffObj(currObj[key], defaultObj[key], combinedKey + '.' + key, level + 1);
+                    } else {
+                        configDifferences.push(`${combinedKey + '.' + key}: ${JSON.stringify(currObj[key])}`);
+                    }
+                }
+            }
+        }
+
+        diffObj(bg_config, background.DEFAULTS, 'root', 3);
+
+        let collectedErrors = background.collectedErrors ?? [];
+
+        helpInfoBox.innerText = `\
+            Anesidora ${getAnesidoraVersion()}
+            ${isChrome ? 'Chromium' : 'Firefox'}${is_android() ? 'mobile' : ''} version ${versionNumber ?? ''}
+            Reported UA: ${ua}
+
+            Config:
+            ${configDifferences.length === 0 ? '(Base)' : configDifferences.join('\n')}
+
+            Errors:
+            ${collectedErrors.length === 0 ? 'None' : collectedErrors.join('\n')}
+        `.replace(/^ {12}/gm, '');
+    })();
+}
