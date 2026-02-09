@@ -267,7 +267,7 @@ section.checklist > .inset p {
 }
 
 section.behavior > .inactivity-duration .fancyInput {
-    width: 12ch;
+    width: 13ch;
 }
 section.behavior > .restart-duration .fancyInput {
     width: 12ch;
@@ -275,7 +275,7 @@ section.behavior > .restart-duration .fancyInput {
 
 
 section.behavior > .inactivity-duration .unit div {
-    left: 3ch;
+    left: 4ch;
 }
 
 section.checklist > .downloadNameFormatString .fancyInput {
