@@ -851,6 +851,42 @@ jscolor.presets.default = {
 	format: 'any'
 };
 
+const statsSection = document.querySelector('section.stats');
+if (statsSection) {
+    /** @type {Record<keyof typeof DEFAULTS['statistics'], string>} */
+    const allStats = {
+        secondsListened: 'seconds listened',
+        songsListened: 'songs listened',
+        songsLiked: 'songs liked',
+        songsDisliked: 'songs disliked',
+        songsSkipped: 'songs skipped',
+        songsDownloaded: 'songs saved',
+        songsSlept: 'songs slept',
+        songsReplayed: 'songs replayed',
+        adsListened: 'ads listened',
+        adsSkipped: 'ads skipped',
+    }
+
+    for (let statKey in allStats) {
+        let label = allStats[statKey];
+        let value = bg_config.statistics[statKey];
+
+        let statElem = document.createElement('div');
+        statElem.classList.add('stat');
+        
+        let valueElem = document.createElement('span');
+        valueElem.innerText = Math.round(value).toLocaleString();
+        valueElem.id = 'stat_' + statKey;
+
+        let labelElem = document.createElement('label');
+        labelElem.innerText = label;
+        labelElem.htmlFor = valueElem.id;
+
+        statElem.append(valueElem, labelElem);
+        statsSection.appendChild(statElem);
+    }
+}
+
 const helpSection = document.querySelector('section.help');
 if (helpSection) {
     (async() => {

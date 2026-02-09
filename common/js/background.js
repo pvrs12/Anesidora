@@ -27,6 +27,7 @@ get_browser().runtime.onInstalled.addListener(async () => {
     });
 });
 
+/** @type {HTMLAudioElement} */
 let mp3Player = document.getElementById('mp3Player');
 
 var callbacks = {
@@ -62,6 +63,10 @@ async function restartSong() {
         return;
     }
 
+    if (mp3Player.duration > 0 && mp3Player.currentTime / mp3Player.duration > 0.5) {
+        config.statistics.songsListened ++;
+    }
+
     mp3Player.currentTime = 0;
 }
 
@@ -93,6 +98,14 @@ async function replaySong(track, pushForwards=false) {
     let prevIndex = prevSongs.indexOf(track);
     if (prevIndex !== -1) {
         prevSongs.splice(prevIndex, 1);
+    }
+
+    config.statistics.songsReplayed ++;
+    if (mp3Player.currentTime != 0) {
+        config.statistics.secondsListened += mp3Player.currentTime;
+        if (mp3Player.duration / mp3Player.currentTime > 0.5) {
+            config.statistics.songsListened ++;
+        }
     }
     
     mp3Player.src = currentSong.audioUrl;
@@ -144,23 +157,21 @@ async function nextSong(depth=1) {
     if (depth > 4){
         return;
     }
-    if (currentSong) {
-        if (currentSong != prevSongs[0]) {
-            prevSongs.unshift(currentSong);
+    if (currentSong && currentSong != prevSongs[0]) {
+        prevSongs.unshift(currentSong);
 
-			let maxHistoryEntries = getPresetMetaVariable('maxHistoryEntries');
-            if (prevSongs.length > maxHistoryEntries) {
-                let removedTracks = prevSongs.splice(maxHistoryEntries, prevSongs.length - maxHistoryEntries);
-                for (let removedTrack of removedTracks) {
-                    // this should stop registeredAds from getting hilariously large
-                    if (removedTrack.adToken) {
-                        delete registeredAds[removedTrack.adToken];
-                    }
+        let maxHistoryEntries = getPresetMetaVariable('maxHistoryEntries');
+        if (prevSongs.length > maxHistoryEntries) {
+            let removedTracks = prevSongs.splice(maxHistoryEntries, prevSongs.length - maxHistoryEntries);
+            for (let removedTrack of removedTracks) {
+                // this should stop registeredAds from getting hilariously large
+                if (removedTrack.adToken) {
+                    delete registeredAds[removedTrack.adToken];
+                }
 
-                    // release art blob
-                    if ('artBlobUrl' in removedTrack && removedTrack.artBlobUrl) {
-                        URL.revokeObjectURL(removedTrack.artBlobUrl);
-                    }
+                // release art blob
+                if ('artBlobUrl' in removedTrack && removedTrack.artBlobUrl) {
+                    URL.revokeObjectURL(removedTrack.artBlobUrl);
                 }
             }
         }
@@ -180,6 +191,24 @@ async function nextSong(depth=1) {
         let songs = await singletonGetPlaylist(currentStationToken);
         if (!currentPlaylist.includes(songs[0])) {
             currentPlaylist.push(...songs);
+        }
+    }
+
+    if (currentSong) {
+        if ('adToken' in currentSong) {
+            config.statistics.secondsListened += mp3Player.currentTime;
+            if (mp3Player.currentTime > 0 && mp3Player.duration > 0 && mp3Player.currentTime / mp3Player.duration > 0.5) {
+                config.statistics.adsListened ++;
+            } else {
+                config.statistics.adsSkipped ++;
+            }
+        } else {
+            config.statistics.secondsListened += mp3Player.currentTime;
+            if (mp3Player.currentTime > 0 && mp3Player.duration > 0 && mp3Player.currentTime / mp3Player.duration > 0.5) {
+                config.statistics.songsListened ++;
+            } else {
+                config.statistics.songsSkipped ++;
+            }
         }
     }
 

@@ -4,6 +4,18 @@
 "use strict";
 
 var DEFAULTS = /** @type {const} */ ({
+    statistics: {
+        secondsListened: 0,
+        songsListened: 0,
+        songsLiked: 0,
+        songsDisliked: 0,
+        songsSkipped: 0,
+        songsDownloaded: 0,
+        songsSlept: 0,
+        songsReplayed: 0,
+        adsSkipped: 0,
+        adsListened: 0,
+    },
 	skipAfterDislike: true,
 	playAds: false,
 	registerAds: false,

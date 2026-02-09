@@ -135,7 +135,7 @@ body > form {
 	padding-top: 0;
 
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(auto, 1000px) minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr) minmax(auto, 800px) minmax(0, 1fr);
 }
 
 form > * {
@@ -549,6 +549,24 @@ details.advanced h3 {
 }
 
 /* #endregion section.appearance */
+
+section.stats {
+    display: flex;
+    flex-flow: row wrap;
+    gap: 1rem 0.5rem;
+}
+section.stats .stat {
+    display: block;
+    background-color: rgba(128, 128, 128, 0.2);
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    flex-grow: 1;
+}
+section.stats .stat span {
+    font-size: 2rem;
+    font-weight: 700;
+    display: block;
+}
 
 section.help {
     line-height: 1.5;

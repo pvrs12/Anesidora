@@ -508,7 +508,9 @@ async function getPlaylist(stationToken) {
 	let responseItems = request.response.result.items;
 
 	if (!config.playAds) {
+        let countBefore = responseItems.length;
 		responseItems = responseItems.filter(item => !item.hasOwnProperty('adToken'));
+        config.statistics.adsSkipped += (countBefore - responseItems.length);
 	} else {
 		let fakeTrackPromises = [];
 		for (let key in responseItems) {
@@ -640,6 +642,7 @@ async function getAdInformationAsFakeTrack(ad) {
 		songName: 'Advertisement',
 		audioUrlMap: result.audioUrlMap,
 		clickThroughUrl: result.clickThroughUrl,
+        adToken: ad.adToken,
 		adTrackingTokens: result.adTrackingTokens,
 		allowFeedback: false,
 		songRating: 0,
@@ -689,6 +692,12 @@ async function addFeedback(track, ratingIsPositive) {
         track.songRating = (ratingIsPositive ? 1 : -1);
         track.feedbackId = req.response.result.feedbackId;
 
+        if (ratingIsPositive) {
+            config.statistics.songsLiked ++;
+        } else {
+            config.statistics.songsDisliked --;
+        }
+
 		if (
             config.skipAfterDislike
             && track.trackToken === currentSong.trackToken
@@ -736,6 +745,14 @@ async function deleteFeedback(track, ignoreExistingFeedbackId=false) {
     if (feedbackId) {
         let req = await sendRequest('station.deleteFeedback', { feedbackId });
 
+        if (req.ok && track.songRating !== 0) {
+            if (track.songRating) {
+                config.statistics.songsLiked --;
+            } else {
+                config.statistics.songsDisliked --;
+            }
+        }
+
         if (!req.ok && !ignoreExistingFeedbackId) {
             // This should always work, unless there is a network error.
             return await deleteFeedback(track, true);
@@ -748,6 +765,7 @@ async function deleteFeedback(track, ignoreExistingFeedbackId=false) {
 }
 
 async function sleepSong() {
+    config.statistics.songsSlept ++;
     await sendRequest("user.sleepSong", {
         trackToken: currentSong.trackToken
     });
@@ -787,6 +805,8 @@ function generateTrackFilename(track) {
 
 function downloadRawSong(track) {
     // Fallback, in case rich doesn't work
+
+    config.statistics.songsDownloaded ++;
 
     return [
         track.audioUrl,
@@ -854,12 +874,14 @@ async function downloadRichSong(track) {
     // Handle error if there's any
     if (mp3Tagger.error !== '') {
         console.error(mp3Tagger.error);
+        collectedErrors.push('Mp3Tagger | ' + mp3Tagger.error);
         return downloadRawSong(track);
     }
 
     // Create blob
     let richSongBytes = new Uint8Array(mp3Tagger.buffer);
 
+    config.statistics.songsDownloaded ++;
 
     return [
         URL.createObjectURL(new Blob([richSongBytes], { type: 'audio/aac' })),
