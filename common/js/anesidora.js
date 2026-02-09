@@ -546,8 +546,10 @@ async function getPlaylist(stationToken) {
 
     for (let item of responseItems) {
         let audioUrl;
-        if (item.additionalAudioUrl != null && ('0' in item.additionalAudioUrl)) {
+        if (item.additionalAudioUrl != null && item.additionalAudioUrl instanceof Array && item.additionalAudioUrl[0]) {
             audioUrl = item.additionalAudioUrl[0];
+        } else if (item.additionalAudioUrl != null && typeof item.additionalAudioUrl === 'string') {
+            audioUrl = item.additionalAudioUrl;
         } else {
             audioUrl = (
                 item.audioUrlMap.highQuality?.audioUrl || 
@@ -654,9 +656,15 @@ function remapAudioUrlsToHTTPS(item) {
         }
     }
     if (item.additionalAudioUrl) {
-        item.additionalAudioUrl = item.additionalAudioUrl.map(
-            url => url.replace(/^http:/, 'https:')
-        );
+        if (typeof item.additionalAudioUrl === 'string') {
+            item.additionalAudioUrl = item.additionalAudioUrl.replace(/^http:/, 'https:');
+        } else if (item.additionalAudioUrl instanceof Array) {
+            item.additionalAudioUrl = item.additionalAudioUrl.map(
+                url => url.replace(/^http:/, 'https:')
+            );
+        } else {
+            console.warn("item.additionalAudioUrl = ", item.additionalAudioUrl);
+        }
     }
     
     return item;

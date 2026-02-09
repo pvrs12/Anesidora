@@ -274,7 +274,8 @@ var config = (() => {
         }, SAVE_MIN_DELAY)
     }
 
-    function constructProxy(target, baseKey) {
+    function constructProxy(unclonedTarget, baseKey) {
+        let target = window.structuredClone(unclonedTarget);
         for (let key in target) {
             if (typeof target[key] === 'object') {
                 target[key] = constructProxy(target[key], baseKey);
@@ -288,7 +289,7 @@ var config = (() => {
                 return target[key];
             },
             set(target, key, value) {
-                let proxiedValue = value;
+                let proxiedValue = window.structuredClone(value);
                 if (typeof proxiedValue === 'object' && !proxiedValue[IS_PROXIED_SYMBOL]) {
                     proxiedValue = constructProxy(value, baseKey);
                 }
@@ -362,7 +363,10 @@ var config = (() => {
             return cachedValue;
         },
         set(_, key, value) {
-            let newValue = value;
+            // Clone the value so it's not a reference from a settings page
+            // If it *is* a reference from a settings page, the reference will die
+            // when the page is closed. So don't.
+            let newValue = window.structuredClone(value);
             if (typeof newValue === 'object' && !newValue[IS_PROXIED_SYMBOL]) {
                 newValue = constructProxy(value, key);
             }
