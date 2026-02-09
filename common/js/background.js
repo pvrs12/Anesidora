@@ -233,12 +233,12 @@ function update_mediasession() {
     if (!metadata || (
         metadata.title != currentSong.songName ||
         metadata.artist != currentSong.artistName ||
-        metadata.artwork[0].src != (currentSong.artBlobUrl ?? currentSong.albumArtUrl))
+        metadata.artwork[0].src != (currentSong.artBlobUrl ?? toHTTPS(currentSong.albumArtUrl)))
         ) {
         navigator.mediaSession.metadata = new MediaMetadata({
             title: currentSong.songName,
             artist: currentSong.artistName,
-            artwork: [{ src: (currentSong.artBlobUrl ?? currentSong.albumArtUrl), sizes: '500x500', type: 'image/jpeg' }]
+            artwork: [{ src: (currentSong.artBlobUrl ?? toHTTPS(currentSong.albumArtUrl)), sizes: '500x500', type: 'image/jpeg' }]
         });
     }
 

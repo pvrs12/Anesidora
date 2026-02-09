@@ -801,7 +801,7 @@ async function downloadRichSong(track) {
     if (!config.tagDownloads || !MP3Tag) {
         return downloadRawSong(track);
     }
-    const artworkPath = track.artBlobUrl || track.albumArtUrl;
+    const artworkPath = track.artBlobUrl || toHTTPS(track.albumArtUrl);
 
     const audioBufferPromise = async () => {
         let audioRequest = await fetch(track.audioUrl);

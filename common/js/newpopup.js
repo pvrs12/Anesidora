@@ -285,7 +285,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 artistElement.innerText = item.artistName;
             }
 
-            coverElement.src = item.artBlobUrl || item.albumArtUrl || DEFAULT_ALBUM_IMAGE;
+            coverElement.src = item.artBlobUrl || toHTTPS(item.albumArtUrl) || DEFAULT_ALBUM_IMAGE;
 
             if (item.songRating === 1) {
                 thumbsUpButton?.classList.add('active');
@@ -498,7 +498,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let backgroundImageElement = document.querySelector('.background-blur');
 
         backgroundImageElement.classList.remove('loaded');
-        coverElement.src = backgroundImageElement.src = currentTrack.artBlobUrl || currentTrack.albumArtUrl || DEFAULT_ALBUM_IMAGE;
+        coverElement.src = backgroundImageElement.src = currentTrack.artBlobUrl || toHTTPS(currentTrack.albumArtUrl) || DEFAULT_ALBUM_IMAGE;
 
         let titleElement = playerScreen.querySelector('.title');
         let artistElement = playerScreen.querySelector('.artist');
