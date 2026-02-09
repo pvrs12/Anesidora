@@ -54,7 +54,7 @@
             "path": "declarativeNetRules.json"
         }]
     },
-    "version": "2.9.0",
+    "version": "2.9.1",
     "options_ui": {
         "page": "options.htm"
     }
