@@ -1351,7 +1351,7 @@ SOFTWARE.
     iframe.src = String(JS);
     iframeDocument = iframe.contentWindow.document;
     iframeDocument.open();
-    iframeDocument.write(scriptTag('<script>document.F=Object</script>'));
+    iframeDocument.write('<script>document.F=Object</script>');
     iframeDocument.close();
     return iframeDocument.F;
   };

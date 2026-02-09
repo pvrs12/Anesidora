@@ -15,9 +15,6 @@
         "48": "images/anesidora-debug-48.png"
     },
     "name": "Anesidora",
-    "omnibox": {
-        "keyword": "radio"
-    },
     "homepage_url": "http://github.com/pvrs12/anesidora",
     "permissions": [
         "declarativeNetRequest",
@@ -30,11 +27,11 @@
     ],
     "browser_specific_settings":{
         "gecko":{
-            "id":"pvrs12@gmail.com"
-        },
-        "data_collection_permissions": {
-            "required": [],
-            "optional": []
+            "id":"pvrs12@gmail.com",
+            "data_collection_permissions": {
+                "required": ["none"],
+                "optional": []
+            }
         }
     },
     "commands": {
