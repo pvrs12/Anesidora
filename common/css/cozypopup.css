@@ -362,11 +362,12 @@
 						flex-shrink: 20;
 						height: calc(var(--player-cover-max-size) * var(--viewport-width));
                         display: grid;
-                        grid-template-columns: auto auto auto;
+                        grid-template-columns: auto minmax(0, 1fr) auto;
                         grid-template-rows: auto minmax(0, 1fr) auto;
                         grid-template-areas: ".  top   .  " "left cover right" ". bottom .";
                         gap: 0.5rem;
                         place-items: center;
+                        aspect-ratio: 1/1;
                     }
                         .cozy > main > .player > .coverHolder > .cover {
                             height: 100%;
