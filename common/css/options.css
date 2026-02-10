@@ -378,6 +378,7 @@ section.appearance .controls {
 
 .appearance .controls .quick-preset-select label.preset.preset-new {
 	width: 3.3rem;
+    font-size: 1.3rem;
 }
 .appearance .controls .quick-preset-select label.preset {
     display: flex;
@@ -439,11 +440,27 @@ section.appearance .controls {
     display: flex;
     flex-flow: row wrap;
     align-items: start;
-    gap: 0.5rem;
+    gap: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.appearance .controls .halign-if-possible.fit {
+    width: fit-content;
+}
+
+.appearance .controls .halign-if-possible .labeltext {
+  padding-left: 0.5ch;
+}
+.appearance .controls .halign-if-possible label {
+    flex-grow: 1;
+}
+
+.appearance .controls .mb-1 {
+    margin-bottom: 1rem;
 }
 .appearance .controls .colors {
-    display: flex;
-    flex-flow: row wrap;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 30ch), 1fr));
     justify-content: space-between;
     align-items: start;
     gap: 0.5rem 2rem;
@@ -456,23 +473,17 @@ section.appearance .controls {
     gap: 0.2rem;
     flex-grow: 1;
 }
+
 .appearance .controls .colors label .labeltext {
 	width: 100%;
 	display: flex;
-	flex-flow: row nowrap;
-	align-items: center;
-	gap: 0.5rem;
-}
-.appearance .controls .colors label .labeltext .separator {
-	height: 1px;
-	width: 0;
-	flex-shrink: 1;
-	flex-grow: 1;
-    opacity: 0.2;
-    background-image: repeating-linear-gradient(90deg, currentColor 0px, currentColor 2px, transparent 2px, transparent 4px);
+	flex-flow: column nowrap;
+	align-items: start;
+	gap: 0;
 }
 .appearance .controls .colors label .labeltext code {
 	font-weight: 500;
+    font-size: 0.7rem;
 }
 .appearance .controls .colors label :is(input, select) {
 	width: 100%;
@@ -522,8 +533,10 @@ section.appearance .controls {
 
 input#preset-name {
     border-bottom: solid 1px currentColor;
-    font-size: 1.1rem;
+    font-size: 1.3rem;
+    margin-top: 1rem;
 	margin-bottom: 0.7rem;
+    padding: 0.5rem 1rem;
 }
 
 input#font-family {

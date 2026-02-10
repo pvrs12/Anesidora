@@ -128,7 +128,7 @@
 
 			position: absolute;
 
-			--blur-amount: var(--album-background-blur-size, calc(0.15 * var(--viewport-width)));
+			--blur-amount: calc(max(var(--viewport-width, 100vw), var(--viewport-height, 100vh)) * var(--album-background-blur-size, 0.15));
 
 			inset: calc(var(--blur-amount) * -1);
 			width: calc(var(--viewport-width) + (2 * var(--blur-amount)));

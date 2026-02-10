@@ -119,7 +119,7 @@
 			width: 100%;
 			height: 100%;
 
-			filter: blur(var(--album-background-blur-size, calc(0.15 * var(--viewport-width)))) saturate(var(--album-background-saturation, 4));
+			filter: blur(calc(max(var(--viewport-width, 100vw), var(--viewport-height, 100vh)) * var(--album-background-blur-size, 0.15))) saturate(var(--album-background-saturation, 4));
 
 			object-fit: cover;
 			object-position: center;

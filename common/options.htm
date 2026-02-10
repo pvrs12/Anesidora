@@ -167,12 +167,15 @@
                     <div class="quick-preset-select" id="selectedPresetContainer">
                     </div>
 					<div class="hidden-if-match">
-						<h3>General</h3>
-						<label>
-							<div class="labeltext">Name</div>
+                        <hr>
+						<label aria-label="Name">
 							<input id="preset-name" type="text" name="preset-name">
 						</label>
-						<div class="halign-if-possible dimInputs">
+						<label class="halign mb-1">
+							<input type="checkbox" name="color-scheme-type">
+							<div class="labeltext">Preset is dark</div>
+						</label>
+						<div class="halign-if-possible dimInputs fit">
 							<label>
 								<div class="labeltext">Viewport width</div>
 								<div class="unit">
@@ -188,7 +191,7 @@
 								</div>
 							</label>
 						</div>
-						<div class="halign-if-possible">
+						<div class="halign-if-possible fit">
 							<label>
 								<div class="labeltext">Player type</div>
 								<select class="fancyInput" name="playerType"></select>
@@ -200,11 +203,7 @@
 								</div>
 							</label>
 						</div>
-						<label class="halign">
-							<input type="checkbox" name="color-scheme-type">
-							<div class="labeltext">Preset is dark</div>
-						</label>
-	
+
 						<h3>Colors</h3>
 						<div class="colors">
 							<label>
@@ -411,11 +410,24 @@
 							</label>
 							<label>
 								<div class="labeltext">Saturation<span class="separator"></span><code>album-background-saturation</code></div>
-								<input name="album-background-saturation">
+								<input name="album-background-saturation" type="range" max="10" min="0" step="0.5" list="usual-saturations">
+                                <datalist id="usual-saturations">
+                                    <option value="0">0</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                    <option value="6">6</option>
+                                    <option value="7">7</option>
+                                    <option value="8">8</option>
+                                    <option value="9">9</option>
+                                    <option value="10">10</option>
+                                </datalist>
 							</label>
 							<label>
 								<div class="labeltext">Blur size<span class="separator"></span><code>album-background-blur-size</code></div>
-								<input name="album-background-blur-size">
+								<input name="album-background-blur-size" type="range" max="0.5" min="0" step="any" list="usual-opacities">
 							</label>
 						</div>
 						<details class="advanced">
