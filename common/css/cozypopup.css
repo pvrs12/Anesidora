@@ -360,7 +360,7 @@
 				/* #region section.player */
                     .cozy > main > .player > .coverHolder {
 						flex-shrink: 20;
-						height: calc(var(--player-cover-max-size) * var(--viewport-width));
+						height: calc(var(--player-cover-max-size) * min(var(--viewport-width), var(--viewport-height)));
                         display: grid;
                         grid-template-columns: auto minmax(0, 1fr) auto;
                         grid-template-rows: auto minmax(0, 1fr) auto;
@@ -390,7 +390,7 @@
                                 --bar-active: var(--volume-bar-color, var(--icon-default-stroke))
                             }
                             .cozy > main > .player > .coverHolder > .volumewrap[data-is-vertical] {
-                                --primary-axis: calc(min(calc(var(--player-cover-max-size) * var(--viewport-width)), var(--viewport-height) * 0.7) * var(--volume-bar-size, 0.9));
+                                --primary-axis: calc((var(--player-cover-max-size) * min(var(--viewport-width), var(--viewport-height))) * var(--volume-bar-size, 0.9));
                                 position: relative;
                                 height: var(--primary-axis);
                                 width: var(--cross-axis);
@@ -411,7 +411,7 @@
 
                     .cozy > main > .player > .seekBar {
                         height: 0.5rem;
-                        width: calc(min(calc(var(--player-cover-max-size) * var(--viewport-width)), calc(min(var(--viewport-height), var(--viewport-width)) * 0.75)) * var(--seek-bar-size, 0.9));
+                        width: calc((var(--player-cover-max-size) * min(var(--viewport-width), var(--viewport-height))) * var(--seek-bar-size, 0.9));
                         --bar-active: var(--seek-bar-color, var(--icon-default-stroke));
                     }
 					
