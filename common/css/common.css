@@ -56,6 +56,7 @@
 	.icon.feather-play-circle > path:first-child {
 		fill: var(--player-play-icon-stroke);
 		stroke: var(--player-play-icon-stroke);
+        clip-path: polygon(0% 0%, 0% 100%, 39% 100%, 39% 29%, 72.22% 48.50%, 39% 66.59%, 39% 100%, 100% 100%, 100% 0%);
 	}
 	.icon.feather-play-circle > path:last-child {
 		fill: var(--player-play-icon-fill);

@@ -286,7 +286,7 @@ async function refreshStationsList() {
 
     let unprocessedStations = request.response.result.stations;
     for (let removedStation of stationsArray) {
-        let next = unprocessedStations(e => e.stationId === removedStation.stationId);
+        let next = unprocessedStations.find(e => e.stationId === removedStation.stationId);
 
         if (removedStation.artBlobUrl && next) {
             next.artBlobUrl = removedStation.artBlobUrl;

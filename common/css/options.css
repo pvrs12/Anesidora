@@ -178,7 +178,7 @@ h3 {
 .fancyInput {
     border: solid 1px rgba(128, 128, 128, 0.1);
     background-color: rgba(128, 128, 128, 0.1);
-    padding: 0.3em 0.2em;
+    padding: 0.3em 0.5em;
     font: inherit;
     color: inherit;
     border-radius: 0.2em 0.2em 0 0;
@@ -221,10 +221,11 @@ form > section {
 }
 	.unit div {
 		position: absolute;
-		left: 2.5ch;
+		left: 3.5ch;
 		top: 0;
 		bottom: 0;
 		display: flex;
+        pointer-events: none;
 		flex-flow: row nowrap;
 		align-items: center;
 		justify-content: start;
@@ -267,15 +268,15 @@ section.checklist > .inset p {
 }
 
 section.behavior > .inactivity-duration .fancyInput {
-    width: 13ch;
+    width: 15ch;
 }
 section.behavior > .restart-duration .fancyInput {
-    width: 12ch;
+    width: 14ch;
 }
 
 
 section.behavior > .inactivity-duration .unit div {
-    left: 4ch;
+    left: 5ch;
 }
 
 section.checklist > .downloadNameFormatString .fancyInput {
@@ -386,11 +387,11 @@ section.appearance .controls {
     justify-content: center;
     text-align: center;
 
-    height: 3.3rem;
+    height: 2.3rem;
     flex-shrink: 0;
 
     background-clip: content-box;
-    padding: 1rem 0.9rem;
+    padding: 1rem;
 
     border-radius: 100rem;
     border: solid 1px var(--icon-default-stroke);
@@ -419,10 +420,10 @@ section.appearance .controls {
     justify-content: center;
 	padding: 1rem 0.9rem;
 
-    clip-path: polygon(100% 0, 0% 100%, 100% 100%);
+    clip-path: polygon(50% 0, 50% 100%, 100% 100%, 100% 0);
 }
 .appearance .controls .quick-preset-select label.preset.preset-match .dark.side {
-    clip-path: polygon(0 0, 0% 100%, 100% 0);
+    clip-path: polygon(0 0, 0 100%, 50% 100%, 50% 0);
 }
 
 .appearance .controls h2 {
@@ -430,10 +431,35 @@ section.appearance .controls {
     margin-bottom: 0.8rem;
 }
 
-.appearance .controls h3 {
+.appearance .controls summary {
+    font-size: 0.9rem;
+    font-weight: normal;
+
+    padding-bottom: 0.3rem;
+    margin-top: 0.3rem;
+
+    cursor: pointer;
+    user-select: none;
+
+    opacity: 0.8;
+    transition: opacity 150ms;
+}
+.appearance .controls details:is(:hover, [open]) summary {
+    opacity: 1;
+}
+.appearance .controls details .colors {
+    padding-top: 0.6rem;
+    margin-bottom: 0.6rem;
+    border-top: solid 1px;
+    border-top-color: rgba(128, 128, 128, 0.6);
+    border-top-color: color-mix(in srgb, currentColor, transparent 80%);
+}
+
+.appearance .controls h4 {
     padding-bottom: 0.2rem;
     margin-top: 1.5rem;
     margin-bottom: 0.6rem;
+    font-size: 1rem;
 }
 
 .appearance .controls .halign-if-possible {
@@ -467,7 +493,6 @@ section.appearance .controls {
 }
 .appearance .controls .colors label {
 	max-width: 100%;
-	width: 40ch;
 	display: flex;
 	flex-flow: column nowrap;
     gap: 0.2rem;
@@ -477,16 +502,32 @@ section.appearance .controls {
 .appearance .controls .colors label .labeltext {
 	width: 100%;
 	display: flex;
-	flex-flow: column nowrap;
+	flex-flow: row wrap;
 	align-items: start;
-	gap: 0;
+    gap: 0 0.5rem;
+    justify-content: space-between;
 }
 .appearance .controls .colors label .labeltext code {
 	font-weight: 500;
     font-size: 0.7rem;
+    opacity: 0.3;
+    transition: opacity 150ms;
+}
+.appearance .controls .colors label:is(:hover, :focus-within) code {
+    opacity: 0.9;
 }
 .appearance .controls .colors label :is(input, select) {
 	width: 100%;
+}
+.appearance .controls .colors .span-2 {
+    display: flex;
+    flex-flow: row wrap;
+    align-items: start;
+    gap: 0.5rem 2rem;
+    grid-column: span 2;
+}
+.appearance .controls .colors .nogrow {
+    flex-grow: 0;
 }
 .appearance .controls label {
     display: flex;
@@ -508,7 +549,7 @@ section.appearance .controls {
 .appearance .controls :is(input, select):not([type="range"], [type="checkbox"]) {
     border: solid 1px rgba(128, 128, 128, 0.1);
     background-color: rgba(128, 128, 128, 0.1);
-    padding: 0.3rem 0.2rem;
+    padding: 0.3rem 0.5rem;
     font: inherit;
     color: inherit;
     border-radius: 0.2rem 0.2rem 0 0;
@@ -524,10 +565,23 @@ section.appearance .controls {
 }
 
 .appearance .dimInputs input {
-	width: 15ch;
+	width: 16ch;
 }
 .appearance .dimInputs .unit div {
-	left: 3.5ch;
+	left: 4.5ch;
+}
+#maxHistoryEntries .unit div {
+    left: 4.5ch;
+}
+#maxHistoryEntries input {
+    width: 14ch;
+}
+
+#delete_preset {
+    cursor: pointer;
+    color: var(--icon-active-stroke);
+    text-decoration: underline;
+    margin-bottom: 1rem;
 }
 
 
@@ -543,7 +597,7 @@ input#font-family {
     border-top-right-radius: 0;
 }
 input#font-size {
-    max-width: 8ch;
+    max-width: 10ch;
     border-top-left-radius: 0;
 }
 
@@ -552,13 +606,6 @@ textarea.fancyInput {
 	width: 100%;
 	max-width: 100%;
 	resize: vertical;
-}
-
-details.advanced {
-	margin-top: 2rem;
-}
-details.advanced h3 {
-	margin-top: 0;
 }
 
 /* #endregion section.appearance */
@@ -591,7 +638,7 @@ section.help p {
 
 section.help .debuginfo {
     display: block;
-    background-color: rgba(0, 0, 0, 0.3);
+    background-color: rgba(128, 128, 128, 0.3);
 
     padding: 1rem;
 

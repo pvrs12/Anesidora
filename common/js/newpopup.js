@@ -419,7 +419,6 @@ document.addEventListener('DOMContentLoaded', () => {
             let volPos = document.documentElement.style.getPropertyValue('--volume-bar-position');
             if (volPos === 'none') {
                 volumeBar.parentElement.style.display = 'none';
-                volumeBar.parentElement.parentElement.style.rowGap = '0';
             }
             if (volPos === 'left' || volPos === 'right') {
                 volumeBar.parentElement.parentElement.style.padding = '0';

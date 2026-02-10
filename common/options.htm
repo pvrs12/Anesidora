@@ -153,7 +153,7 @@
             <h2>Hotkeys</h2>
             <section class="hotkeys">
                 <p class="possible-disclaimer"></p>
-                <button class="hotkeys-button">
+                <button class="hotkeys-button" type="button">
                     Edit hotkeys in browser settings
                 </button>
             </section>
@@ -190,249 +190,317 @@
 									<div>px</div>
 								</div>
 							</label>
-						</div>
-						<div class="halign-if-possible fit">
 							<label>
 								<div class="labeltext">Player type</div>
 								<select class="fancyInput" name="playerType"></select>
 							</label>
-							<label>
-								<div class="labeltext">Max history entries</div>
-								<div class="unit">
-									<input name="maxHistoryEntries" type="number" min="0" step="1">
-								</div>
-							</label>
 						</div>
+                        <button type="button" id="delete_preset">
+                            Delete preset
+                        </button>
 
-						<h3>Colors</h3>
-						<div class="colors">
-							<label>
-								<div class="labeltext">Background<span class="separator"></span><code>background-color</code></div>
-								<input data-jscolor="{}" name="background-color">
-							</label>
-							<label>
-								<div class="labeltext">Text<span class="separator"></span><code>text-color</code></div>
-								<input data-jscolor="{}" name="text-color">
-							</label>
-							<label>
-								<div class="labeltext">Navigation background<span class="separator"></span><code>tab-navigation-background-color</code></div>
-								<input data-jscolor="{}" name="tab-navigation-background-color">
-							</label>
-							<label>
-								<div class="labeltext">Navigation text<span class="separator"></span><code>tab-navigation-text-color</code></div>
-								<input data-jscolor="{}" name="tab-navigation-text-color">
-							</label>
-						</div>
-						<h3>Icon colors</h3>
-						<div class="colors">
-							<label>
-								<div class="labeltext">Icon stroke<span class="separator"></span><code>icon-default-stroke</code></div>
-								<input data-jscolor="{}" name="icon-default-stroke">
-							</label>
-							<label>
-								<div class="labeltext">Icon fill<span class="separator"></span><code>icon-default-fill</code></div>
-								<input data-jscolor="{}" name="icon-default-fill">
-							</label>
-							<label>
-								<div class="labeltext">Active icon stroke<span class="separator"></span><code>icon-active-stroke</code></div>
-								<input data-jscolor="{}" name="icon-active-stroke">
-							</label>
-							<label>
-								<div class="labeltext">Active icon fill<span class="separator"></span><code>icon-active-fill</code></div>
-								<input data-jscolor="{}" name="icon-active-fill">
-							</label>
-							<label>
-								<div class="labeltext">Hovered icon stroke<span class="separator"></span><code>icon-hover-stroke</code></div>
-								<input data-jscolor="{}" name="icon-hover-stroke">
-							</label>
-							<label>
-								<div class="labeltext">Hovered icon fill<span class="separator"></span><code>icon-hover-fill</code></div>
-								<input data-jscolor="{}" name="icon-hover-fill">
-							</label>
-						</div>
-						<h3>Player</h3>
-						<div class="colors">
-							<label>
-								<div class="labeltext">Player main icons stroke<span class="separator"></span><code>player-main-icons-stroke</code></div>
-								<input data-jscolor="{}" name="player-main-icons-stroke">
-							</label>
-							<label>
-								<div class="labeltext">Player main icons fill<span class="separator"></span><code>player-main-icons-fill</code></div>
-								<input data-jscolor="{}" name="player-main-icons-fill">
-							</label>
-							<label>
-								<div class="labeltext">Play/pause stroke<span class="separator"></span><code>player-play-icon-stroke</code></div>
-								<input data-jscolor="{}" name="player-play-icon-stroke">
-							</label>
-							<label>
-								<div class="labeltext">Play/pause fill<span class="separator"></span><code>player-play-icon-fill</code></div>
-								<input data-jscolor="{}" name="player-play-icon-fill">
-							</label>
-							<label>
-								<div class="labeltext">Player minor icons stroke<span class="separator"></span><code>player-minor-icons-stroke</code></div>
-								<input data-jscolor="{}" name="player-minor-icons-stroke">
-							</label>
-							<label>
-								<div class="labeltext">Player minor icons fill<span class="separator"></span><code>player-minor-icons-fill</code></div>
-								<input data-jscolor="{}" name="player-minor-icons-fill">
-							</label>
-							<label>
-								<div class="labeltext">Seek bar color<span class="separator"></span><code>seek-bar-color</code></div>
-								<input data-jscolor="{}" name="seek-bar-color">
-							</label>
-							<label>
-								<div class="labeltext">Volume bar color<span class="separator"></span><code>volume-bar-color</code></div>
-								<input data-jscolor="{}" name="volume-bar-color">
-							</label>
-                            <label>
-                                <div class="labeltext">Volume bar position</div>
-                                <select name="volume-bar-position">
-                                    <option value="none">None</option>
-                                    <option value="left">Left</option>
-                                    <option value="right">Right</option>
-                                    <option value="top">Top</option>
-                                    <option value="bottom">Bottom</option>
-                                </select>
-                            </label>
-							<label>
-								<div class="labeltext">Volume size</div>
-								<input name="volume-bar-size" type="range" max="1" min="0.1" step="0.01" list="usual-opacities">
-							</label>
-							<label>
-								<div class="labeltext">Seek bar size</div>
-								<input name="seek-bar-size" type="range" max="1" min="0.1" step="0.01" list="usual-opacities">
-							</label>
-						</div>
-						<h3>Misc. Colors</h3>
-						<div class="colors">
-							<label>
-								<div class="labeltext">Alternating row background<span class="separator"></span><code>alternating-row-background</code></div>
-								<input data-jscolor="{}" name="alternating-row-background">
-							</label>
-							<label>
-								<div class="labeltext">Station play hover color<span class="separator"></span><code>stations-play-background-color</code></div>
-								<input data-jscolor="{}" name="stations-play-background-color">
-							</label>
-							<label>
-								<div class="labeltext">Active station background<span class="separator"></span><code>stations-active-station-background</code></div>
-								<input data-jscolor="{}" name="stations-active-station-background">
-							</label>
-							<label>
-								<div class="labeltext">Active station text<span class="separator"></span><code>stations-active-station-color</code></div>
-								<input data-jscolor="{}" name="stations-active-station-color">
-							</label>
-						</div>
+                        <details>
+                            <summary>General</summary>
+                            <div class="colors">
+                                <label>
+                                    <div class="labeltext">Background<span class="separator"></span><code>background-color</code></div>
+                                    <input data-jscolor="{}" name="background-color">
+                                </label>
+                                <label>
+                                    <div class="labeltext">Text<span class="separator"></span><code>text-color</code></div>
+                                    <input data-jscolor="{}" name="text-color">
+                                </label>
+                                <label>
+                                    <div class="labeltext">Icon stroke<span class="separator"></span><code>icon-default-stroke</code></div>
+                                    <input data-jscolor="{}" name="icon-default-stroke">
+                                </label>
+                                <label>
+                                    <div class="labeltext">Icon fill<span class="separator"></span><code>icon-default-fill</code></div>
+                                    <input data-jscolor="{}" name="icon-default-fill">
+                                </label>
+                                <label>
+                                    <div class="labeltext">Active icon stroke<span class="separator"></span><code>icon-active-stroke</code></div>
+                                    <input data-jscolor="{}" name="icon-active-stroke">
+                                </label>
+                                <label>
+                                    <div class="labeltext">Active icon fill<span class="separator"></span><code>icon-active-fill</code></div>
+                                    <input data-jscolor="{}" name="icon-active-fill">
+                                </label>
+                                <label>
+                                    <div class="labeltext">Hovered icon stroke<span class="separator"></span><code>icon-hover-stroke</code></div>
+                                    <input data-jscolor="{}" name="icon-hover-stroke">
+                                </label>
+                                <label>
+                                    <div class="labeltext">Hovered icon fill<span class="separator"></span><code>icon-hover-fill</code></div>
+                                    <input data-jscolor="{}" name="icon-hover-fill">
+                                </label>
+                                <div class="span-2">
+                                    <label>
+                                        <div class="labeltext">Font family</div>
+                                        <input id="font-family" type="text" name="font-family">
+                                    </label>
+                                    <label class="nogrow">
+                                        <div class="labeltext">Font size</div>
+                                        <div class="unit">
+                                            <input id="font-size" type="number" name="font-size">
+                                            <div>px</div>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+                        </details>
+                        <details>
+                            <summary>Album background image</summary>
+                            <div class="colors">
 
-						<h3>Text</h3>
-						<div class="halign-if-possible">
-							<label>
-								<div class="labeltext">Font family</div>
-								<input id="font-family" type="text" name="font-family">
-							</label>
-							<label>
-								<div class="labeltext">Font size</div>
-								<div class="unit">
-									<input id="font-size" type="number" name="font-size">
-									<div>px</div>
-								</div>
-							</label>
-						</div>
+                                <label>
+                                    <div class="labeltext">Opacity<span class="separator"></span><code>album-background-strength</code></div>
+                                    <input name="album-background-strength" type="range" max="1" min="0" step="0.05" list="usual-opacities">
+                                    <datalist id="usual-opacities">
+                                        <option value="0">0</option>
+                                        <option value="0.1">10%</option>
+                                        <option value="0.2">20%</option>
+                                        <option value="0.3">30%</option>
+                                        <option value="0.4">40%</option>
+                                        <option value="0.5">50%</option>
+                                        <option value="0.6">60%</option>
+                                        <option value="0.7">70%</option>
+                                        <option value="0.8">80%</option>
+                                        <option value="0.9">90%</option>
+                                        <option value="1">100%</option>
+                                    </datalist>
+                                </label>
+                                <label>
+                                    <div class="labeltext">Saturation<span class="separator"></span><code>album-background-saturation</code></div>
+                                    <input name="album-background-saturation" type="range" max="10" min="0" step="0.5" list="usual-saturations">
+                                    <datalist id="usual-saturations">
+                                        <option value="0">0</option>
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                        <option value="4">4</option>
+                                        <option value="5">5</option>
+                                        <option value="6">6</option>
+                                        <option value="7">7</option>
+                                        <option value="8">8</option>
+                                        <option value="9">9</option>
+                                        <option value="10">10</option>
+                                    </datalist>
+                                </label>
+                                <label>
+                                    <div class="labeltext">Blur size<span class="separator"></span><code>album-background-blur-size</code></div>
+                                    <input name="album-background-blur-size" type="range" max="0.5" min="0" step="any" list="usual-opacities">
+                                </label>
+                            </div>
+                        </details>
+                        <details>
+                            <summary>Navigation</summary>
+                            <div class="colors">
+                                <label>
+                                    <div class="labeltext">Background<span class="separator"></span><code>tab-navigation-background-color</code></div>
+                                    <input data-jscolor="{}" name="tab-navigation-background-color">
+                                </label>
+                                <label>
+                                    <div class="labeltext">Text<span class="separator"></span><code>tab-navigation-text-color</code></div>
+                                    <input data-jscolor="{}" name="tab-navigation-text-color">
+                                </label>
+                                <label>
+                                    <div class="labeltext">Left/right button size</div>
+                                    <div class="unit">
+                                        <input type="number" name="tab-navigation-icon-size">
+                                        <div>px</div>
+                                    </div>
+                                </label>
+                            </div>
+                        </details>
+                        <details>
+                            <summary>History</summary>
+                            <div class="colors">
+                                <label id="maxHistoryEntries">
+                                    <div class="labeltext">History length</div>
+                                    <div class="unit">
+                                        <input name="maxHistoryEntries" type="number" min="0" max="100" step="1">
+                                        <div>songs</div>
+                                    </div>
+                                </label>
+                                <label>
+                                    <div class="labeltext">Cover size</div>
+                                    <div class="unit">
+                                        <input name="history-cover-size" type="number" min="0" step="1">
+                                        <div>px</div>
+                                    </div>
+                                </label>
+                                <label>
+                                    <div class="labeltext">Button size</div>
+                                    <div class="unit">
+                                        <input type="number" name="history-icon-size">
+                                        <div>px</div>
+                                    </div>
+                                </label>
+                            </div>
+                        </details>
+                        <details>
+                            <summary>Now Playing</summary>
+                            <div class="colors">
+                                <label>
+                                    <div class="labeltext">Primary button stroke<span class="separator"></span><code>player-play-icon-stroke</code></div>
+                                    <input data-jscolor="{}" name="player-play-icon-stroke">
+                                </label>
+                                <label>
+                                    <div class="labeltext">Primary button fill<span class="separator"></span><code>player-play-icon-fill</code></div>
+                                    <input data-jscolor="{}" name="player-play-icon-fill">
+                                </label>
+                                <label>
+                                    <div class="labeltext">Secondary button stroke<span class="separator"></span><code>player-main-icons-stroke</code></div>
+                                    <input data-jscolor="{}" name="player-main-icons-stroke">
+                                </label>
+                                <label>
+                                    <div class="labeltext">Secondary button fill<span class="separator"></span><code>player-main-icons-fill</code></div>
+                                    <input data-jscolor="{}" name="player-main-icons-fill">
+                                </label>
+                                <label>
+                                    <div class="labeltext">Tertiary button stroke<span class="separator"></span><code>player-minor-icons-stroke</code></div>
+                                    <input data-jscolor="{}" name="player-minor-icons-stroke">
+                                </label>
+                                <label>
+                                    <div class="labeltext">Tertiary button fill<span class="separator"></span><code>player-minor-icons-fill</code></div>
+                                    <input data-jscolor="{}" name="player-minor-icons-fill">
+                                </label>
+                                <label>
+                                    <div class="labeltext">Primary button size</div>
+                                    <div class="unit">
+                                        <input type="number" name="player-main-icon-size">
+                                        <div>px</div>
+                                    </div>
+                                </label>
+                                <label>
+                                    <div class="labeltext">Secondary button size</div>
+                                    <div class="unit">
+                                        <input type="number" name="player-icon-size">
+                                        <div>px</div>
+                                    </div>
+                                </label>
+                                <label>
+                                    <div class="labeltext">Tertiary button size</div>
+                                    <div class="unit">
+                                        <input type="number" name="player-small-icon-size">
+                                        <div>px</div>
+                                    </div>
+                                </label>
+                            </div>
+                        </details>
+                        <details>
+                            <summary>Album cover</summary>
+                            <div class="colors">
+                                <label>
+                                    <div class="labeltext">Corner radius</div>
+                                    <div class="unit">
+                                        <input type="number" name="player-cover-corner-radius" min="0">
+                                        <div>px</div>
+                                    </div>
+                                </label>
+                                <label>
+                                    <div class="labeltext">Size<span class="separator"></span><code>player-cover-max-size</code></div>
+                                    <input name="player-cover-max-size" type="range" max="1" min="0" step="any" list="usual-opacities">
+                                </label>
+                            </div>
+                        </details>
+                        <details>
+                            <summary>Volume bar</summary>
+                            <div class="colors">
+                
+                                <label>
+                                    <div class="labeltext">Background<span class="separator"></span><code>volume-bar-fill</code></div>
+                                    <input data-jscolor="{}" name="volume-bar-fill">
+                                </label>
+                
+                                <label>
+                                    <div class="labeltext">Progress fill<span class="separator"></span><code>volume-bar-progress-fill</code></div>
+                                    <input data-jscolor="{}" name="volume-bar-progress-fill">
+                                </label>
+                
+                                <label>
+                                    <div class="labeltext">Thumb color<span class="separator"></span><code>volume-bar-thumb-color</code></div>
+                                    <input data-jscolor="{}" name="volume-bar-thumb-color">
+                                </label>
+                
+                                <label>
+                                    <div class="labeltext">Border<span class="separator"></span><code>volume-bar-stroke</code></div>
+                                    <input data-jscolor="{}" name="volume-bar-stroke">
+                                </label>
+                                <label>
+                                    <div class="labeltext">Position</div>
+                                    <select name="volume-bar-position">
+                                        <option value="none">None</option>
+                                        <option value="left">Left</option>
+                                        <option value="right">Right</option>
+                                        <option value="top">Top</option>
+                                        <option value="bottom">Bottom</option>
+                                    </select>
+                                </label>
+                                <label>
+                                    <div class="labeltext">Size</div>
+                                    <input name="volume-bar-size" type="range" max="1" min="0.1" step="0.01" list="usual-opacities">
+                                </label>
+                            </div>
+                        </details>
+                        <details>
+                            <summary>Seek bar</summary>
+                            <div class="colors">
+                                <label>
+                                    <div class="labeltext">Background<span class="separator"></span><code>seek-bar-fill</code></div>
+                                    <input data-jscolor="{}" name="seek-bar-fill">
+                                </label>
+                
+                                <label>
+                                    <div class="labeltext">Progress fill<span class="separator"></span><code>seek-bar-progress-fill</code></div>
+                                    <input data-jscolor="{}" name="seek-bar-progress-fill">
+                                </label>
+                
+                                <label>
+                                    <div class="labeltext">Thumb color<span class="separator"></span><code>seek-bar-thumb-color</code></div>
+                                    <input data-jscolor="{}" name="seek-bar-thumb-color">
+                                </label>
+                
+                                <label>
+                                    <div class="labeltext">Border<span class="separator"></span><code>seek-bar-stroke</code></div>
+                                    <input data-jscolor="{}" name="seek-bar-stroke">
+                                </label>
 
-						<h3>Sizes</h3>
-						<div class="halign-if-possible">
-							<label>
-								<div class="labeltext">Navigation icon size</div>
-								<div class="unit">
-									<input type="number" name="tab-navigation-icon-size">
-									<div>px</div>
-								</div>
-							</label>
-							<label>
-								<div class="labeltext">History icon size</div>
-								<div class="unit">
-									<input type="number" name="history-icon-size">
-									<div>px</div>
-								</div>
-							</label>
-							<label>
-								<div class="labeltext">Player play/pause size</div>
-								<div class="unit">
-									<input type="number" name="player-main-icon-size">
-									<div>px</div>
-								</div>
-							</label>
-							<label>
-								<div class="labeltext">Player primary icon size</div>
-								<div class="unit">
-									<input type="number" name="player-icon-size">
-									<div>px</div>
-								</div>
-							</label>
-							<label>
-								<div class="labeltext">Player secondary icon size</div>
-								<div class="unit">
-									<input type="number" name="player-small-icon-size">
-									<div>px</div>
-								</div>
-							</label>
-							<label>
-								<div class="labeltext">Album cover rounding</div>
-								<div class="unit">
-									<input type="number" name="player-cover-corner-radius">
-									<div>px</div>
-								</div>
-							</label>
-						</div>
-						<div class="colors">
-							<label>
-								<div class="labeltext">Album cover size<span class="separator"></span><code>player-cover-max-size</code></div>
-								<input name="player-cover-max-size" type="range" max="1" min="0" step="any" list="usual-opacities">
-							</label>
-						</div>
-						<h3>Album cover background</h3>
-						<div class="colors">
-							<label>
-								<div class="labeltext">Opacity<span class="separator"></span><code>album-background-strength</code></div>
-								<input name="album-background-strength" type="range" max="1" min="0" step="0.05" list="usual-opacities">
-								<datalist id="usual-opacities">
-									<option value="0">0</option>
-									<option value="0.1">10%</option>
-									<option value="0.2">20%</option>
-									<option value="0.3">30%</option>
-									<option value="0.4">40%</option>
-									<option value="0.5">50%</option>
-									<option value="0.6">60%</option>
-									<option value="0.7">70%</option>
-									<option value="0.8">80%</option>
-									<option value="0.9">90%</option>
-									<option value="1">100%</option>
-								</datalist>
-							</label>
-							<label>
-								<div class="labeltext">Saturation<span class="separator"></span><code>album-background-saturation</code></div>
-								<input name="album-background-saturation" type="range" max="10" min="0" step="0.5" list="usual-saturations">
-                                <datalist id="usual-saturations">
-                                    <option value="0">0</option>
-                                    <option value="1">1</option>
-                                    <option value="2">2</option>
-                                    <option value="3">3</option>
-                                    <option value="4">4</option>
-                                    <option value="5">5</option>
-                                    <option value="6">6</option>
-                                    <option value="7">7</option>
-                                    <option value="8">8</option>
-                                    <option value="9">9</option>
-                                    <option value="10">10</option>
-                                </datalist>
-							</label>
-							<label>
-								<div class="labeltext">Blur size<span class="separator"></span><code>album-background-blur-size</code></div>
-								<input name="album-background-blur-size" type="range" max="0.5" min="0" step="any" list="usual-opacities">
-							</label>
-						</div>
+                                <label>
+                                    <div class="labeltext">Size</div>
+                                    <input name="seek-bar-size" type="range" max="1" min="0.1" step="0.01" list="usual-opacities">
+                                </label>
+                            </div>
+                        </details>
+                        <details>
+                            <summary>Stations</summary>
+                            <div class="colors">
+                                <label>
+                                    <div class="labeltext">Image hover color<span class="separator"></span><code>stations-play-background-color</code></div>
+                                    <input data-jscolor="{}" name="stations-play-background-color">
+                                </label>
+                                <label>
+                                    <div class="labeltext">Active station background<span class="separator"></span><code>stations-active-station-background</code></div>
+                                    <input data-jscolor="{}" name="stations-active-station-background">
+                                </label>
+                                <label>
+                                    <div class="labeltext">Active station text<span class="separator"></span><code>stations-active-station-color</code></div>
+                                    <input data-jscolor="{}" name="stations-active-station-color">
+                                </label>
+                            </div>
+                        </details>
+                        <details>
+                            <summary>Misc.</summary>
+                            <div class="colors">
+                                <label>
+                                    <div class="labeltext">Alternating row background<span class="separator"></span><code>alternating-row-background</code></div>
+                                    <input data-jscolor="{}" name="alternating-row-background">
+                                </label>
+    						</div>
+                        </details>
 						<details class="advanced">
-							<summary>Advanced</summary>
-							<h3>Custom CSS</h3>
+							<summary>Advanced - Custom CSS</summary>
 							<textarea name="customCSS" class="fancyInput"></textarea>
 						</details>
 					</div>

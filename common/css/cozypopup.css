@@ -11,13 +11,13 @@
 
 	.cozy input[type="range"] {
 		border-radius: 4px;
-		accent-color: var(--bar-active, var(--icon-default-stroke));
-		border: solid 1px var(--bar-active, var(--icon-default-stroke));
+		accent-color: var(--bar-stroke, var(--icon-default-stroke));
+		border: solid 1px var(--bar-stroke, var(--icon-default-stroke));
 		appearance: none;
 		overflow: hidden;
 		overflow: clip;
         line-height: 0;
-        background: transparent;
+        background: var(--bar-fill, transparent);
 	}
 		/*
 			For future reference, styling cross-browser range inputs is utterly cursed.
@@ -28,30 +28,31 @@
 
 			Also, there's a different way of making a vertical input for every engine.
 			I gave up and just used a wrapped transform. Because of course.
+
 		*/
 		.cozy input[type="range"]:focus-visible {
 			outline: solid 1px var(--icon-active-stroke);
 		}
 		.cozy input[type="range"]::-moz-range-track {
-			background: transparent;
+			background: var(--bar-fill, transparent);
 		}
 		.cozy input[type="range"]::-webkit-slider-runnable-track {
-			background: transparent;
+			background: var(--bar-fill, transparent);
 		}
 		.cozy input[type="range"]::-moz-range-progress {
 			height: 100%;
-			background: var(--bar-active, var(--icon-default-stroke));
+			background: var(--bar-progress-fill, var(--bar-stroke, var(--icon-default-stroke)));
 		}
 		.cozy input[type="range"]::-moz-range-thumb {
 			height: 100%;
 			border: none;
-			background-color: var(--bar-active, var(--icon-default-stroke));
+			background-color: var(--bar-thumb-color, var(--bar-progress-fill, var(--bar-stroke, var(--icon-default-stroke))));
 		}
 		.cozy input[type="range"]::-webkit-slider-thumb {
 			height: 100%;
 			border: none;
-			background-color: var(--bar-active, var(--icon-default-stroke));
-			box-shadow: -500px 0 0 500px var(--bar-active, var(--icon-default-stroke));
+			background-color: var(--bar-thumb-color, var(--bar-progress-fill, var(--bar-stroke, var(--icon-default-stroke))));
+			box-shadow: -500px 0 0 500px var(--bar-progress-fill, var(--bar-stroke, var(--icon-default-stroke)));
 		}
 
 
@@ -83,6 +84,8 @@
 		height: calc(1em + 1.25rem); /* + 20px */
 		padding: 0.625rem; /* 10px */
 		padding-right: 0;
+        stroke: var(--icon-default-stroke);
+        fill: var(--icon-default-fill);
 	}
 	.cozy .search > input {
 		padding: 0.5rem 0.625rem; /* 8px 10px */
@@ -148,6 +151,7 @@
 			background: var(--tab-navigation-background-color);
 			color: var(--tab-navigation-text-color);
 
+            z-index: 3;
 		}
 
 		/* #region navigation */
@@ -190,7 +194,7 @@
 				.cozy > .navigation > .navigation-button > svg.icon {
 					width: var(--tab-navigation-icon-size, 30px);
 					height: var(--tab-navigation-icon-size, 30px);
-					color: var(--icon-default-stroke);
+					stroke: var(--icon-default-stroke);
 					stroke-width: 1.5;
 					z-index: 2;
 				}
@@ -262,15 +266,15 @@
 							justify-content: start;
 
 							width: 100%;
-							padding: 0.3125rem 0.625rem; /* 5px 10px */
+							padding: 5px 10px;
 							gap: 0.5rem; /* 8px */
 						}
 						.cozy > main > .history > ul > .history-item:nth-child(2n) {
 							background: var(--alternating-row-background);
 						}
 							.cozy > main > .history > ul > .history-item > .cover {
-								width: 4.6875rem; /* 75px */
-								height: 4.6875rem; /* 75px */
+								width: var(--history-cover-size, 4.5rem);
+								height: var(--history-cover-size, 4.5rem);
 								flex-shrink: 0;
                                 object-fit: cover;
                                 object-position: contain;
@@ -283,6 +287,8 @@
 								height: 100%;
 
 								padding: 0.1875rem 0; /* 3px 0 */
+
+                                justify-content: center;
 							}
 								.cozy > main > .history > ul > .history-item > .vwrap > .artist,
 								.cozy > main > .history > ul > .history-item > .vwrap > .title {
@@ -305,40 +311,39 @@
 									display: flex;
 									flex-flow: row nowrap;
 
-									gap: 0.4375rem; /* 7px */
+									gap: 0.5rem;
 
 									width: 100%;
-									flex-grow: 1;
 
-									align-items: end;
+                                    margin-top: 0.5rem;
+
 									justify-content: start;
 								}
 
 									.cozy > main > .history > ul > .history-item > .vwrap > .actions > .action {
 										width: var(--history-icon-size);
 										height: var(--history-icon-size);
-										color: var(--icon-default-stroke);
 
 										cursor: pointer;
-
-										transition: color 150ms;
 									}
 									.cozy > main > .history > ul > .history-item > .vwrap > .actions > .action:disabled {
 										opacity: 0.3;
 										cursor: not-allowed;
 									}
-									.cozy > main > .history > ul > .history-item > .vwrap > .actions > .action:not(.active, :disabled):hover {
-										color: var(--icon-hover-stroke);
-									}
-									.cozy > main > .history > ul > .history-item > .vwrap > .actions > .action.active {
-										color: var(--icon-active-stroke);
-									}
+                                        .cozy > main > .history > ul > .history-item > .vwrap > .actions > .action:not(.active, :disabled):hover > .icon {
+                                            fill: var(--icon-hover-fill);
+                                            stroke: var(--icon-hover-stroke);
+                                        }
 										.cozy > main > .history > ul > .history-item > .vwrap > .actions > .action > .icon {
 											width: var(--history-icon-size);
 											height: var(--history-icon-size);
+                                            fill: var(--icon-default-fill);
+                                            stroke: var(--icon-default-stroke);
+                                            transition: fill 150ms, stroke 150ms;
 										}
 										.cozy > main > .history > ul > .history-item > .vwrap > .actions > .action.active > .icon {
-											fill: var(--icon-active-stroke);
+											fill: var(--icon-active-fill);
+                                            stroke: var(--icon-active-stroke);
 										}
 										.cozy > main > .history > ul > .history-item > .vwrap > .actions > .action.download.active > .icon {
 											fill: transparent;
@@ -387,7 +392,10 @@
                             .cozy > main > .player > .coverHolder > .volumewrap > .volume {
                                 height: var(--cross-axis);
                                 width: 100%;
-                                --bar-active: var(--volume-bar-color, var(--icon-default-stroke))
+                                --bar-fill: var(--volume-bar-fill, transparent);
+                                --bar-progress-fill: var(--volume-bar-progress-fill, var(--icon-default-fill));
+                                --bar-thumb-color: var(--volume-bar-thumb-color, var(--bar-progress-fill));
+                                --bar-stroke: var(--volume-bar-stroke, var(--icon-default-stroke));
                             }
                             .cozy > main > .player > .coverHolder > .volumewrap[data-is-vertical] {
                                 --primary-axis: calc((var(--player-cover-max-size) * min(var(--viewport-width), var(--viewport-height))) * var(--volume-bar-size, 0.9));
@@ -406,13 +414,16 @@
                                 left: 100%;
                             }
                             .cozy > main > .player > .coverHolder > .volumewrap[data-is-vertical] > .volume::-webkit-slider-thumb {
-                                box-shadow: 500px 0 0 500px var(--volume-bar-color, var(--icon-default-stroke));
+                                box-shadow: 500px 0 0 500px var(--bar-progress-fill, var(--icon-default-stroke));
                             }
 
                     .cozy > main > .player > .seekBar {
                         height: 0.5rem;
                         width: calc((var(--player-cover-max-size) * min(var(--viewport-width), var(--viewport-height))) * var(--seek-bar-size, 0.9));
-                        --bar-active: var(--seek-bar-color, var(--icon-default-stroke));
+                        --bar-fill: var(--seek-bar-fill, transparent);
+                        --bar-progress-fill: var(--seek-bar-progress-fill, var(--icon-default-fill));
+                        --bar-thumb-color: var(--seek-bar-thumb-color, var(--bar-progress-fill));
+                        --bar-stroke: var(--seek-bar-stroke, var(--icon-default-stroke));
                     }
 					
 					.cozy > main > .player > .infoline {
@@ -474,6 +485,10 @@
 							.cozy > main > .player > .actions > .row > .action:not(:disabled):active {
 								transform: scale(0.9);
 							}
+							.cozy > main > .player > .actions > .row > .action:not(:disabled):hover > .icon {
+								fill: var(--icon-hover-fill);
+                                stroke: var(--icon-hover-stroke);
+							}
 							.cozy > main > .player > .actions > .row > .action:disabled {
 								opacity: 0.3;
 								cursor: not-allowed;
@@ -481,29 +496,39 @@
 								.cozy > main > .player > .actions > .row > .action > .icon {
 									width: var(--player-icon-size);
 									height: var(--player-icon-size);
-									color: var(--player-main-icons-stroke);
+                                    fill: var(--player-main-icons-fill);
+                                    stroke: var(--player-main-icons-stroke);
 
 									stroke-width: 2.5;
+
+                                    transition: fill 150ms, stroke 150ms;
 								}
-								.cozy > main > .player > .actions > .row > .big > .icon {
+								.cozy > main > .player > .actions > .row > .action.big > .icon {
 									width: var(--player-main-icon-size);
 									height: var(--player-main-icon-size);
-									color: var(--player-play-icon-stroke);
+
+                                    fill: var(--player-play-icon-fill);
+                                    stroke: var(--player-play-icon-stroke);
 								}
 								.cozy > main > .player > .actions > .row.small > .action > .icon {
 									width: var(--player-small-icon-size);
 									height: var(--player-small-icon-size);
-									color: var(--player-minor-icons-stroke);
+
+                                    fill: var(--player-minor-icons-fill);
+									stroke: var(--player-minor-icons-stroke);
 
 									stroke-width: 2;
+
+                                    transition: fill 150ms, stroke 150ms;
 								}
 								.cozy > main > .player > .actions > .row.small > .action:not(.active, :disabled):hover > .icon {
-									color: var(--icon-hover-stroke);
+									stroke: var(--icon-hover-stroke);
+                                    fill: var(--icon-hover-fill);
 									stroke-width: 2.5;
 								}
 								.cozy > main > .player > .actions > .row.small > .action.active > .icon {
-									color: var(--icon-active-stroke);
-									fill: var(--icon-active-stroke);
+                                    fill: var(--icon-active-fill);
+									stroke: var(--icon-active-stroke);
 								}
 								.cozy > main > .player > .actions > .row.small > .action.download.active > .icon {
 									fill: transparent;
@@ -575,7 +600,7 @@
                             object-position: center;
 						}
 						.cozy > main > .stations > ul > .station > .coverholder > .feather-play {
-							fill: var(--icon-hover-stroke);
+							fill: var(--icon-hover-fill);
 							stroke: var(--icon-hover-stroke);
 
 							background: var(--stations-play-background-color);
@@ -600,7 +625,7 @@
 							opacity: 1;
 						}
 						.cozy > main > .stations > ul > .station.active > .coverholder > .feather-play {
-							fill: var(--icon-active-stroke);
+							fill: var(--icon-active-fill);
 							stroke: var(--icon-active-stroke);
 						}
 						.cozy > main > .stations > ul > .station.active > .title {

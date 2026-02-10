@@ -165,6 +165,7 @@ if (appearanceSection) {
     const settingsElements = [];
 
 	let disableDimensionChanges = false;
+    let updatePreviewVolBar = null;
 
 	let prevPlayerType = null;
 	function updatePreviewType() {
@@ -186,7 +187,9 @@ if (appearanceSection) {
         background.updatePopupUrl();
 
 		setTimeout(() => {
-            updatePreviewVolBar(mainForm.elements.namedItem('volume-bar-position').value);
+            if (updatePreviewVolBar) {
+                updatePreviewVolBar(mainForm.elements.namedItem('volume-bar-position').value);
+            }
 			disableDimensionChanges = false;
 		}, 300);
 	}
@@ -633,6 +636,7 @@ if (appearanceSection) {
 			selectedPreset.maxHistoryEntries = parseInt(maxHistoryInput.value, 10);
 		})
 	}
+	setupSizeInput('history-cover-size');
 
 	// Preset is dark
 	{
@@ -653,6 +657,24 @@ if (appearanceSection) {
 		})
 	}
 
+    // Delete preset
+    {
+		/** @type {HTMLButtonElement} */
+		let deletePresetButton = document.getElementById('delete_preset');
+        settingsUpdateCBs.push(() => {
+            deletePresetButton.disabled = false;
+        })
+		deletePresetButton.addEventListener('click', () => {
+            let currentColorScheme = getEffectivePreset().cssVariables['color-scheme-type'];
+            bg_config.presets.splice(bg_config.presets.findIndex(e => e.id === bg_config.selectedPreset), 1);
+            let matchPresets = getSelectedMatchPresets();
+            bg_config.selectedPreset = matchPresets[currentColorScheme];
+
+            regeneratePresetLists();
+            onPresetChange();
+		})
+    }
+
 	// Colors
 	setupGenericInput('background-color');
 	setupGenericInput('text-color');
@@ -666,20 +688,25 @@ if (appearanceSection) {
 	setupGenericInput('icon-hover-stroke');
 
 	setupGenericInput('player-play-icon-stroke');
-	setupGenericInput('seek-bar-color');
-	setupGenericInput('volume-bar-color');
+    setupGenericInput('seek-bar-fill');
+    setupGenericInput('seek-bar-progress-fill');
+    setupGenericInput('seek-bar-thumb-color');
+    setupGenericInput('seek-bar-stroke');
+    setupGenericInput('volume-bar-fill');
+    setupGenericInput('volume-bar-progress-fill');
+    setupGenericInput('volume-bar-thumb-color');
+    setupGenericInput('volume-bar-stroke');
+
 	setupGenericInput('volume-bar-position'); // definitely a color
-    const updatePreviewVolBar = (volPos) => {
-        let volumeBar = previewElement.contentDocument?.querySelector?.('.volume');
+    updatePreviewVolBar = (volPos) => {
+        let volumeBar = previewElement?.contentDocument?.querySelector?.('.volume');
         if (!volumeBar) {
             return;
         }
         if (volPos === 'none') {
             volumeBar.parentElement.style.display = 'none';
-            volumeBar.parentElement.parentElement.style.rowGap = '0';
         } else {
             volumeBar.parentElement.style.display = '';
-            volumeBar.parentElement.parentElement.style.rowGap = '';
         }
         if (volPos === 'left' || volPos === 'right') {
             volumeBar.parentElement.parentElement.style.padding = '0';
