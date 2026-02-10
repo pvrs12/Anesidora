@@ -188,8 +188,8 @@
 
 
 				.cozy > .navigation > .navigation-button > svg.icon {
-					width: 1.875rem; /* 30px */
-					height: 1.875rem; /* 30px */
+					width: var(--tab-navigation-icon-size, 30px);
+					height: var(--tab-navigation-icon-size, 30px);
 					color: var(--icon-default-stroke);
 					stroke-width: 1.5;
 					z-index: 2;
