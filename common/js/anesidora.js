@@ -769,6 +769,7 @@ async function sleepSong() {
     await sendRequest("user.sleepSong", {
         trackToken: currentSong.trackToken
     });
+    await nextSong();
 }
 
 async function createStation(musicToken) {
