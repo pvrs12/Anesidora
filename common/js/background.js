@@ -223,15 +223,21 @@ async function nextSong(depth=1) {
 
 function setup_commands() {
     if (!is_android()) {
-        get_browser().commands.onCommand.addListener(function(command) {
-            if (command === "pause_play") {
-                if (!mp3Player.paused) {
-                    mp3Player.pause();
-                } else {
-                    play();
-                }
-            } else if(command === "skip_song") {
-                nextSong();
+        get_browser().commands.onCommand.addListener((command) => {
+            switch (command) {
+                case "pause_play":
+                    if (!mp3Player.paused) {
+                        mp3Player.pause();
+                    } else {
+                        play();
+                    }
+                    break;
+                case "skip_song":
+                    nextSong();
+                    break;
+                case "skip_back":
+                    seekBack();
+                    break;
             }
         });
     }

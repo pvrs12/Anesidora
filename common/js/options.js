@@ -941,3 +941,30 @@ if (helpSection) {
         `.replace(/^ {12}/gm, '');
     })();
 }
+
+const hotkeysSection = document.querySelector('section.hotkeys');
+if (hotkeysSection) {
+    let hotkeysButton = hotkeysSection.querySelector('.hotkeys-button');
+    let disclaimer = hotkeysSection.querySelector('.possible-disclaimer');
+
+    get_is_android().then(() => {
+        if (is_android()) {
+            hotkeysButton.style.display = "none";
+            disclaimer.innerText = "Hotkeys are unavailable on mobile browsers.";
+        }
+    })
+
+    hotkeysButton.addEventListener('click', () => {
+        if (is_android()) {
+            return;
+        }
+        if (is_chrome()) {
+            get_browser().tabs.create({
+                active: true,
+                url: "chrome://extensions/shortcuts"
+            });
+        } else {
+            get_browser().commands.openShortcutSettings();
+        }
+    })
+}

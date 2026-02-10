@@ -37,13 +37,17 @@
         }]
     },
     "commands": {
+        "skip_back": {
+            "description": "Skip back"
+        },
         "pause_play": {
-            "description": "Play/Pause the current song"
+            "description": "Play/Pause"
         },
         "skip_song": {
-            "description": "Skip to the next song"
+            "description": "Skip forward"
         },
         "_execute_browser_action": {
+            "description": "Open player popup",
             "suggested_key": {
                 "default": "Ctrl+Space"
             }
