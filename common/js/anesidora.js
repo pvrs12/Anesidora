@@ -695,7 +695,7 @@ async function addFeedback(track, ratingIsPositive) {
         if (ratingIsPositive) {
             config.statistics.songsLiked ++;
         } else {
-            config.statistics.songsDisliked --;
+            config.statistics.songsDisliked ++;
         }
 
 		if (
