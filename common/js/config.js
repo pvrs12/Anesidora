@@ -107,7 +107,7 @@ var DEFAULTS = /** @type {const} */ ({
                 "stations-active-station-color": "var(--text-color)",
                 "font-family": "InterVariable, Arial, system-ui, sans-serif",
                 "font-size": "16px",
-                "color-scheme-type": "light",
+                "color-scheme-type": "dark",
                 "viewport-width": "325px",
                 "viewport-height": "450px",
                 "history-cover-size": "72px"
