@@ -831,10 +831,12 @@ if (appearanceSection) {
 		settingsUpdateCBs.push(updateFunc);
 	
 		wInput.addEventListener('change', debounceFunction(() => {
+            previewHolder.style.width = wInput.value + 'px';
 			document.documentElement.style.setProperty('--viewport-width', wInput.value + 'px');
 		}, 100));
 		
 		hInput.addEventListener('change', debounceFunction(() => {
+            previewHolder.style.height = hInput.value + 'px';
 			document.documentElement.style.setProperty('--viewport-height', hInput.value + 'px');
 		}, 100));
 	
@@ -870,6 +872,22 @@ if (appearanceSection) {
 		resizeObserver.observe(previewHolder);
 	
 	}
+
+    let resetPresetsButton = document.getElementById('reset_presets');
+    resetPresetsButton.addEventListener('click', () => {
+        let confirmation = confirm("Are you sure you want to delete your presets and reset to default?");
+        if (!confirmation) {
+            return;
+        }
+
+        delete bg_config.presets;
+        delete bg_config.selectedPreset;
+        delete bg_config.selectedMatchPresets;
+
+        setTimeout(() => {
+            window.location.reload();
+        }, 300);
+    })
 }
 
 // These options apply to all color pickers on the page
