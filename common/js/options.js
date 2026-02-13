@@ -975,7 +975,7 @@ if (helpSection) {
 
         helpInfoBox.innerText = `\
             Anesidora ${getAnesidoraVersion()}
-            ${isChrome ? 'Chromium' : 'Firefox'}${is_android() ? 'mobile' : ''} version ${versionNumber ?? ''}
+            ${isChrome ? 'Chromium' : 'Firefox'}${is_android() ? ' mobile' : ''} version ${versionNumber ?? ''}
             Reported UA: ${ua}
 
             Config:
