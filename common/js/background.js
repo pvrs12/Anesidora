@@ -44,7 +44,7 @@ function setCallbacks(updatePlayer,drawPlayer){
 
 async function play() {
     if (mp3Player.currentTime > 0) {
-        mp3Player.play();
+        mp3Player.play().catch(console.log);
     } else {
         await nextSong();
     }
@@ -109,7 +109,7 @@ async function replaySong(track, pushForwards=false) {
     }
     
     mp3Player.src = currentSong.audioUrl;
-    mp3Player.play();
+    mp3Player.play().catch(console.log);
 
     updatePlayers();
 }
@@ -186,9 +186,23 @@ async function nextSong(depth=1) {
     // if they skip before it's finished preloading (and populating the currentPlaylist),
     // THEN block on it
     if (currentPlaylist.length === 2) {
-        singletonGetPlaylist(currentStationToken).then(e => currentPlaylist.push(...e));
+        singletonGetPlaylist(currentStationToken).then(e => {
+            if (e) {
+                currentPlaylist.push(...e)
+            }
+            // no else. if this doesn't work, then rely on the else branch below
+        });
     } else if (currentPlaylist.length < 2) {
         let songs = await singletonGetPlaylist(currentStationToken);
+        let nothing_count = 0;
+        while (!songs && nothing_count < 3) {
+            songs = await getPlaylist(currentStationToken);
+            nothing_count++;
+        }
+        if (!songs) {
+            collectedErrors.push("background.js:198 | Songs is nothing for some reason")
+            return false;
+        }
         if (!currentPlaylist.includes(songs[0])) {
             currentPlaylist.push(...songs);
         }
@@ -215,7 +229,7 @@ async function nextSong(depth=1) {
     currentSong = currentPlaylist.shift();
 
     mp3Player.src = currentSong.audioUrl;
-    mp3Player.play();
+    mp3Player.play().catch(console.log);
 	registerAds(currentSong);
 
     updatePlayers();
