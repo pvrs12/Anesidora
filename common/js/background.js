@@ -51,7 +51,7 @@ async function play() {
 }
 
 async function seekBack() {
-    if (bg_config.doRewinds && (mp3Player?.currentTime > bg_config.rewindDuration)) {
+    if (config.doRewinds && (mp3Player?.currentTime > config.rewindDuration)) {
         await restartSong();
     } else {
         await replaySong(prevSongs[0], true);
@@ -131,7 +131,7 @@ async function playStation(stationToken) {
 const registeredAds = {};
 
 async function registerAds(track) {
-	if (!bg_config.registerAds) {
+	if (!config.registerAds) {
 		return;
 	}
 	if (!track.adTrackingTokens) {
@@ -323,7 +323,7 @@ const updatePlayers = () => {
 
 document.addEventListener('DOMContentLoaded', function () {
     mp3Player = document.getElementById('mp3Player');
-    mp3Player.volume = 1;
+    mp3Player.volume = config.volume;
 
     platform_specific();
 
@@ -379,7 +379,7 @@ function interactionHappened() {
 		window.clearTimeout(timeoutIdentifier);
 	}
 
-	if (!bg_config.pauseAfterInactivity) {
+	if (!config.pauseAfterInactivity) {
 		return;
 	}
 
@@ -387,5 +387,5 @@ function interactionHappened() {
 		if (!mp3Player.paused) {
 			mp3Player.pause();
 		}
-	}, bg_config.inactivityDuration * 60 * 1000)
+	}, config.inactivityDuration * 60 * 1000)
 }

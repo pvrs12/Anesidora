@@ -426,7 +426,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             volumeBar.addEventListener('input', (e) => {
                 if (background?.mp3Player) {
-                    background.mp3Player.volume = (parseFloat(e.target.value) / 100);
+                    bg_config.volume = background.mp3Player.volume = (parseFloat(e.target.value) / 100);
                 }
             })
         }

@@ -16,6 +16,7 @@ var DEFAULTS = /** @type {const} */ ({
         adsSkipped: 0,
         adsListened: 0,
     },
+    volume: 1,
 	skipAfterDislike: true,
 	playAds: false,
 	registerAds: false,
