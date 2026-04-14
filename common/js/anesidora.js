@@ -1,22 +1,8 @@
 "use strict"
 /*globals $, encrypt, decrypt, currentSong, play, prevSongs*/
-/*exported addFeedback, explainTrack, search, createStation, sleepSong, setQuickMix, deleteStation, getSongBlobURL */
+/*exported addFeedback, explainTrack, search, createStation, sleepSong, setQuickMix, deleteStation */
 
-let dontRetryPartnerLogin = false;
-
-//https://stackoverflow.com/questions/610406/javascript-equivalent-to-printf-string-format#4673436
-if (!String.prototype.format) {
-    String.prototype.format = function() {
-        var args = arguments;
-        return this.replace(/{(\d+)}/g, function(match, number) {
-            return args[number] !== undefined
-                ? args[number]
-                : match;
-        });
-    };
-}
-
-// http://stackoverflow.com/questions/1240408/reading-bytes-from-a-javascript-string
+/** @link {http://stackoverflow.com/questions/1240408/reading-bytes-from-a-javascript-string} */
 function stringToBytes(str) {
     var ch, st, re = [];
     for(var i = 0; i < str.length; i ++) {
@@ -35,322 +21,890 @@ function stringToBytes(str) {
     return re;
 }
 
-function formatParameters(parameterObject) {
-    let params = []
-    for(let key in parameterObject) {
-        let value = parameterObject[key];
-        if (value.length > 0) {
-            params.push("{0}={1}".format(key, value));
+var currentStationToken = null;
+var stationsArray = [];
+var stationsByToken = {};
+var currentPlaylist = [];
+
+let maxRetries = 2;
+/**
+ * Purposeful var here: `let` doesn't put properties on window object, so inaccessible to popup window
+ * If authToken is `null`, it has expired.
+ * @typedef {{logged_in: true, credsSeemGood: boolean, email: string, authToken: string | null, userId: string }} LoggedInUserInfo
+ * @typedef {{logged_in: false, credsSeemGood: boolean, email: never, authToken: never, userId: never}} LoggedOutUserInfo
+ * @type {LoggedOutUserInfo | LoggedInUserInfo} */
+var currentUserInfo = {
+    logged_in: false,
+    credsSeemGood: true
+}
+
+/** @type {{partnerId: null, authToken: null, syncTime: never, clientStartTime: never} | {partnerId: string, authToken: string, syncTime: number, clientStartTime: number}} */
+let partnerInfo = {
+    partnerId: null,
+    authToken: null
+}
+
+function getSyncTime() {
+    let time = (new Date()).getTime();
+    let now = parseInt(String(time).substring(0, 10), 10);
+    return parseInt(partnerInfo.syncTime) + (now - partnerInfo.clientStartTime);
+}
+
+/**
+ * @type {(methodOrParams: string | Record<string, string>, body: Record<string, unknown>, encrypted?: boolean, currentRetry?: number) => Promise<{ ok: true, response: unknown, reason: never } | { ok: false, reason: string, response: Response }>
+ * */
+async function sendRequest(methodOrParams, body, encrypted = true, retries = 0) {
+    // This function is used to communicate with Pandora,
+    // and as such is the heart of Anesidora.
+    // 
+    // This function serves 5 purposes:
+    // 1. Format requests in such a way that Pandora will accept them
+    // 2. If needed, encrypt the request body *in addition* to HTTPS
+    // 3. Pass the request to the browser to make
+    // 4. Handle errors
+    // 5. If needed, retry.
+
+    // ---- //
+
+    /// 1. Format requests in such a way that Pandora will accept them
+    // We use Pandora's JSON API, unoficially documented here:
+    // https://6xq.net/pandora-apidoc/json/
+
+    // A request to Pandora consists of three parts:
+    // (a). The 'parameters'. These usually include authorization information,
+    // such as the user's ID, the partner we're impersonating's ID, and
+    // the "auth token" (a temporary password generated upon login).
+    // These are almost always included automatically.
+    // (b). The 'method', or the name of what we're trying to do.
+    // For example, "user.sleepSong" is the method to sleep a song.
+    // (c). The 'body', which includes more information about what we're trying to do.
+    // For example, *which* song we're trying to sleep.
+    // Combined, these are "who I am", "what I'm doing", and "what I'm doing it to."
+
+    
+    // The method is actually passed as the first parameter,
+    // but since there is usually no need to add any extra parameters
+    // this function allows taking EITHER the method name OR a list (object) of parameters.
+
+    // Therefore, our first step is to, if needed,
+    // turn a method name into a list of parameters.
+    let userDefinedParams = {};
+    if (typeof methodOrParams === 'string') {
+        userDefinedParams = {
+            method: methodOrParams
+        }
+    } else {
+        userDefinedParams = methodOrParams;
+    }
+
+    let parametersObject = null;
+    if (currentUserInfo.authToken) {
+        parametersObject = {
+            auth_token: currentUserInfo.authToken,
+            partner_id: partnerInfo.partnerId,
+            user_id: currentUserInfo.userId,
+            ...userDefinedParams
+        };
+    } else {
+        parametersObject = userDefinedParams;
+    }
+
+    // According to the documentation,
+    // the request body should always include the
+    // current user's auth token and syncTime, if available.
+    if (currentUserInfo.authToken) {
+        body.userAuthToken = currentUserInfo.authToken;
+    }
+    if (partnerInfo.syncTime) {
+        // The syncTime prevents replay attacks by making sure
+        // request bodies include the time they're sent.
+        body.syncTime = getSyncTime();
+    }
+    
+    // Format the parameters to be used in a request
+    // "key1=value1&key2=value2"
+    let parametersString = new URLSearchParams(parametersObject).toString();
+    
+    // 2. If needed, encrypt the request body *in addition* to HTTPS
+    // This API was made before HTTPS was popular, so it uses its own encryption scheme.
+    // Every request is encrypted using Blowfish ECB, *except* for Partner login.
+    let encrypted_body = encrypted ? encrypt(JSON.stringify(body)) : JSON.stringify(body);
+    
+    /** @type {Response} */
+    let response;
+    /** @type {Record<string, unknown>} */
+    let responseBody;
+    try {
+        // 3. Pass the request to the browser to make
+        response = await fetch("https://tuner.pandora.com/services/json/?" + parametersString, {
+            method: 'POST',
+            headers: {
+                "Content-Type": encrypted ? 'text/plain' : 'application/json'
+            },
+            body: encrypted_body
+        })
+        responseBody = await response.json()
+    } catch(e) {
+        // 4. Handle errors
+        // Something's gone wrong.
+        // This will almost always be network errors:
+        // The user has disconnected from the Internet
+        // or is behind a misbehaving proxy.
+
+        // These are handled by retrying,
+        // with a longer period of time between each retry.
+        if (retries < maxRetries) {
+            await new Promise(res => setTimeout(res, ((2**retries)-1) * 1000));
+            // First retry would take one second,
+            // Second would take three,
+            // Third would take seven.
+            // Current max is three, but next retry would take fifteen seconds.
+            return await sendRequest(methodOrParams, body, encrypted, retries + 1)
         } else {
-            params.push(key);
-        }
-    }
-    return params.join("&");
-}
-
-var clientStartTime = 0;
-var syncTime = 0;
-var userAuthToken = "";
-var userId = "";
-var partnerId;
-var stationList=[];
-var currentPlaylist;
-
-function getSyncTime(syncTime) {
-    var time = (new Date()).getTime();
-    var now = parseInt(String(time).substr(0, 10));
-    return parseInt(syncTime) + (now - clientStartTime);
-}
-
-var failed = false;
-async function sendRequest(secure, encrypted, method, request) {
-    var url, parameters;
-    if (localStorage.forceSecure === "true" || secure) {
-        url = "https://tuner.pandora.com/services/json/?method=";
-    } else {
-        url = "http://tuner.pandora.com/services/json/?method=";
-    }
-    if (userAuthToken !== "") {
-        let parameterObject = {
-            "auth_token": encodeURIComponent(userAuthToken),
-            "partner_id": partnerId,
-            "user_id": userId
-        }
-        parameters = "&{0}".format(formatParameters(parameterObject))
-        // parameters = "&auth_token={0}&partner_id={1}&user_id={2}".format(encodeURIComponent(userAuthToken), partnerId, userId);
-    } else {
-        parameters = "";
-    }
-    let new_request = encrypted ? encrypt(request) : request;
-    let response = await fetch(url + method + parameters, {
-        method: 'POST',
-        headers: {
-            "Content-Type": encrypted ? 'text/plain' : 'application/json'
-        },
-        body: new_request
-    })
-    response = await response.json()
-    if (response.stat === "fail") {
-        switch (response.code) {
-        case 0:
-            return;
-        case 1001:
-            if (!dontRetryPartnerLogin) {
-                partnerLogin();
-                dontRetryPartnerLogin = true;
+            return {
+                ok: false,
+                reason: "Network error. Can you connect to pandora.com?",
+                response: response
             }
-            break;
-        default:
-            console.log("sendRequest failed: ",parameters, request, response);
-        }
-        if (method == "station.getPlaylist" && failed == false) {
-            getPlaylist(sessionStorage.currentStation);
-            failed = true;
         }
     }
-    return response;
-}
 
+    if ('debugRequests' in window) {
+        // Usually, you can view requests and responses in the
+        // network pane of DevTools.
+        // Unfortunately, the request bodies are encrypted, so you'd just see bytes.
+        // This helps, when needed.
+        console.group(parametersObject.method);
+        console.log(parametersObject, body);
+        console.log(responseBody);
+        console.groupEnd();
+    }
+    
+    if (responseBody.stat === "fail") {
+        // 4. Handle errors
+        // Something has gone wrong, but in a different way.
+        // In this case, our request has reached Pandora -
+        // but Pandora has said "no, you're doing it wrong."
+        // Retrying usually does not help.
 
-async function getStationList() {
-    let request = JSON.stringify({
-        "userAuthToken": userAuthToken,
-        "syncTime": getSyncTime(syncTime),
-        includeStationArtUrl: true
-    });
-    let response = await sendRequest(false, true,"user.getStationList", request);
-    stationList = response.result.stations;
-    stationList.forEach(e => {
-        stationImgs[e.stationToken] = e.artUrl;
-    })
-    localStorage.stationImgs = JSON.stringify(stationImgs);
-
-    if (localStorage.userStation === undefined) {
-        response.result.stations.forEach(function (station) {
-            if (station.isQuickMix) {
-                localStorage.userStation = station.stationId;
+        switch (responseBody.code) {
+            case 0: { // "INTERNAL ERROR"
+                // Sometimes rate limiting.
+                // Purposefully do not retry.
+                return {
+                    ok: false,
+                    reason: "Internal Pandora error. Might be rate limited.",
+                    response: responseBody
+                };
             }
-        });
+
+            case 1001: {
+                // INVALID_AUTH_TOKEN
+                // Either the user token has expired,
+                // or was never valid in the first place.
+
+                // If the auth token WAS good at some point:
+                if (currentUserInfo.credsSeemGood) {
+                    // DO retry - but first, refresh user auth token.
+                    currentUserInfo.credsSeemGood = false; // This will be set back in userLogin.
+                    currentUserInfo.authToken = null;
+                    let partnerResult = await partnerLogin();
+                    if (!partnerResult.ok) {
+                        // What?
+                        // This should never fail, unless we're having network errors
+                        // But that's not the case, since we got a response from
+                        // Pandora that says "that token's no good."
+
+                        // Seriously, what?
+                        return;
+                    }
+                    let userLoginResult = await userLogin();
+                    if (userLoginResult.ok) {
+                        console.info("Relogged to refresh auth token.");
+                    }
+                    // Continue to retry.
+                    break;
+                } else {
+                    // Either it was never good, or we can't get a new good one.
+                    // Do not retry.
+                    return {
+                        ok: false,
+                        reason: "User auth token expired, and could not be refreshed.",
+                        response: responseBody
+                    }
+                }
+            }
+
+            default:
+                console.log("sendRequest failed: ", parametersString, body, responseBody);
+        }
+
+        if (retries < maxRetries) {
+            // Wait for a bit before retrying.
+            // This avoids retrying too fast causing errors.
+            await new Promise(res => setTimeout(res, ((2**retries)-1) * 1000));
+            // First retry would take one second,
+            // Second would take three,
+            // Third would take seven.
+            // Current max is three, but next retry would take fifteen seconds.
+            return await sendRequest(methodOrParams, body, encrypted, retries + 1)
+        } else {
+            return {
+                ok: false,
+                reason: `Max retries reached. Response code: ${responseBody.code}`,
+                response: responseBody
+            }
+        }
+    } else {
+        return {
+            ok: true,
+            response: responseBody
+        };
     }
-    return stationList;
 }
 
-//Set this up to store good user login information. Need to probe the JSON method and see how it responds with bad
-//login info so we can know that un/pw is bad before assuming it is.
-//seems error 1002 is bad login info.
-
-async function userLogin(response) {
-    partnerId = response.result.partnerId;
-    if (localStorage.username === undefined || localStorage.password === undefined) {
+/** @type {number} */
+let lastStationsRefresh = Date.now();
+async function throttleRefreshStationsList(timeout=120) {
+    if (lastStationsRefresh < (Date.now() + (timeout*1000))) {
         return;
     }
 
-    let request = JSON.stringify({
-        "loginType": "user",
-        "username": localStorage.username,
-        "password": localStorage.password,
-        "partnerAuthToken": response.result.partnerAuthToken,
-        "syncTime": getSyncTime(syncTime)
-    });
-    let parameterObject = {
-        "auth_token": encodeURIComponent(response.result.partnerAuthToken),
-        "partner_id": response.result.partnerId
-    }
-    let parameters = "auth.userLogin&{0}".format(formatParameters(parameterObject));
+    lastStationsRefresh = Date.now();
+    await refreshStationsList();
+}
 
-    // var parameters = "auth.userLogin&auth_token={0}&partner_id={1}".format(encodeURIComponent(response.result.partnerAuthToken), response.result.partnerId);
-    let res = await sendRequest(true, true, parameters, request);
-    if (res.stat == "fail") {
-        return "uncool credentials";
+/** @type {{ok: true, reason: never } | {ok: false, reason: string }} */
+async function refreshStationsList() {
+    let request = await sendRequest("user.getStationList", { includeStationArtUrl: true });
+    if (!request.ok) {
+        return {
+            ok: false,
+            reason: request.reason
+        };
+    }
+
+    let unprocessedStations = request.response.result.stations;
+    for (let removedStation of stationsArray) {
+        let next = unprocessedStations.find(e => e.stationId === removedStation.stationId);
+
+        if (removedStation.artBlobUrl && next) {
+            next.artBlobUrl = removedStation.artBlobUrl;
+        } else if (removedStation.artBlobUrl) {
+            URL.revokeObjectURL(removedTrack.artBlobUrl);
+        }
+    }
+    for (let item of unprocessedStations) {
+        loadStationArtIntoCache(item);
+        if (item.artUrl) {
+            item.artUrl = toHTTPS(item.artUrl);
+        }
+    }
+    stationsArray = unprocessedStations;
+    stationsByToken = {};
+    stationsArray.forEach(e => {
+        stationsByToken[e.stationToken] = e;
+    })
+
+    return { ok: true };
+}
+
+
+/**
+ * @param {string} email 
+ * @param {string} password 
+ * @returns {Promise<{ ok: false, reason: string } | { ok: true, reason: never }>}
+ */
+async function userLogin(
+    email = localStorage.getItem('username'),
+    password = localStorage.getItem('password')
+) {
+    // This function authenticates the user with Pandora.
+    // There are two steps to such:
+    // 1. Partner login:
+    // This tries to ensure we are using an official Pandora app,
+    // and stores a partnerId and partnerAuthToken, which are used in step 2.
+    // Obviously, we are not using an official Pandora app, so
+    // we pretend to be an old version of their Android app.
+    // 2. User login:
+    // Actually send the user's login to Pandora.
+    // If login is successful, they'll send back an "auth token" that
+    // we can use instead of a username/password combo.
+    // The auth token will expire after somewhere between 4 and 18 hours.
+
+    // Many services have a "token regenerate" feature, where you can give them
+    // your old expired token and it gives you back a fresh one.
+    // If Pandora had that, we wouldn't need to store the user's password at all.
+    // Unfortunately, they don't - or if they do it's not documented - so
+    // we have to just log in again every time the token expires.
+    
+
+    // If we are missing either the email or password,
+    // abort.
+    if (!email || !password) {
+        return {
+            ok: false,
+            reason: "No username and/or password provided."
+        }
+    }
+
+    // 1. If we have not already completed Partner login, do so.
+    if (!partnerInfo.partnerId || !partnerInfo.authToken) {
+        let partnerResult = await partnerLogin();
+        if (!partnerResult.ok) {
+            return partnerResult;
+        }
+    }
+
+    
+    // Usually "auth_token" will be set to the user's token,
+    // but we don't have that yet.
+    // So in this one case, we set it to the partner/app token.
+    // This is why we do Partner login first
+    let parameters = {
+        method: 'auth.userLogin',
+        auth_token: partnerInfo.authToken,
+        partner_id: partnerInfo.partnerId
+    }
+    let body = {
+        loginType: "user",
+        username: email,
+        password,
+        partnerAuthToken: partnerInfo.authToken,
+    };
+
+    let loginResponse = await sendRequest(
+        parameters,
+        body,
+        true /* do encrypt */,
+        maxRetries /* do not retry */
+    );
+
+    if (!loginResponse.ok) {
+        // If there's an issue, the most common one will be
+        // that the username/password are incorrect.
+        // Pandora sets an "error code" to say what the problem is.
+
+        // The only one we know (for user login) is
+        // the "incorrect username/password" code, which is "1002"
+        if (loginResponse.response.code === 1002) {
+            return {
+                ok: false,
+                reason: "Username or password is incorrect."
+            };
+        }
+
+        // Otherwise, we have no idea what the error is, so just report back what sendRequest said.
+        return {
+            ...loginResponse,
+            reason: "Error: " + loginResponse.reason
+        };
+    }
+
+    // OK, we did not get an error code.
+    // So we can assume that what we got back is correct.
+    // Store the auth token:
+    currentUserInfo = {
+        ...currentUserInfo,
+        credsSeemGood: true,
+        logged_in: true,
+        authToken: loginResponse.response.result.userAuthToken,
+        userId: loginResponse.response.result.userId,
+        email
     }
     
-	dontRetryPartnerLogin = false;
+    localStorage.setItem('username', email);
+    localStorage.setItem('password', password);
 
-    userAuthToken = res.result.userAuthToken;
-    userId = res.result.userId;
-    if (stationList.length == 0) {
-        await getStationList();
+    // And we're done.
+    return {
+        ok: true
     }
 }
 
+function userLogout() {
+    // Remove temporary info
+    currentUserInfo = {
+        credsSeemGood: false,
+        logged_in: false
+    }
 
+    // Reset player state
+    currentPlaylist = [];
+    stationsArray = [];
+    stationsByToken = {};
+    mp3Player.src = '';
+    mp3Player.pause();
+    
+    // Remove stored info
+    localStorage.removeItem('username');
+    localStorage.removeItem('password');
+}
+
+/** @type {() => Promise<{ ok: true, reason: never } | { ok: false, reason: string }>} */
 async function partnerLogin() {
-    if (localStorage.username !== "" && localStorage.password !== "") {
-        let request = JSON.stringify({
-            "username": "android",
-            "password": "AC7IBG09A3DTSYM4R41UJWL07VLN8JI7",
-            "version": "5",
-            "deviceModel": "android-generic",
-            "includeUrls": true
-        });
-        let response = await sendRequest(true, false, "auth.partnerLogin", request);
-        var b = stringToBytes(decrypt(response.result.syncTime));
-        // skip 4 bytes of garbage
-        var s = "", i;
-        for (i = 4; i < b.length; i++) {
-            s += String.fromCharCode(b[i]);
+    let body = {
+        // These are not user logins;
+        // these are "partner logins", Pandora's attempt
+        // to make sure nobody can impersonate their apps.
+        // Too bad! Turns out you can just grab those from their apps' code.
+        username: "android",
+        password: "AC7IBG09A3DTSYM4R41UJWL07VLN8JI7",
+        version: "5",
+        deviceModel: "android-generic",
+        includeUrls: true
+    };
+    let partnerLoginRequest = await sendRequest("auth.partnerLogin", body, false);
+    let response = partnerLoginRequest.response;
+    if (!('result' in response)) {
+        return {
+            ok: false,
+            reason: "Partner login failed, somehow."
         }
-        syncTime = parseInt(s);
-        clientStartTime = parseInt((new Date().getTime() + "").substr(0, 10));
-        return await userLogin(response);
     }
+
+    var b = stringToBytes(decrypt(response.result.syncTime));
+    // skip 4 bytes of garbage
+    var s = "", i;
+    for (i = 4; i < b.length; i++) {
+        s += String.fromCharCode(b[i]);
+    }
+    partnerInfo.syncTime = parseInt(s);
+    partnerInfo.clientStartTime = parseInt((new Date().getTime() + "").substr(0, 10));
+    partnerInfo.partnerId = response.result.partnerId;
+    partnerInfo.authToken = response.result.partnerAuthToken;
+
+    return { ok: true };
 }
 
-//removes ads from fetched playlist. solves issue when player gets stuck on "undefined - undefined" [added by BukeMan]
-function removeAds(playList) {
-    playList.forEach(function (value, index) {
-        if (value.hasOwnProperty("adToken")) {
-            playList.splice(index, 1);
-        }
-    });
+let runningGetPlaylistCall = null;
+async function singletonGetPlaylist(stationToken) {
+    runningGetPlaylistCall ??= getPlaylist(stationToken);
+
+    let actualResult = await runningGetPlaylistCall;
+    runningGetPlaylistCall = null;
+    return actualResult;
 }
 
 async function getPlaylist(stationToken) {
-    sessionStorage.currentStation = stationToken;
     let audioFormats = [
         "HTTP_128_MP3",
         "HTTP_64_AACPLUS_ADTS"
     ];
     if (is_android()) {
-        audioFormats = [
-            "HTTP_128_MP3"
-        ];
+        audioFormats.shift();
     }
 
-    let request = JSON.stringify({
-        "stationToken": stationToken,
-        "additionalAudioUrl": audioFormats.join(","),
-        "userAuthToken": userAuthToken,
-        "syncTime": getSyncTime(syncTime)
+    let request = await sendRequest("station.getPlaylist", {
+        stationToken,
+        additionalAudioUrl: audioFormats.join(",")
     });
-    let response = await sendRequest(true, true, "station.getPlaylist", request);
-    if (!response.result) {
-        failed = true;
-        return;
-    } else {
-        failed = false;
-    }
-    currentPlaylist = response.result.items;
-    //currentPlaylist.pop(); //Pop goes the advertisment.
-    removeAds(currentPlaylist);
-}
 
-async function addFeedback(songNum, liked) {
-    if (currentSong.songRating === true && liked) {  // Bug fix for addFeedback being executed by bind()
-        return; // edit by hucario, 5/22/2021: i have no idea why this is here but I don't want to reintroduce a bug
+	if (!request.ok) {
+		console.error('getPlaylist failed:',request);
+		return;
+	}
+	/** @type {unknown[]} */
+	let responseItems = request.response.result.items;
+
+	if (!config.playAds) {
+        let countBefore = responseItems.length;
+		responseItems = responseItems.filter(item => !item.hasOwnProperty('adToken'));
+        config.statistics.adsSkipped += (countBefore - responseItems.length);
+	} else {
+		let fakeTrackPromises = [];
+		for (let key in responseItems) {
+			if ('adToken' in responseItems[key]) {
+				let fakeTrackPromise = getAdInformationAsFakeTrack(responseItems[key]);
+				fakeTrackPromises.push(fakeTrackPromise);
+			}
+		}
+		let fakeItems = await Promise.all(fakeTrackPromises);
+		responseItems = responseItems.map(item => {
+			if ('adToken' in item) {
+				// If any of the promises error, this will cause
+				// the ads to be out of order or undefined.
+				// Frankly, out of order is fine. It's internet radio, not on-demand.
+				// But we don't want undefined items in the queue, so filter
+				// those out after
+				return fakeItems.shift();
+			} else {
+				return item;
+			}
+		}).filter(e => !!e);
+	}
+
+    if (config.cacheAlbumArt) {
+        for (let item of responseItems) {
+            if ('albumArtUrl' in item) {
+                loadAlbumArtIntoCache(item);
+            }
+        }
     }
     
-    let song;
-    if (songNum === -1) {
-        song = currentSong;
-    } else {
-        song = prevSongs[songNum];
+	if (config.httpsOnlyAssets) {
+		responseItems = responseItems.map(remapAudioUrlsToHTTPS);
+	}
+
+    for (let item of responseItems) {
+        let audioUrl;
+        if (item.additionalAudioUrl != null && item.additionalAudioUrl instanceof Array && item.additionalAudioUrl[0]) {
+            audioUrl = item.additionalAudioUrl[0];
+        } else if (item.additionalAudioUrl != null && typeof item.additionalAudioUrl === 'string') {
+            audioUrl = item.additionalAudioUrl;
+        } else {
+            audioUrl = (
+                item.audioUrlMap.highQuality?.audioUrl || 
+                item.audioUrlMap.mediumQuality?.audioUrl || 
+                item.audioUrlMap.lowQuality?.audioUrl
+            );
+        }
+
+        if (audioUrl) {
+            item.audioUrl = audioUrl;
+        }
     }
 
-    if (!songNum || typeof liked !== 'boolean') {
-        throw new Error("incorrect arguments passed to addFeedback");
-    }
-    if (!song) {
-        throw new Error("out of range or something");
+    return responseItems;
+}
+
+async function tryGettingBlobUrl(artUrl) {
+    if (!artUrl) {
+        return;
     }
 
-    if (song.songRating === (liked?1:-1)) {
-        return; // no action needed
+    artUrl = toHTTPS(artUrl);
+
+    // This method is identifiably different from using new Image(), because
+    // the request headers are fetch-specific rather than image-specific.
+    // i.e., the Accept: header is set to generic rather than image/jpeg, etc
+    // This shouldn't matter until they actually check that.
+
+    let imageBlob;
+    try {
+        // Try fetching a small version
+        let imageResponse = await fetch(artUrl.replace('1080W_1080H', '500W_500H'));
+        imageBlob = await imageResponse.blob();
+    } catch(e) {
+        // Alright, just use the full version then.
+        let imageResponse = await fetch(artUrl);
+        imageBlob = await imageResponse.blob();
+    }
+    
+    return URL.createObjectURL(imageBlob);
+}
+
+async function loadStationArtIntoCache(item) {
+    let artUrl = item.artUrl;
+    if (!artUrl) {
+        return;
+    }
+    
+    item.artBlobUrl = await tryGettingBlobUrl(artUrl);
+}
+async function loadAlbumArtIntoCache(item) {
+    let artUrl = item.albumArtUrl;
+    if (!artUrl) {
+        return;
+    }
+    
+    item.artBlobUrl = await tryGettingBlobUrl(artUrl);
+}
+
+async function getAdInformationAsFakeTrack(ad) {
+	if (!('adToken' in ad)) {
+		console.group('getAdInformationAsFakeTrack()');
+		console.trace("Something's wrong here: No adToken in ad.");
+		console.error(ad);
+		console.groupEnd();
+		return ad;
+	}
+
+	let request = await sendRequest('ad.getAdMetadata', {
+        userAuthToken: currentUserInfo.authToken,
+        syncTime: getSyncTime(),
+		adToken: ad.adToken,
+		supportAudioAds: true,
+		returnAdTrackingTokens: true
+	});
+
+	if (!request.ok) {
+		console.group('getAdInformationAsFakeTrack()');
+		console.trace("Request failed.");
+		console.error(request);
+		console.groupEnd();
+		return ad;
+	}
+
+	let result = request.response.result;
+
+	return {
+		songName: 'Advertisement',
+		audioUrlMap: result.audioUrlMap,
+		clickThroughUrl: result.clickThroughUrl,
+        adToken: ad.adToken,
+		adTrackingTokens: result.adTrackingTokens,
+		allowFeedback: false,
+		songRating: 0,
+		albumName: "",
+		albumArtUrl: result.imageUrl,
+		artistName: result.companyName,
+	}
+}
+
+function remapAudioUrlsToHTTPS(item) {
+    if (item.audioUrlMap) {
+        for (let key in item.audioUrlMap) {
+            item.audioUrlMap[key].audioUrl = item.audioUrlMap[key].audioUrl.replace(/^http:/, 'https:');
+        }
+    }
+    if (item.additionalAudioUrl) {
+        if (typeof item.additionalAudioUrl === 'string') {
+            item.additionalAudioUrl = item.additionalAudioUrl.replace(/^http:/, 'https:');
+        } else if (item.additionalAudioUrl instanceof Array) {
+            item.additionalAudioUrl = item.additionalAudioUrl.map(
+                url => url.replace(/^http:/, 'https:')
+            );
+        } else {
+            console.warn("item.additionalAudioUrl = ", item.additionalAudioUrl);
+        }
+    }
+    
+    return item;
+}
+
+async function addFeedback(track, ratingIsPositive) {
+	if (track.adToken) {
+		return false; // You can't rate ads.
+	}
+    if (track.songRating === (ratingIsPositive ? 1 : -1 )) {
+        return true; // no action needed
     }
 
-    let request = JSON.stringify({
-        "trackToken": song.trackToken,
-        "isPositive": liked,
-        "userAuthToken": userAuthToken,
-        "syncTime": getSyncTime(syncTime)
+    let req = await sendRequest("station.addFeedback", {
+        trackToken: track.trackToken,
+        // This may change in the future, but for now all station tokens
+        // are just the station id. Works for me.
+        stationToken: track.stationId,
+        isPositive: ratingIsPositive
     });
-    song.songRating = (liked?1:-1);
-    await sendRequest(false, true, "station.addFeedback", request);
+    if (req.ok) {
+        track.songRating = (ratingIsPositive ? 1 : -1);
+        track.feedbackId = req.response.result.feedbackId;
+
+        if (ratingIsPositive) {
+            config.statistics.songsLiked ++;
+        } else {
+            config.statistics.songsDisliked ++;
+        }
+
+		if (
+            config.skipAfterDislike
+            && track.trackToken === currentSong.trackToken
+            && !ratingIsPositive
+        ) {
+			await nextSong();
+		}
+
+        return true;
+    } else {
+        // noop. nothing to do
+
+        return false;
+    }
+}
+
+async function deleteFeedback(track, ignoreExistingFeedbackId=false) {
+    if (track.songRating === 0) {
+        // Nothing to do.
+        return true;
+    }
+
+    /** @type {string | null | undefined} */
+    let feedbackId = null;
+    if (track.feedbackId && !ignoreExistingFeedbackId) {
+        feedbackId = track.feedbackId;
+    } else {
+        let stationInfoReq = await sendRequest("station.getStation", {
+            // This may change in the future, but for now all station tokens
+            // are just the station id. Works for me.
+            stationToken: track.stationId,
+            includeExtendedAttributes: true
+        });
+
+        if (!stationInfoReq.ok) {
+            return false;
+        }
+
+        let stationInfo = stationInfoReq.response.result;
+        let infoKey = (track.songRating === 1 ? "thumbsUp": "thumbsDown");
+
+        feedbackId = stationInfo.feedback[infoKey].find(item => item.songIdentity === track.songIdentity)?.feedbackId;
+    }
+
+    if (feedbackId) {
+        let req = await sendRequest('station.deleteFeedback', { feedbackId });
+
+        if (req.ok && track.songRating !== 0) {
+            if (track.songRating) {
+                config.statistics.songsLiked --;
+            } else {
+                config.statistics.songsDisliked --;
+            }
+        }
+
+        if (!req.ok && !ignoreExistingFeedbackId) {
+            // This should always work, unless there is a network error.
+            return await deleteFeedback(track, true);
+        }
+        
+        return req.ok;
+    } else {
+        return false;
+    }
 }
 
 async function sleepSong() {
-    let request = JSON.stringify({
-        "trackToken": currentSong.trackToken,
-        "userAuthToken": userAuthToken,
-        "syncTime": getSyncTime(syncTime)
+    config.statistics.songsSlept ++;
+    await sendRequest("user.sleepSong", {
+        trackToken: currentSong.trackToken
     });
-    await sendRequest(false, true, "user.sleepSong", request);
+    await nextSong();
 }
-
-async function setQuickMix(mixStations) {
-    let request = JSON.stringify({
-        "quickMixStationIds": mixStations,
-        "userAuthToken": userAuthToken,
-        "syncTime": getSyncTime(syncTime)
-    });
-    await sendRequest(false,true,"user.setQuickMix", request);
-}
-
-async function search(searchString) {
-    let request = JSON.stringify({
-        "searchText": searchString,
-        "userAuthToken": userAuthToken,
-        "syncTime": getSyncTime(syncTime)
-    });
-
-    return await sendRequest(false, true, "music.search", request);
-}
-
 
 async function createStation(musicToken) {
-    let request = JSON.stringify({
-        "musicToken": musicToken,
-        "userAuthToken": userAuthToken,
-        "syncTime": getSyncTime(syncTime)
-    });
-    let response = await sendRequest(false, true, "station.createStation", request);
-    
-    await play(response.result.stationId);
+    let request = await sendRequest("station.createStation", { musicToken });
+    await play(request.response.result.stationId);
 }
 
 async function deleteStation(stationToken) {
-    let request = JSON.stringify({
-        "stationToken": stationToken,
-        "userAuthToken": userAuthToken,
-        "syncTime": getSyncTime(syncTime)
-    });
-    await sendRequest(false, true, "station.deleteStation", request);
+    await sendRequest("station.deleteStation", { stationToken });
 }
 
-async function explainTrack() {
-    let request = JSON.stringify({
-        "trackToken": currentSong.trackToken,
-        "userAuthToken": userAuthToken,
-        "syncTime": getSyncTime(syncTime)
-    });
-    return await sendRequest(false, true, "track.explainTrack", request);
+async function explainTrack(trackToken = currentSong.trackToken) {
+    return await sendRequest("track.explainTrack", { trackToken });
 }
 
+function generateTrackFilename(track) {
+	if (!config.renameDownloads) {
+		return null;
+	}
 
-async function getSongBlobURL(track) {
-    let audioPath;
-    if (track.additionalAudioUrl && (track.additionalAudioUrl instanceof Array) && ('0' in track.additionalAudioUrl)) {
-        audioPath = track.additionalAudioUrl[0];
-    } else {
-        audioPath = (
-            track.audioUrlMap.highQuality?.audioUrl ?? 
-            track.audioUrlMap.mediumQuality?.audioUrl ?? 
-            track.audioUrlMap.lowQuality?.audioUrl
-        );
-    }
+	let templateString = config.downloadNameFormatString
+			.replaceAll('%trackname%', track.songName)
+			.replaceAll('%trackid%', track.musicId)
+			.replaceAll('%artistname%', track.artistName);
 
-    let audioRequest = await fetch(audioPath);
-    let audioBuffer = await audioRequest.arrayBuffer();
-    
-    // Create blob
-    let richSongBytes = new Uint8Array(audioBuffer);
+	if (config.limitFilenameLength) {
+		let splitByExt = templateString.split('.');
+		let ext = splitByExt.pop();
+		templateString = splitByExt.join('.').substring(0, 32) + '.' + ext;
+	}
+
+	return templateString;
+}
+
+function downloadRawSong(track) {
+    // Fallback, in case rich doesn't work
+
+    config.statistics.songsDownloaded ++;
 
     return [
-        URL.createObjectURL(new Blob([richSongBytes], { type: 'audio/aac' })),
-        track.songName.replace(/[^a-z ]/gi, '').substring(0, 29) + '.aac'
+        track.audioUrl,
+        generateTrackFilename(track)
     ]
 }
 
-if (localStorage.username !== "" && localStorage.password !== "") {
-    partnerLogin();
+async function downloadRichSong(track) {
+    if (!track) {
+        return null;
+    }
+    if (!config.tagDownloads || !MP3Tag) {
+        return downloadRawSong(track);
+    }
+    const artworkPath = track.artBlobUrl || toHTTPS(track.albumArtUrl);
+
+    const audioBufferPromise = async () => {
+        let audioRequest = await fetch(track.audioUrl);
+        return await audioRequest.arrayBuffer();
+    }
+
+    const artBufferPromise = async () => {
+        if (!artworkPath) {
+            return null;
+        }
+        const artRequest = await fetch(artworkPath);
+        const artBuffer = await artRequest.arrayBuffer();
+        const artBytes = new Uint8Array(artBuffer)
+
+        return artBytes;
+    }
+    let audioBuffer, artBytes;
+    try {
+        [audioBuffer, artBytes] = await Promise.all([
+            audioBufferPromise(),
+            artBufferPromise()
+        ]);    
+    } catch(e) {
+        return downloadRawSong(track);
+    }
+
+    const mp3Tagger = new MP3Tag(audioBuffer, true)
+
+    mp3Tagger.read()
+
+    if (artBytes && artworkPath.includes('.jpg')) {
+        console.log('Adding art');
+        mp3Tagger.tags.v2.APIC = [
+            {
+                format: 'image/jpeg',
+                type: 3,
+                description: 'Album image',
+                data: artBytes
+            }
+        ]
+    }
+
+    mp3Tagger.tags.title = track.songName;
+    mp3Tagger.tags.artist = track.artistName;
+    mp3Tagger.tags.album = track.albumName;
+
+    // Save the tags
+    mp3Tagger.save()
+
+    // Handle error if there's any
+    if (mp3Tagger.error !== '') {
+        console.error(mp3Tagger.error);
+        collectedErrors.push('Mp3Tagger | ' + mp3Tagger.error);
+        return downloadRawSong(track);
+    }
+
+    // Create blob
+    let richSongBytes = new Uint8Array(mp3Tagger.buffer);
+
+    config.statistics.songsDownloaded ++;
+
+    return [
+        URL.createObjectURL(new Blob([richSongBytes], { type: 'audio/aac' })),
+        generateTrackFilename(track)
+    ];
 }
+
+async function tryExistingLogin() {
+    if (!localStorage.getItem('username') || !localStorage.getItem('password')) {
+        return {
+            ok: false,
+            reason: "No current credentials."
+        };
+    }
+
+    let partnerResult = await partnerLogin();
+    if (!partnerResult.ok) {
+        return partnerResult;
+    }
+
+    await userLogin();
+    refreshStationsList();
+}
+
+tryExistingLogin();

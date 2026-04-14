@@ -1,142 +1,663 @@
-* {
-    outline: none;
-    font-family: Verdana,Arial;
-    font-size: 12px; 
-    font-weight:normal;
-    scrollbar-color: rgba(249,249,250,.4) rgba(20,20,25,.3);
-    transition: color 250ms, background 250ms, border 250ms, box-shadow 250ms;
-}
-
-@media (prefers-color-scheme: dark) {
-    :root {
-        --bg-color: #202023;
-        --color: white;
-        --border: rgba(249,249,250,0.2);
-    }
-}
-
-@media (prefers-color-scheme: light) {
-    :root {
-        --bg-color: white;
-        --color: black;
-        --border: rgba(0, 0, 0, 0.2);
-    }
+html {
+    background: var(--background-color);
+    font-size: var(--font-size);
 }
 
 body {
-    background: var(--bg-color);
-    color: var(--color);
-    width: 100%;
-
     /* Center horizontally */
-    display: flex;
-    align-items: center;
-    flex-direction: column;
-
-    font-size: 15px;
-    font-weight: normal;
-    margin: 0;
-}
-
-form {
-    background: none;
-}
-
-#preview {
-    border: 1px solid rgba(249,249,250,0.2);
-    border-radius: 2px;
-    background: linear-gradient(45deg,gray,var(--bg-color));
-    margin-bottom: 2em;
-    transition: all 100ms;
-}
-label {
     display: block;
-    width: 50%;
-    float: left;
-    flex-grow: 1;
+	padding: 0;
+
+    
+    color: var(--text-color);
+    font-family: var(--font-family);
+    font-optical-sizing: auto;
 }
 
-input[type="number"], input[type="text"], select {
-    display: block;
-    font-family: inherit;
-    font-size: inherit;
-    padding: 5px 8px;
-    margin: 2px 4px;
-    -moz-appearance: none;
-    border: 1px solid var(--border);
-    border-radius: 2px;
-    flex-grow: 1;
-    transition: all 250ms;
+/* #region .logo */
+.logoholder {
+	display: flex;
+	padding: 3rem;
+	justify-content: center;
 }
-input:focus {
-    border-color: #0a84ff;
-    box-shadow: 0 0 0 1px #0a84ff, 0 0 0 4px rgba(10,132,255,0.3);
+.logo {
+	display: flex;
+	flex-flow: row nowrap;
+	align-items: center;
+	justify-content: start;
+
+	gap: 0.6125rem; /* 10px */
+
+	position: relative;
+}
+	.logo > img {
+		width: 5rem;
+		height: 5rem;
+		border-radius: 0.125rem; /* 2px */
+
+		background-color: white;
+	}
+	.logo > .valign {
+		display: flex;
+		flex-flow: column nowrap;
+		align-items: start;
+		justify-content: center;
+		gap: 0.25rem; /* 4px */
+
+		cursor: default;
+		line-height: 0.8;
+	}
+		.logo > .valign > .name {
+			font-size: 2rem;
+			font-weight: 500;
+		}
+		.logo > .valign > .update {
+			display: flex;
+			flex-flow: row nowrap;
+			align-items: center;
+			justify-content: center;
+
+			gap: 0.3125rem; /* 5px */
+
+			cursor: pointer;
+		}
+			.logo > .valign > .update > .version {
+				font-size: 1.2rem;
+				font-weight: 300;
+			}
+		.logo > .valign > .update > .settingsicon {
+			height: 1rem;
+			width: 1rem;
+			stroke-width: 2;
+			color: var(--icon-default-stroke);
+		}
+		.logo > .valign > .update:hover > .settingsicon {
+			color: var(--icon-hover-stroke);
+		}
+		.logo > .valign > .update.active > .settingsicon {
+			animation: spin 2s infinite linear;
+		}
+@keyframes spin {
+	0% {
+		transform: rotate(0deg);
+	}
+	100% {
+		transform: rotate(360deg);
+	}
 }
 
-#check {
-    margin-top: 0.4em;
+.logo > .update-tooltip {
+	position: absolute;
+	z-index: 9;
+	left: -2.5rem; /* -40px */
+	right: -2.5rem; /* -40px */
+	top: calc(100% + 5px);
+	text-align: center;
+
+	font-size: 0.9rem;
+
+	padding: 0.5rem 0.2rem;
+
+	background-color: rgba(128, 128, 128, 0.1);
+	border: solid 2px rgba(128, 128, 128, 0.1);
+	border-radius: 0.5rem;
+
+	opacity: 0;
+	pointer-events: none;
+	transition: opacity 150ms;
+}
+	.logo > .update-tooltip::before {
+		content: '';
+		display: block;
+		position: absolute;
+
+		--size: 12px;
+		--offset: 14%;
+
+		bottom: calc(100% - (var(--size) / 2));
+		left: calc(50% - 2px - ((var(--size) / 2) - var(--offset)));
+		right: calc(50% - ((var(--size) / 2) + var(--offset)));
+
+		height: var(--size);
+		transform: rotate(45deg);
+
+		background-color: rgba(128, 128, 128, 0.1);
+		border: solid 2px rgba(128, 128, 128, 0.1);
+		clip-path: polygon(0 0, 0% 100%, 100% 0);
+	}
+.logo > .valign:is(:hover, :focus-within) + .update-tooltip {
+	opacity: 1;
+}
+/* #endregion .logo */
+
+body > form {
+    padding: 2rem 1rem;
+	padding-top: 0;
+
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(auto, 800px) minmax(0, 1fr);
 }
 
-#httpWarning {
-    float: unset;
-    width: 100%;
-    opacity: 0;
-    font-weight: bolder;
-    height: max-content;
-    transition: opacity 100ms;
+form > * {
+	grid-column: 2;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    margin-bottom: 1rem;
+    border-bottom: solid 1px;
+    border-bottom-color: rgba(128, 128, 128, 0.6);
+    border-bottom-color: color-mix(in srgb, currentColor, transparent 80%);
+}
+
+h1 {
+    font-size: 1.4rem;
+    font-weight: 600;
+}
+
+h2 {
+    font-size: 1.1rem;
+    font-weight: 550;
+}
+
+h3 {
+    font-size: 1rem;
+    font-weight: 550;
+}
+
+.settingsicon {
+    width: 1.5rem;
+    height: 1.5rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
 }
 
 
-input[type="checkbox"] {
-    /* -moz-appearance: none; */
-    width: 20px;
-    height: 20px;
-    padding: 1px;
-    border: 1px solid var(--border); 
-    border-radius: 2px;
-    margin: 0;
-    margin-inline-end: 10px;
-    background-position: center;
-    background-repeat: no-repeat;
-    vertical-align: middle;
-    flex-shrink: 0;
-}
-
-input[type="checkbox"]:not(:disabled):hover {
-    border-color: #0a84ff;
-}
-
-button:focus,
-input[type="checkbox"]:focus {
-  outline: 2px solid #0a84ff !important;
-  outline-offset: -1px !important;
-  -moz-outline-radius: 3px !important;
-  box-shadow: 0 0 0 4px rgba(249,249,250,0.3) !important;
-}
-
-button {
-    min-width: 6.3em;
-    margin-inline: 4px;
-    -moz-appearance: none;
-    min-height: 32px;
-    border-radius: 2px;
-    font-weight: 400;
-    padding: 0 10px;
-    text-decoration: none;
-    margin: 4px 4px;
-    font-size: 1em;
-    padding: 3px;
+.fancyInput {
+    border: solid 1px rgba(128, 128, 128, 0.1);
+    background-color: rgba(128, 128, 128, 0.1);
+    padding: 0.3em 0.5em;
     font: inherit;
-    text-align: center;
+    color: inherit;
+    border-radius: 0.2em 0.2em 0 0;
+
+    transition: border-color 150ms;
+}
+
+.fancyInput:not(:disabled):hover {
+    border-color: rgba(128, 128, 128, 0.7);
+}
+select.fancyInput {
+	text-transform: capitalize;
+}
+.fancyInput option {
+	background-color: var(--background-color);
+	color: var(--text-color);
 }
 
 
-#playerStyle {
-    -moz-appearance: menulist;
-    width: 37%;
+form > h2 {
+	margin-top: 5rem;
+	margin-bottom: 0.5rem;
+	padding-bottom: 0.5rem;
+}
+form > h2:first-child {
+	margin-top: 0;
+}
+form > section {
+    background-color: rgba(128, 128, 128, 0.08);
+    border-radius: 0.5rem;
+
+    max-width: 100%;
+	padding: 1.1rem 1.1rem;
+
+    font-size: 0.8rem;	
 }
 
-form > div {
+.unit {
+    position: relative;
+}
+	.unit div {
+		position: absolute;
+		left: 3.5ch;
+		top: 0;
+		bottom: 0;
+		display: flex;
+        pointer-events: none;
+		flex-flow: row nowrap;
+		align-items: center;
+		justify-content: start;
+		border-width: 2px 0;
+		border-style: solid;
+		border-color: transparent;
+	}
+
+/* #region behavior / downloads */
+section.checklist {
+	display: flex;
+	flex-flow: column nowrap;
+	align-items: start;
+	justify-content: start;
+	gap: 0.2rem;
+}
+
+section.checklist label {
+	display: flex;
+	flex-flow: row wrap;
+	align-items: center;
+	justify-content: start;
+	gap: 0.4rem;
+	font-weight: 450;
+	user-select: none;
+}
+
+section.checklist label:not(:first-child) {
+	margin-top: 0.3rem;
+}
+
+section.checklist > .inset {
+    padding: 0rem 0.8rem;
+    border-left: solid 1px currentColor;
+    margin-left: 0.4rem;
+    margin-bottom: 0.4rem;
+}
+section.checklist > .inset p {
+	padding: 0.2rem 0;
+}
+
+section.behavior > .inactivity-duration .fancyInput {
+    width: 15ch;
+}
+section.behavior > .restart-duration .fancyInput {
+    width: 14ch;
+}
+
+
+section.behavior > .inactivity-duration .unit div {
+    left: 5ch;
+}
+
+section.checklist > .downloadNameFormatString .fancyInput {
+	flex-grow: 1;
+	font-family: monospace;
+}
+/* #endregion behavior / downloads */
+
+
+/* #region section.appearance */
+section.appearance .previewHolder #preview {
+    width: var(--viewport-width);
+    height: var(--viewport-height);
+	border: none;
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+section.appearance .previewHolder {
+    width: var(--viewport-width);
+    height: var(--viewport-height);
+
+	flex-grow: 0;
+	flex-shrink: 0;
+
+	position: sticky;
+	top: 1.1rem;
+	z-index: 2;
+	box-sizing: content-box;
+	border-radius: 10px;
+	border: solid 1px rgba(128, 128, 128, 0.6);
+    
+    overflow: hidden;
+
+	resize: both;
+	max-width: 800px;
+	max-height: 598px;
+	
+    transition: border-color 150ms;
+}
+section.appearance {
+    margin-bottom: 1rem;
+
+    gap: 3rem 1rem;
+
+	padding: 1rem 0;
+
+	background: none;
+    grid-column: 1 / -1;
+
+	display: flex;
+	flex-flow: row nowrap;
+
+    justify-self: center;
+}
+
+@media (max-width: 800px) {
+    section.appearance {
+        flex-flow: column nowrap;
+    }
+    section.appearance .previewHolder {
+        position: relative;
+    }
+}
+
+section.appearance .controls {
+	z-index: 3;
+	position: relative;
+
+    max-width: 100%;
+
+    padding: 1.1rem 1.1rem;
+	backdrop-filter: blur(5px);
+	background: color-mix(in srgb, 70% color-mix(in srgb, var(--background-color), rgba(128, 128, 128, 0.2)), transparent);
+}
+
+.appearance .controls.preset-match .hidden-if-match {
+	display: none;
+}
+.appearance .controls.preset-match .shown-if-match {
+	display: block;
+}
+.appearance .controls.preset-match .shown-if-match p {
+	line-height: 1.5;
+    margin-bottom: 0.5rem;
+}
+.appearance .controls:not(.preset-match) .hidden-if-match {
+	display: block;
+}
+.appearance .controls:not(.preset-match) .shown-if-match {
+	display: none;
+}
+.appearance .controls .quick-preset-select {
+    display: flex;
+    flex-flow: row wrap;
+
+    gap: 0.5rem 0.25rem;
+    padding-bottom: 0.4rem;
+}
+
+.appearance .controls .quick-preset-select label.preset.preset-new {
+	width: 3.3rem;
+    font-size: 1.3rem;
+}
+.appearance .controls .quick-preset-select label.preset {
     display: flex;
     align-items: center;
+    justify-content: center;
+    text-align: center;
+
+    height: 2.3rem;
+    flex-shrink: 0;
+
+    background-clip: content-box;
+    padding: 1rem;
+
+    border-radius: 100rem;
+    border: solid 1px var(--icon-default-stroke);
+
+    font-size: 0.8rem;
+
+    cursor: pointer;
+}
+.appearance .controls .quick-preset-select label.preset.active {
+    border-color: var(--icon-active-stroke);
+}
+
+.appearance .controls .quick-preset-select label.preset.preset-match {
+    display: grid;
+    grid-template: 100% / 100%;
+	padding: 1px;
+}
+.appearance .controls .quick-preset-select label.preset.preset-match .side {
+    grid-area: 1/1;
+    width: 100%;
+    height: 100%;
+    border-radius: 100rem;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+	padding: 1rem 0.9rem;
+
+    clip-path: polygon(50% 0, 50% 100%, 100% 100%, 100% 0);
+}
+.appearance .controls .quick-preset-select label.preset.preset-match .dark.side {
+    clip-path: polygon(0 0, 0 100%, 50% 100%, 50% 0);
+}
+
+.appearance .controls h2 {
+    padding-bottom: 0.4rem;
+    margin-bottom: 0.8rem;
+}
+
+.appearance .controls summary {
+    font-size: 0.9rem;
+    font-weight: normal;
+
+    padding-bottom: 0.3rem;
+    margin-top: 0.3rem;
+
+    cursor: pointer;
+    user-select: none;
+
+    opacity: 0.8;
+    transition: opacity 150ms;
+}
+.appearance .controls details:is(:hover, [open]) summary {
+    opacity: 1;
+}
+.appearance .controls details .colors {
+    padding-top: 0.6rem;
+    margin-bottom: 0.6rem;
+    border-top: solid 1px;
+    border-top-color: rgba(128, 128, 128, 0.6);
+    border-top-color: color-mix(in srgb, currentColor, transparent 80%);
+}
+
+.appearance .controls h4 {
+    padding-bottom: 0.2rem;
+    margin-top: 1.5rem;
+    margin-bottom: 0.6rem;
+    font-size: 1rem;
+}
+
+.appearance .controls .halign-if-possible {
+    display: flex;
+    flex-flow: row wrap;
+    align-items: start;
+    gap: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.appearance .controls .halign-if-possible.fit {
+    width: fit-content;
+}
+
+.appearance .controls .halign-if-possible .labeltext {
+  padding-left: 0.5ch;
+}
+.appearance .controls .halign-if-possible label {
+    flex-grow: 1;
+}
+
+.appearance .controls .mb-1 {
+    margin-bottom: 1rem;
+}
+.appearance .controls .colors {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 30ch), 1fr));
+    justify-content: space-between;
+    align-items: start;
+    gap: 0.5rem 2rem;
+}
+.appearance .controls .colors label {
+	max-width: 100%;
+	display: flex;
+	flex-flow: column nowrap;
+    gap: 0.2rem;
+    flex-grow: 1;
+}
+
+.appearance .controls .colors label .labeltext {
+	width: 100%;
+	display: flex;
+	flex-flow: row wrap;
+	align-items: start;
+    gap: 0 0.5rem;
+    justify-content: space-between;
+}
+.appearance .controls .colors label .labeltext code {
+	font-weight: 500;
+    font-size: 0.7rem;
+    opacity: 0.3;
+    transition: opacity 150ms;
+}
+.appearance .controls .colors label:is(:hover, :focus-within) code {
+    opacity: 0.9;
+}
+.appearance .controls .colors label :is(input, select) {
+	width: 100%;
+}
+.appearance .controls .colors .span-2 {
+    display: flex;
+    flex-flow: row wrap;
+    align-items: start;
+    gap: 0.5rem 2rem;
+    grid-column: span 2;
+}
+.appearance .controls .colors .nogrow {
+    flex-grow: 0;
+}
+.appearance .controls label {
+    display: flex;
+    flex-flow: column nowrap;
+    align-items: start;
+    gap: 0.1rem;
+    margin-bottom: 0.2rem;
+}
+.appearance .controls label.halign {
+    flex-flow: row nowrap;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.appearance .controls label .labeltext {
+    font-weight: 550;
+}
+
+.appearance .controls :is(input, select):not([type="range"], [type="checkbox"]) {
+    border: solid 1px rgba(128, 128, 128, 0.1);
+    background-color: rgba(128, 128, 128, 0.1);
+    padding: 0.3rem 0.5rem;
+    font: inherit;
+    color: inherit;
+    border-radius: 0.2rem 0.2rem 0 0;
+
+    transition: border-color 150ms;
+}
+.appearance .controls :is(input, select):not([type="range"], [type="checkbox"]):disabled {
+    opacity: 0.8;
+    cursor: not-allowed;
+}
+.appearance .controls :is(input, select):not([type="range"], [type="checkbox"]):not(:disabled):hover {
+    border-color: rgba(128, 128, 128, 0.7);
+}
+
+.appearance .dimInputs input {
+	width: 16ch;
+}
+.appearance .dimInputs .unit div {
+	left: 4.5ch;
+}
+#maxHistoryEntries .unit div {
+    left: 4.5ch;
+}
+#maxHistoryEntries input {
+    width: 14ch;
+}
+
+#delete_preset {
+    cursor: pointer;
+    color: var(--icon-active-stroke);
+    text-decoration: underline;
+    margin-bottom: 1rem;
+}
+
+
+input#preset-name {
+    border-bottom: solid 1px currentColor;
+    font-size: 1.3rem;
+    margin-top: 1rem;
+	margin-bottom: 0.7rem;
+    padding: 0.5rem 1rem;
+}
+
+input#font-family {
+    border-top-right-radius: 0;
+}
+input#font-size {
+    max-width: 10ch;
+    border-top-left-radius: 0;
+}
+
+textarea.fancyInput {
+	font-family: monospace;
+	width: 100%;
+	max-width: 100%;
+	resize: vertical;
+}
+
+/* #endregion section.appearance */
+
+section.stats {
+    display: flex;
+    flex-flow: row wrap;
+    gap: 1rem 0.5rem;
+}
+section.stats .stat {
+    display: block;
+    background-color: rgba(128, 128, 128, 0.2);
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    flex-grow: 1;
+}
+section.stats .stat span {
+    font-size: 2rem;
+    font-weight: 700;
+    display: block;
+}
+
+section.help {
+    line-height: 1.5;
+}
+
+section.help p {
+    margin-bottom: 0.5rem;
+}
+
+section.help .debuginfo {
+    display: block;
+    background-color: rgba(128, 128, 128, 0.3);
+
+    padding: 1rem;
+
+    user-select: all;
+    white-space: pre-wrap;
+}
+
+.hotkeys-button {
+    padding: 0.5rem 1rem;
+    background-color: rgba(128, 128, 128, 0.2);
+    border: solid 1px rgba(128, 128, 128, 0.5);
+    cursor: pointer;
+    transition: background-color 150ms;
+}
+
+.hotkeys-button:is(:hover,:focus) {
+    background-color: rgba(128, 128, 128, 0.1);
+}
+
+a {
+    color: inherit;
 }

@@ -1,0 +1,215 @@
+<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml" class="compact">
+<head>
+    <meta charset="utf-8">
+    <base target="_blank">
+    <title>Anesidora</title>
+    <!-- Crossorigin despite being local because https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/rel/preload#cors-enabled_fetches -->    
+    <link rel="preload" href="./css/InterVariable.woff2" as="font" type="font/woff2" crossorigin>
+	<script src="./js/collect_errors.js" type="text/javascript"></script>
+    <script src="./js/platform_specific.js" type="text/javascript"></script>
+    <script src="./js/common.js" type="text/javascript"></script>
+    <script src="./js/newpopup.js" type="text/javascript"></script>
+
+    <link href="./css/common.css" rel="stylesheet" type="text/css" />
+    <link href="./css/reworked_oldpopup.css" rel="stylesheet" type="text/css" />
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, interactive-widget=overlays-content" />
+</head>
+
+<body>
+    <template class="play-icon-template">
+        <svg class="icon anesidora-play" width="28" height="13" viewBox="1 1 28 13">
+            <path d="m13 3 5 4.5-5 4.5z" fill="currentColor"/>
+        </svg>
+    </template>
+    <template class="pause-icon-template">
+        <svg class="icon anesidora-pause" width="28" height="13" viewBox="1 1 28 13">
+            <rect x="11" y="2" width="3" height="11" fill="currentColor"/>
+            <rect x="16" y="2" width="3" height="11" fill="currentColor"/>
+        </svg>
+    </template>
+    <template class="check-icon-template">
+        <!-- This is entirely unused in compact.htm, but just in case the JS _somehow_ loads this, there should be no exception. -->
+    </template>
+    <template class="alert-icon-template">
+        <!-- This is entirely unused in compact.htm, but just in case the JS _somehow_ loads this, there should be no exception. -->
+    </template>
+    <template class="refresh-icon-template">
+        <svg class="icon anesidora-refresh" width="28" height="13" viewBox="1 1 28 13">
+            <path d="m14 3s-3.64 0-3.66 4.5h-1.84l2.75 2.5 2.75-2.5h-1.85c0-3 1.85-3 1.85-3z" fill="currentColor"/>
+            <path d="m16.5 12s3.64 0 3.66-4.5h1.84l-2.75-2.5-2.75 2.5h1.85c0 3-1.85 3-1.85 3z" fill="currentColor"/>
+        </svg>
+    </template>
+    <template class="login-icon-template">
+        <!-- This is entirely unused in compact.htm, but just in case the JS _somehow_ loads this, there should be no exception. -->
+    </template>
+    <div id="anesidora" class="compact">
+        <img class="background-blur" alt="" />
+
+        <a class="skipnav" href="#main" target="_self">Skip to active section</a>
+        <button class="navigate-previous navigation-button" aria-label="Previous section">
+            <svg class="icon anesidora-previous" width="16" height="56" viewBox="2 2 16 56">
+                <path d="m13 22.5-8 7.5 8 7.5z" fill="currentColor"/>
+            </svg>
+        </button>
+        <main>
+            <section class="history" aria-label="History">
+                <template class="history-item-template">
+                    <li class="history-item">
+                        <img class="cover" src="./images/default_cover.svg" alt="">
+                        <a class="title">[ This text should not appear ]</a>
+
+                        <div class="spacer"></div>
+
+                        <button class="action thumbs-up" aria-label="Thumbs up">
+                            <svg class="icon dull anesidora-thumbs-up" width="28" height="13" viewBox="1 1 28 13">
+                                <path d="m14.5 3c.8 0 1.6 0 1.5.7v2.3h3c.5 0 .5.5.5.8l-.2 3.2c-.1.5-1.6 2-2.1 2h-3.1c-2.1 0-2.1-2-3.6-2v-1.5c0-1.1.5-.5 1-.9 0 0 1-.6 1.6-1.2.7-.7 1.4-3.4 1.4-3.4z" fill="currentColor"/>
+                                <path class="check" d="m19 4-5 5-2.5-2.5-1.5 1.5 4 4 6.5-6.5z" fill="#13416f"/>
+                            </svg>
+                        </button>
+                        <button class="action download" aria-label="Download">
+                            <svg class="icon anesidora-download" width="28" height="13" viewBox="1 1 28 13">
+                                <path d="m11 3.5h7v3.5h2l-5.5 5.5-5.5-5.5h2z" fill="currentColor"/>
+                            </svg>
+                        </button>
+                    </li>
+                </template>
+                <ul></ul>
+            </section>
+            <section class="player" aria-label="Now playing">
+                <img class="cover" src="./images/default_cover.svg" alt="" />
+                <div class="valign">
+                    <div class="infoline" tabindex="0">
+                        <div class="infoline-content">
+                            <a class="artist">Choose a station to begin.</a><span class="sep"> - </span><a class="title">Nothing is playing currently.</a>
+                        </div>
+                    </div>
+                    <input aria-label="Seek" class="seekBar" type="range" min="0" max="100" value="0" step="any" />
+                    <ul class="actions">
+                        <button class="action play big" aria-label="Play">
+                            <svg class="icon anesidora-play" width="28" height="13" viewBox="1 1 28 13">
+                                <path d="m13 3 5 4.5-5 4.5z" fill="currentColor"/>
+                            </svg>
+                        </button>
+                        <button class="action skip-next" aria-label="Skip">
+                            <svg class="icon anesidora-skip" width="28" height="22" viewBox="1 1 28 22">
+                                <path d="m8 6 6.5 6-6.5 6z" fill="currentColor"/>
+                                <path d="m14.5 6 6.5 6-6.5 6z" fill="currentColor"/>
+                                <rect x="21" y="6" width="2" height="12" fill="currentColor"/>
+                            </svg>
+                        </button>
+                        <button class="action thumbs-up" aria-label="Thumbs up">
+                            <svg class="icon dull anesidora-thumbs-up" width="28" height="13" viewBox="1 1 28 13">
+                                <path d="m14.5 3c.8 0 1.6 0 1.5.7v2.3h3c.5 0 .5.5.5.8l-.2 3.2c-.1.5-1.6 2-2.1 2h-3.1c-2.1 0-2.1-2-3.6-2v-1.5c0-1.1.5-.5 1-.9 0 0 1-.6 1.6-1.2.7-.7 1.4-3.4 1.4-3.4z" fill="currentColor"/>
+                                <path class="check" d="m19 4-5 5-2.5-2.5-1.5 1.5 4 4 6.5-6.5z" fill="#13416f"/>
+                            </svg>
+                        </button>
+                        <button class="action thumbs-down" aria-label="Thumbs down">
+                            <svg class="icon dull anesidora-thumbs-down" width="28" height="13" viewBox="1 1 28 13">
+                                <path d="m14.5 12c.8 0 1.6 0 1.5-.7v-2.3h3c.5 0 .5-.5.5-.8l-.2-3.2c-.1-.5-1.6-2-2.1-2h-3.1c-2.1 0-2.1 2-3.6 2v1.5c0 1.1.5.5 1 .9 0 0 1 .6 1.6 1.2.7.7 1.4 3.4 1.4 3.4z" fill="currentColor"/>
+                                <path class="check" d="m19 4-5 5-2.5-2.5-1.5 1.5 4 4 6.5-6.5z" fill="#13416f"/>
+                            </svg>
+                        </button>
+                        <button class="action tired-of-song" aria-label="I'm tired of this track">
+                            <svg class="icon dull anesidora-sleep" width="28" height="13" viewBox="1 1 28 13">
+                                <path d="m8 7h5v1l-3.75 3h3.75v1h-5v-1l3.75-3h-3.75z" fill="currentColor"/>
+                                <path d="m15 5h3v.75l-2 2.25h2v.75h-3v-.75l2-2.25h-2z" fill="currentColor"/>
+                                <path d="m19 2.25h3v.5l-1.9 1.75h1.9v.5h-3v-.5l2-1.75h-2z" fill="currentColor"/>
+                                <path class="check" d="m19 4.5-5 5-2.5-2.5-1.5 1.5 4 4 6.5-6.5z" fill="#13416f"/>
+                            </svg>
+                        </button>
+                        <button class="action download" aria-label="Download">
+                            <svg class="icon anesidora-download" width="28" height="13" viewBox="1 1 28 13">
+                                <path d="m11 3.5h7v3.5h2l-5.5 5.5-5.5-5.5h2z" fill="currentColor"/>
+                            </svg>
+                        </button>
+                        <a class="action settings" aria-label="Settings" href="./options.htm">
+                            <svg class="icon dull anesidora-moreinfo" width="28" height="22" viewBox="1 1 28 22">
+                                <circle cx="10" cy="17" r="1.5" fill="currentColor"/>
+                                <circle cx="15" cy="17" r="1.5" fill="currentColor"/>
+                                <circle cx="20" cy="17" r="1.5" fill="currentColor"/>
+                            </svg>
+                        </a>
+                    </ul>
+                </div>
+                <div class="volumewrap">
+                    <input aria-label="Volume" class="volume" type="range" data-vertical="true" min="0" max="100" value="100" step="any" />
+                </div>
+            </section>
+            <section class="stations" aria-label="Stations">
+                <template class="station-template">
+                    <button role="listitem" class="station">
+                        <span class="title">
+                            [ This text should not appear ]
+                        </span>
+                    </button>
+                </template>
+                <div class="search">
+                    <input class="stations-search" id="stations-search" placeholder="Filter stations...">
+                    <button class="refresh" aria-label="Refresh stations">
+                        <svg class="icon anesidora-refresh" width="28" height="13" viewBox="1 1 28 13">
+                            <path d="m14 3s-3.64 0-3.66 4.5h-1.84l2.75 2.5 2.75-2.5h-1.85c0-3 1.85-3 1.85-3z" fill="currentColor"/>
+                            <path d="m16.5 12s3.64 0 3.66-4.5h1.84l-2.75-2.5-2.75 2.5h1.85c0 3-1.85 3-1.85 3z" fill="currentColor"/>
+                        </svg>
+                    </button>
+                </div>
+                <ul class="stationsList"></ul>
+            </section>
+            <section class="account" aria-label="Account">
+                <ul>
+                    <li class="anesidora">Anesidora <span class="version"></span></li>
+                    <li class="links">
+                        <a class="iconlink" href="https://github.com/pvrs12/Anesidora/issues">Issues</a><div class="separator"></div>
+                        <a class="iconlink" href="https://github.com/pvrs12/Anesidora">Code</a><div class="separator"></div>
+                        <a class="iconlink" href="https://github.com/pvrs12/Anesidora/graphs/contributors">Contributors</a><div class="separator"></div>
+                        <a class="iconlink" href="https://github.com/pvrs12/Anesidora/blob/master/login.md">Login FAQ</a>
+                    </li>
+                </ul>
+                <div class="spacer login-after-me account-info-after-me"></div>
+                <template class="account-template">
+                    <div class="real-account">
+                        <span>Logged in as <span class="username">[ This text should not appear ]</span></span>
+                        <button class="logout-button logout-button">
+                            <span>Logout</span>
+                            <svg class="icon feather-log-out" viewBox="0 0 24 24">
+                                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                                <polyline points="16 17 21 12 16 7"/>
+                                <line x1="21" y1="12" x2="9" y2="12"/>
+                            </svg>
+                        </button>
+                    </div>
+                </template>
+                <template class="login-template">
+                    <form class="login">
+                        <div class="halign">
+                            <div class="inputgroup">
+                                <label for="login-email">Email</label>
+                                <input id="login-email" name="email" type="email" placeholder="john.doe@example.com" required autocomplete="email">
+                            </div>
+                            <div class="inputgroup">
+                                <label for="login-password">Password</label>
+                                <input id="login-password" name="password" type="password" required>
+                            </div>
+                        </div>
+                        <div class="login-error-container"><br/></div>
+                        <div class="buttonsgroup">
+                            <a class="iconbutton" href="https://www.pandora.com/account/register" referrerpolicy="no-referrer">
+                                Sign up
+                            </a>
+                            <button class="login-submit iconbutton" type="submit">
+                                Log in
+                            </button>
+                        </div>
+                    </form>
+                </template>
+            </section>
+        </main>
+        <button class="navigate-next navigation-button" aria-label="Next section">
+            <svg class="icon anesidora-next" width="16" height="56" viewBox="2 2 16 56">
+                <path d="m15 30-8-7.5v15z" fill="currentColor"/>
+            </svg>
+        </button>
+    </div>
+</body>
+
+</html>

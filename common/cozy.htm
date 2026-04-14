@@ -1,0 +1,317 @@
+<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml" class="cozy">
+<head>
+    <meta charset="utf-8">
+    <base target="_blank">
+    <title>Anesidora</title>
+    <!-- Crossorigin despite being local because https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/rel/preload#cors-enabled_fetches -->    
+    <link rel="preload" href="./css/InterVariable.woff2" as="font" type="font/woff2" crossorigin>
+	<script src="./js/collect_errors.js" type="text/javascript"></script>
+    <script src="./js/platform_specific.js" type="text/javascript"></script>
+    <script src="./js/common.js" type="text/javascript"></script>
+    <script src="./js/newpopup.js" type="text/javascript"></script>
+
+    <link href="./css/common.css" rel="stylesheet" type="text/css" />
+    <link href="./css/cozypopup.css" rel="stylesheet" type="text/css" />
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, interactive-widget=overlays-content" />
+</head>
+<body>
+	<template class="link-icon-template">
+		<svg class="icon feather-external-link" viewBox="0 0 24 24">
+			<path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+			<polyline points="15 3 21 3 21 9"/>
+			<line x1="10" y1="14" x2="21" y2="3"/>
+		</svg>
+	</template>
+    <template class="play-icon-template">
+        <svg class="icon feather-play-circle" viewBox="0 0 40 40">
+            <path d="M20 36.6667C29.2048 36.6667 36.6667 29.2048 36.6667 20C36.6667 10.7953 29.2048 3.33334 20 3.33334C10.7953 3.33334 3.33334 10.7953 3.33334 20C3.33334 29.2048 10.7953 36.6667 20 36.6667Z"/>
+            <path d="M16.6667 13.3333L26.6667 20L16.6667 26.6667V13.3333Z" />
+        </svg>
+    </template>
+    <template class="pause-icon-template">
+        <svg class="icon feather-pause-circle" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="10" y1="15" x2="10" y2="9"/>
+            <line x1="14" y1="15" x2="14" y2="9"/>
+        </svg>
+    </template>
+    <template class="refresh-icon-template">
+        <svg class="icon feather-refresh-cw" viewBox="0 0 24 24">
+            <polyline points="23 4 23 10 17 10"></polyline>
+            <polyline points="1 20 1 14 7 14"></polyline>
+            <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+        </svg>
+    </template>
+    <template class="login-icon-template">
+        <svg class="icon feather-log-in" viewBox="0 0 24 24">
+            <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
+            <polyline points="10 17 15 12 10 7"/>
+            <line x1="15" y1="12" x2="3" y2="12"/>
+        </svg>
+    </template>
+    <div id="anesidora" class="cozy">
+        <img class="background-blur" alt="" />
+        <nav class="navigation">
+            <a class="skipnav" href="#main" target="_self">Skip to active section</a>
+            <button class="navigate-previous navigation-button" aria-label="Previous section">
+                <svg class="icon feather-chevron-left" viewBox="0 0 24 24">
+                    <polyline points="15 18 9 12 15 6"></polyline>
+                </svg>
+            </button>
+            <div class="navigation-scroll-container">
+                <div class="navigation-scroll-items">
+                    <span>History</span>
+                    <span class="now-playing-title">Now Playing</span>
+                    <span>Stations</span>
+                    <span>Account</span>
+                </div>
+            </div>
+            <button class="navigate-next navigation-button" aria-label="Next section">
+                <svg class="icon feather-chevron-right" viewBox="0 0 24 24">
+                    <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+            </button>
+        </nav>
+        <main>
+            <!-- The ids need to be classes so that the id can be set/unset for skiplink -->
+            <section class="history" aria-label="History">
+                <template class="history-item-template">
+                    <li class="history-item">
+                        <img class="cover" src="./images/default_cover.svg" alt="">
+                        <div class="vwrap">
+                            <span class="title">[ This text should not appear ]</span>
+                            <span class="sr-only">by </span><span class="artist">[ This text should not appear ]</span>
+                            <ul class="actions">
+                                <button class="action thumbs-up" aria-label="Thumbs up">
+                                    <svg class="icon feather-thumbs-up" viewBox="0 0 24 24">
+                                        <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/>
+                                    </svg>
+                                </button>
+                                <button class="action play" aria-label="Play this again">
+                                    <svg class="icon feather-play" viewBox="0 0 24 24">
+                                        <polygon points="5 3 19 12 5 21 5 3"/>
+                                    </svg>
+                                </button>
+                                <button class="action download" aria-label="Download">
+                                    <svg class="icon feather-download-cloud" viewBox="0 0 24 24">
+                                        <polyline points="8 17 12 21 16 17"></polyline>
+                                        <line x1="12" y1="12" x2="12" y2="21"></line>
+                                        <path d="M20.88 18.09A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.29"></path>
+                                    </svg>
+                                </button>
+                                <button class="action thumbs-down" aria-label="Thumbs down">
+                                    <svg class="icon feather-thumbs-down" viewBox="0 0 24 24">
+                                        <path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zm7-13h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17"/>
+                                    </svg>
+                                </button>
+                            </ul>
+                        </div>
+                    </li>
+                </template>
+                <div class="search">
+                    <label for="history-search">
+                        <svg class="icon feather-search" viewBox="0 0 24 24">
+                            <circle cx="11" cy="11" r="8"/>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                        </svg>
+                        <span class="sr-only">
+                            Search
+                        </span>
+                    </label>
+                    <input id="history-search" autocomplete="off">
+                </div>
+                <ul></ul>
+            </section>
+            <section class="player" aria-label="Now playing">
+                <div class="spacer"></div>
+                <div class="coverHolder">
+                    <div class="volumewrap">
+                        <input aria-label="Volume" class="volume" type="range" min="0" max="100" value="0" step="any" />
+                    </div>
+                    <img class="cover" src="./images/default_cover.svg" alt="" />
+                </div>
+                <input aria-label="Seek" class="seekBar" type="range" min="0" max="100" value="0" step="any" />
+                <div class="spacer"></div>
+                <div class="infoline" tabindex="0">
+                    <div class="infoline-content">
+                        <span class="title">Nothing is playing currently.</span>
+                    </div>
+                </div>
+                <span class="artist">Choose a station to begin.</span>
+                <div class="actions">
+                    <ul class="row">
+                        <button class="action skip-previous" aria-label="Skip back">
+                            <svg class="icon feather-skip-back" viewBox="0 0 24 24">
+                                <polygon points="19 20 9 12 19 4 19 20"></polygon>
+                                <line x1="5" y1="19" x2="5" y2="5"></line>
+                            </svg>
+                        </button>
+                        <button class="action play big" aria-label="Play">
+                            <svg class="icon feather-play-circle" viewBox="0 0 40 40">
+                                <path d="M20 36.6667C29.2048 36.6667 36.6667 29.2048 36.6667 20C36.6667 10.7953 29.2048 3.33334 20 3.33334C10.7953 3.33334 3.33334 10.7953 3.33334 20C3.33334 29.2048 10.7953 36.6667 20 36.6667Z"/>
+                                <path d="M16.6667 13.3333L26.6667 20L16.6667 26.6667V13.3333Z" />
+                            </svg>
+                        </button>
+                        <button class="action skip-next" aria-label="Skip">
+                            <svg class="icon feather-skip-forward" viewBox="0 0 24 24">
+                                <polygon points="5 4 15 12 5 20 5 4"></polygon>
+                                <line x1="19" y1="5" x2="19" y2="19"></line>
+                            </svg>
+                        </button>
+                    </ul>
+                    <ul class="row small">
+                        <button class="action thumbs-down" aria-label="Thumbs down">
+                            <svg class="icon feather-thumbs-down" viewBox="0 0 24 24">
+                                <path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zm7-13h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17"/>
+                            </svg>
+                        </button>
+                        <button class="action tired-of-song" aria-label="I'm tired of this track">
+                            <svg class="icon feather-clock" viewBox="0 0 24 24">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <polyline points="12 6 12 12 16 14"></polyline>
+                            </svg>
+                        </button>
+                        <a class="action settings" aria-label="Settings" href="./options.htm">
+                            <svg class="icon feather-sliders" viewBox="0 0 24 24">
+                                <line x1="4" y1="21" x2="4" y2="14"></line>
+                                <line x1="4" y1="10" x2="4" y2="3"></line>
+                                <line x1="12" y1="21" x2="12" y2="12"></line>
+                                <line x1="12" y1="8" x2="12" y2="3"></line>
+                                <line x1="20" y1="21" x2="20" y2="16"></line>
+                                <line x1="20" y1="12" x2="20" y2="3"></line>
+                                <line x1="1" y1="14" x2="7" y2="14"></line>
+                                <line x1="9" y1="8" x2="15" y2="8"></line>
+                                <line x1="17" y1="16" x2="23" y2="16"></line>
+                            </svg>
+                        </a>
+                        <button class="action download" aria-label="Download">
+                            <svg class="icon feather-download-cloud" viewBox="0 0 24 24">
+                                <polyline points="8 17 12 21 16 17"></polyline>
+                                <line x1="12" y1="12" x2="12" y2="21"></line>
+                                <path d="M20.88 18.09A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.29"></path>
+                            </svg>
+                        </button>
+                        <button class="action thumbs-up" aria-label="Thumbs up">
+                            <svg class="icon feather-thumbs-up" viewBox="0 0 24 24">
+                                <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/>
+                            </svg>
+                        </button>
+                    </ul>
+                </div>
+                <div class="spacer"></div>
+            </section>
+            <section class="stations" aria-label="Stations">
+                <template class="station-template">
+                    <button role="listitem" class="station">
+                        <div class="coverholder">
+                            <img class="cover" src="./images/default_cover.svg" alt="">
+                            <svg viewBox="-15 -15 54 54" class="icon feather-play">
+                                <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                            </svg>
+                        </div>
+                        <span class="title">[ This text should not appear ]</span>
+                    </button>
+                </template>
+                <div class="search">
+                    <label for="stations-search">
+                        <svg class="icon feather-search" viewBox="0 0 24 24">
+                            <circle cx="11" cy="11" r="8"/>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                        </svg>
+                        <span class="sr-only">
+                            Search
+                        </span>
+                    </label>
+                    <input id="stations-search" autocomplete="off">
+                </div>  
+                <ul class="stationsList"></ul>
+            </section>
+            <section class="account" aria-label="Account">
+                <div class="logoholder login-after-me">
+                    <img class="logo" src="./images/anesidora-128.png" alt="" />
+                    <div class="valign">
+                        <span class="name">Anesidora</span>
+						<span class="version">v2.2.3</span>
+                    </div>
+                </div>
+                <span class="links">
+                    <a class="iconlink" href="https://github.com/pvrs12/Anesidora/issues">
+                        Issues
+                        <svg class="icon feather-chevron-right" viewBox="0 0 24 24">
+                            <polyline points="9 18 15 12 9 6"></polyline>
+                        </svg>
+                    </a>
+                    <a class="iconlink" href="https://github.com/pvrs12/Anesidora">
+                        Code
+                        <svg class="icon feather-chevron-right" viewBox="0 0 24 24">
+                            <polyline points="9 18 15 12 9 6"></polyline>
+                        </svg>
+                    </a>
+                    <a class="iconlink" href="https://github.com/pvrs12/Anesidora/graphs/contributors">
+                        Contributors
+                        <svg class="icon feather-chevron-right" viewBox="0 0 24 24">
+                            <polyline points="9 18 15 12 9 6"></polyline>
+                        </svg>
+                    </a>
+                    <a class="iconlink" href="https://github.com/pvrs12/Anesidora/blob/master/login.md">
+                        Login FAQ
+                        <svg class="icon feather-chevron-right" viewBox="0 0 24 24">
+                            <polyline points="9 18 15 12 9 6"></polyline>
+                        </svg>
+                    </a>
+                </span>
+
+                <div class="spacer account-info-after-me"></div>
+
+                <template class="account-template">
+                    <button class="real-account logout-button">
+                        <img class="avatar" src="" alt="" loading="lazy">
+                        <div class="valign">
+                            <span class="username">[ This text should not appear ]</span>
+                            <div class="logout-button">
+                                <span>Logout</span>
+                                <svg class="icon feather-log-out" viewBox="0 0 24 24">
+                                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                                    <polyline points="16 17 21 12 16 7"/>
+                                    <line x1="21" y1="12" x2="9" y2="12"/>
+                                </svg>
+                            </div>
+                        </div>
+                    </button>
+                </template>
+                <template class="login-template">
+                    <form class="login">
+                        <div class="inputgroup">
+                            <label for="login-email">Email</label>
+                            <input id="login-email" name="email" type="email" placeholder="john.doe@example.com" required autocomplete="email">
+                        </div>
+                        <div class="inputgroup">
+                            <label for="login-password">Password</label>
+                            <input id="login-password" name="password" type="password" required>
+                        </div>
+                        <div class="login-error-container"><br/></div>
+                        <div class="buttonsgroup">
+                            <a class="iconbutton" href="https://www.pandora.com/account/register" referrerpolicy="no-referrer">
+                                Sign up
+                                <svg class="icon feather-external-link" viewBox="0 0 24 24">
+                                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+                                    <polyline points="15 3 21 3 21 9"/>
+                                    <line x1="10" y1="14" x2="21" y2="3"/>
+                                </svg>
+                            </a>
+                            <button class="login-submit iconbutton" type="submit">
+                                Log in
+                                <svg class="icon feather-log-in" viewBox="0 0 24 24">
+                                    <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
+                                    <polyline points="10 17 15 12 10 7"/>
+                                    <line x1="15" y1="12" x2="3" y2="12"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </form>
+                </template>
+            </section>
+        </main>
+    </div>
+</body>

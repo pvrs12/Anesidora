@@ -1,59 +1,536 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html>
     <head>
         <meta charset="utf-8">
         <title>Anesidora Options</title>
-        <script type="text/javascript" src="./js/platform_specific.js"></script>
-        <link href="./css/options.css" rel="stylesheet" type="text/css">
-        <link href="./css/preview.css" rel="stylesheet" type="text/css">
-        <link href="./css/oldpreview.css" rel="stylesheet" type="text/css">
-        <link href="css/anesidora/jquery-ui-1.8.6.custom.css" rel="stylesheet" type="text/css" />
+        <link rel="preload" href="./css/InterVariable.woff2" as="font" type="font/woff2" crossorigin>
+        <!-- Crossorigin despite being local because https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/rel/preload#cors-enabled_fetches -->
+        <link  href="./css/common.css" rel="stylesheet" type="text/css" />
+        <link  href="./css/options.css" rel="stylesheet" type="text/css">
+        <link  href="./css/cozypopup.css" rel="stylesheet" type="text/css">
+        <link  href="./css/reworked_oldpopup.css" rel="stylesheet" type="text/css">
+	    <script src="./js/collect_errors.js" type="text/javascript"></script>
+        <script src="./js/platform_specific.js" type="text/javascript"></script>
+        <script src="./js/jscolor.js" type="text/javascript"></script>
+        <script src="./js/common.js" type="text/javascript"></script>
+        <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, interactive-widget=overlays-content" />
     </head>
     <body>
+		<template class="check-icon-template">
+			<svg class="settingsicon feather-check-circle" viewBox="0 0 24 24">
+				<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+				<polyline points="22 4 12 14.01 9 11.01"/>
+			</svg>
+		</template>
+		<template class="alert-icon-template">
+			<svg class="settingsicon feather-alert-triangle" viewBox="0 0 24 24">
+				<path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+				<line x1="12" y1="9" x2="12" y2="13"/>
+				<line x1="12" y1="17" x2="12.01" y2="17"/>
+			</svg>
+		</template>
+		<template class="refresh-icon-template">
+			<svg class="settingsicon feather-refresh-cw" viewBox="0 0 24 24">
+				<polyline points="23 4 23 10 17 10"></polyline>
+				<polyline points="1 20 1 14 7 14"></polyline>
+				<path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+			</svg>
+		</template>
+		<div class="logoholder">
+			<div class="logo">
+				<img src="./images/anesidora-128.png" alt="" />
+				<div class="valign">
+					<span class="name">Anesidora</span>
+					<button class="update" aria-labelledby="update-tooltip">
+						<span class="version">v2.2.3</span>
+						<svg class="settingsicon feather-refresh-cw" viewBox="0 0 24 24">
+							<polyline points="23 4 23 10 17 10"></polyline>
+							<polyline points="1 20 1 14 7 14"></polyline>
+							<path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+						</svg>
+					</button>
+				</div>
+				<div class="update-tooltip">
+					Click to check latest version.
+				</div>
+			</div>
+		</div>
+        <form id="mainForm">
+            <h2>Statistics</h2>
+            <section class="stats">
+            </section>
 
-    <iframe id="preview" src="./popup.htm" loading="eager" importance="high"></iframe>
+            <h2>Behavior</h2>
+			<section class="behavior checklist">
+				<label>
+					<input type="checkbox" name="skipAfterDislike">
+					Skip after disliking
+				</label>
+				<label>
+					<input type="checkbox" name="pauseAfterInactivity" data-visibility-child=".inactivity-duration">
+					Pause after inactivity
+				</label>
+				<label class="inactivity-duration inset">
+					Inactivity is defined as 
+					<div class="unit">
+						<input class="fancyInput" type="number" name="inactivityDuration">
+						<div>minutes</div>
+					</div>
+					without opening the player or hitting a hotkey.
+				</label>
+				<label>
+					<input type="checkbox" name="httpsOnlyAssets" />
+					Rewrite asset URLS to <code>https://</code>
+				</label>
+				<label>
+					<input type="checkbox" name="stripTrackingParams" />
+					Remove tracking parameters from URLS
+				</label>
+				<label>
+					<input type="checkbox" name="doRewinds" data-visibility-child=".restart-duration">
+					Restart track instead of skipping back
+				</label>
+				<label class="restart-duration inset">
+					Skip back when within 
+					<div class="unit">
+						<input class="fancyInput" type="number" name="rewindDuration">
+						<div>seconds</div>
+					</div>
+					of the start of the song.
+				</label>
+				<label>
+					<input type="checkbox" name="cacheAlbumArt">
+					Cache album art
+				</label>
+			</section>
 
-    <form>
-        <div>
-            <label class="browser-style">Player Style</label>
-            <select id="playerStyle">
-                <option value="new">New</option>
-                <option value="old">Old</option>
-            </select>
-        </div>
-        <div>
-            <label class="browser-style">Player Width</label>
-            <input type="number" id="bodyWidth" class="browser-style">
-        </div>
-        <div>
-            <label class="browser-style">Player Height</label>
-            <input type="number" id="bodyHeight" class="browser-style">
-        </div>
-        <div>
-        <label class="browser-style">Song History to Store</label>
-        <input type="number" id="historyNum" class="browser-style">
-        </div>
-        <div id="check">
-            <label class="browser-style">Force HTTPS</label>
-            <input type="checkbox" id="forceSecure" class="browser-style">
-        </div>
-            <label class="browser-style" style="color: red; opacity: 0; height: max-content;" id="httpWarning">Are you sure you want to allow unencrypted traffic?</label>
-        <div>
-            <label class="browser-style">Play/Pause Hotkey</label>
-            <input type="text" id="playPauseHotkey" class="browser-style">
-        </div>
-        <div>
-            <label class="browser-style">Skip Song Hotkey</label>
-            <input type="text" id="skipSongHotkey" class="browser-style">
-        </div>
-        <div>
-            <button type="button" id="theming" clsas="browser-style">Theme</button>
-            <button type="button" id="refresh" class="browser-style">Refresh Stations</button>
-            <button type="button" id="logout" class="browser-style">Logout</button>
-            <button type="button" id="default" class="browser-style">Defaults</button>
-            <button type="button" id="save" class="browser-style">Save</button>
-        </div>
-    </form>
-    <script src="js/options.js" type="text/javascript"></script>
+			<h2>Ads</h2>
+			<section class="ads checklist">
+				<label>
+					<input type="checkbox" name="playAds">
+					Play ads
+				</label>
+				<label>
+					<input type="checkbox" name="registerAds">
+					Register which ads are played with Pandora
+				</label>
+				<div class="inset">
+					<p>
+						Pandora likely does not get money for playing ads unless this happens.
+					</p>
+					<p>
+						This option does nothing if ads do not play.
+					</p>
+				</div>
+			</section>
+
+			<h2>Downloads</h2>
+			<section class="downloads checklist">
+				<label>
+					<input type="checkbox" name="tagDownloads" />
+					Set id3 tags on downloaded tracks
+				</label>
+				<label>
+					<input type="checkbox" name="renameDownloads" data-visibility-child=".downloadNameFormatString" />
+					Rename downloads from Pandora's default unreadable filenames
+				</label>
+				<div class="downloadNameFormatString inset">
+					<label>
+						Rename template:
+						<input class="fancyInput" type="text" name="downloadNameFormatString">
+					</label>
+					<p>
+						Accepted parameters: <code>%trackname%, %trackid%, %artistname%</code>
+					</p>
+					<label>
+						<input type="checkbox" name="limitFilenameLength" />
+						Limit filenames to 32 characters
+					</label>
+				</div>
+				
+			</section>
+
+            <h2>Hotkeys</h2>
+            <section class="hotkeys">
+                <p class="possible-disclaimer"></p>
+                <button class="hotkeys-button" type="button">
+                    Edit hotkeys in browser settings
+                </button>
+            </section>
+
+			<h2>My presets</h2>
+            <section class="appearance">
+				<div class="previewHolder">
+					<iframe id="preview"></iframe>
+				</div>
+                <div class="controls">
+                    <div class="quick-preset-select" id="selectedPresetContainer">
+                    </div>
+					<div class="hidden-if-match">
+                        <hr>
+						<label aria-label="Name">
+							<input id="preset-name" type="text" name="preset-name">
+						</label>
+						<label class="halign mb-1">
+							<input type="checkbox" name="color-scheme-type">
+							<div class="labeltext">Preset is dark</div>
+						</label>
+						<div class="halign-if-possible dimInputs fit">
+							<label>
+								<div class="labeltext">Viewport width</div>
+								<div class="unit">
+									<input id="viewport-width" type="number" name="viewport-width">
+									<div>px</div>
+								</div>
+							</label>
+							<label>
+								<div class="labeltext">Viewport height</div>
+								<div class="unit">
+									<input id="viewport-height" type="number" name="viewport-height">
+									<div>px</div>
+								</div>
+							</label>
+							<label>
+								<div class="labeltext">Player type</div>
+								<select class="fancyInput" name="playerType"></select>
+							</label>
+						</div>
+                        <button type="button" id="delete_preset">
+                            Delete preset
+                        </button>
+
+                        <details>
+                            <summary>General</summary>
+                            <div class="colors">
+                                <label>
+                                    <div class="labeltext">Background<span class="separator"></span><code>background-color</code></div>
+                                    <input data-jscolor="{}" name="background-color">
+                                </label>
+                                <label>
+                                    <div class="labeltext">Text<span class="separator"></span><code>text-color</code></div>
+                                    <input data-jscolor="{}" name="text-color">
+                                </label>
+                                <label>
+                                    <div class="labeltext">Icon stroke<span class="separator"></span><code>icon-default-stroke</code></div>
+                                    <input data-jscolor="{}" name="icon-default-stroke">
+                                </label>
+                                <label>
+                                    <div class="labeltext">Icon fill<span class="separator"></span><code>icon-default-fill</code></div>
+                                    <input data-jscolor="{}" name="icon-default-fill">
+                                </label>
+                                <label>
+                                    <div class="labeltext">Active icon stroke<span class="separator"></span><code>icon-active-stroke</code></div>
+                                    <input data-jscolor="{}" name="icon-active-stroke">
+                                </label>
+                                <label>
+                                    <div class="labeltext">Active icon fill<span class="separator"></span><code>icon-active-fill</code></div>
+                                    <input data-jscolor="{}" name="icon-active-fill">
+                                </label>
+                                <label>
+                                    <div class="labeltext">Hovered icon stroke<span class="separator"></span><code>icon-hover-stroke</code></div>
+                                    <input data-jscolor="{}" name="icon-hover-stroke">
+                                </label>
+                                <label>
+                                    <div class="labeltext">Hovered icon fill<span class="separator"></span><code>icon-hover-fill</code></div>
+                                    <input data-jscolor="{}" name="icon-hover-fill">
+                                </label>
+                                <div class="span-2">
+                                    <label>
+                                        <div class="labeltext">Font family</div>
+                                        <input id="font-family" type="text" name="font-family">
+                                    </label>
+                                    <label class="nogrow">
+                                        <div class="labeltext">Font size</div>
+                                        <div class="unit">
+                                            <input id="font-size" type="number" name="font-size">
+                                            <div>px</div>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+                        </details>
+                        <details>
+                            <summary>Album background image</summary>
+                            <div class="colors">
+
+                                <label>
+                                    <div class="labeltext">Opacity<span class="separator"></span><code>album-background-strength</code></div>
+                                    <input name="album-background-strength" type="range" max="1" min="0" step="0.05" list="usual-opacities">
+                                    <datalist id="usual-opacities">
+                                        <option value="0">0</option>
+                                        <option value="0.1">10%</option>
+                                        <option value="0.2">20%</option>
+                                        <option value="0.3">30%</option>
+                                        <option value="0.4">40%</option>
+                                        <option value="0.5">50%</option>
+                                        <option value="0.6">60%</option>
+                                        <option value="0.7">70%</option>
+                                        <option value="0.8">80%</option>
+                                        <option value="0.9">90%</option>
+                                        <option value="1">100%</option>
+                                    </datalist>
+                                </label>
+                                <label>
+                                    <div class="labeltext">Saturation<span class="separator"></span><code>album-background-saturation</code></div>
+                                    <input name="album-background-saturation" type="range" max="10" min="0" step="0.5" list="usual-saturations">
+                                    <datalist id="usual-saturations">
+                                        <option value="0">0</option>
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                        <option value="4">4</option>
+                                        <option value="5">5</option>
+                                        <option value="6">6</option>
+                                        <option value="7">7</option>
+                                        <option value="8">8</option>
+                                        <option value="9">9</option>
+                                        <option value="10">10</option>
+                                    </datalist>
+                                </label>
+                                <label>
+                                    <div class="labeltext">Blur size<span class="separator"></span><code>album-background-blur-size</code></div>
+                                    <input name="album-background-blur-size" type="range" max="0.5" min="0" step="any" list="usual-opacities">
+                                </label>
+                            </div>
+                        </details>
+                        <details>
+                            <summary>Navigation</summary>
+                            <div class="colors">
+                                <label>
+                                    <div class="labeltext">Background<span class="separator"></span><code>tab-navigation-background-color</code></div>
+                                    <input data-jscolor="{}" name="tab-navigation-background-color">
+                                </label>
+                                <label>
+                                    <div class="labeltext">Text<span class="separator"></span><code>tab-navigation-text-color</code></div>
+                                    <input data-jscolor="{}" name="tab-navigation-text-color">
+                                </label>
+                                <label>
+                                    <div class="labeltext">Left/right button size</div>
+                                    <div class="unit">
+                                        <input type="number" name="tab-navigation-icon-size">
+                                        <div>px</div>
+                                    </div>
+                                </label>
+                            </div>
+                        </details>
+                        <details>
+                            <summary>History</summary>
+                            <div class="colors">
+                                <label id="maxHistoryEntries">
+                                    <div class="labeltext">History length</div>
+                                    <div class="unit">
+                                        <input name="maxHistoryEntries" type="number" min="0" max="100" step="1">
+                                        <div>songs</div>
+                                    </div>
+                                </label>
+                                <label>
+                                    <div class="labeltext">Cover size</div>
+                                    <div class="unit">
+                                        <input name="history-cover-size" type="number" min="0" step="1">
+                                        <div>px</div>
+                                    </div>
+                                </label>
+                                <label>
+                                    <div class="labeltext">Button size</div>
+                                    <div class="unit">
+                                        <input type="number" name="history-icon-size">
+                                        <div>px</div>
+                                    </div>
+                                </label>
+                            </div>
+                        </details>
+                        <details>
+                            <summary>Now Playing</summary>
+                            <div class="colors">
+                                <label>
+                                    <div class="labeltext">Primary button stroke<span class="separator"></span><code>player-play-icon-stroke</code></div>
+                                    <input data-jscolor="{}" name="player-play-icon-stroke">
+                                </label>
+                                <label>
+                                    <div class="labeltext">Primary button fill<span class="separator"></span><code>player-play-icon-fill</code></div>
+                                    <input data-jscolor="{}" name="player-play-icon-fill">
+                                </label>
+                                <label>
+                                    <div class="labeltext">Secondary button stroke<span class="separator"></span><code>player-main-icons-stroke</code></div>
+                                    <input data-jscolor="{}" name="player-main-icons-stroke">
+                                </label>
+                                <label>
+                                    <div class="labeltext">Secondary button fill<span class="separator"></span><code>player-main-icons-fill</code></div>
+                                    <input data-jscolor="{}" name="player-main-icons-fill">
+                                </label>
+                                <label>
+                                    <div class="labeltext">Tertiary button stroke<span class="separator"></span><code>player-minor-icons-stroke</code></div>
+                                    <input data-jscolor="{}" name="player-minor-icons-stroke">
+                                </label>
+                                <label>
+                                    <div class="labeltext">Tertiary button fill<span class="separator"></span><code>player-minor-icons-fill</code></div>
+                                    <input data-jscolor="{}" name="player-minor-icons-fill">
+                                </label>
+                                <label>
+                                    <div class="labeltext">Primary button size</div>
+                                    <div class="unit">
+                                        <input type="number" name="player-main-icon-size">
+                                        <div>px</div>
+                                    </div>
+                                </label>
+                                <label>
+                                    <div class="labeltext">Secondary button size</div>
+                                    <div class="unit">
+                                        <input type="number" name="player-icon-size">
+                                        <div>px</div>
+                                    </div>
+                                </label>
+                                <label>
+                                    <div class="labeltext">Tertiary button size</div>
+                                    <div class="unit">
+                                        <input type="number" name="player-small-icon-size">
+                                        <div>px</div>
+                                    </div>
+                                </label>
+                            </div>
+                        </details>
+                        <details>
+                            <summary>Album cover</summary>
+                            <div class="colors">
+                                <label>
+                                    <div class="labeltext">Corner radius</div>
+                                    <div class="unit">
+                                        <input type="number" name="player-cover-corner-radius" min="0">
+                                        <div>px</div>
+                                    </div>
+                                </label>
+                                <label>
+                                    <div class="labeltext">Size<span class="separator"></span><code>player-cover-max-size</code></div>
+                                    <input name="player-cover-max-size" type="range" max="1" min="0" step="any" list="usual-opacities">
+                                </label>
+                            </div>
+                        </details>
+                        <details>
+                            <summary>Volume bar</summary>
+                            <div class="colors">
+                
+                                <label>
+                                    <div class="labeltext">Background<span class="separator"></span><code>volume-bar-fill</code></div>
+                                    <input data-jscolor="{}" name="volume-bar-fill">
+                                </label>
+                
+                                <label>
+                                    <div class="labeltext">Progress fill<span class="separator"></span><code>volume-bar-progress-fill</code></div>
+                                    <input data-jscolor="{}" name="volume-bar-progress-fill">
+                                </label>
+                
+                                <label>
+                                    <div class="labeltext">Thumb color<span class="separator"></span><code>volume-bar-thumb-color</code></div>
+                                    <input data-jscolor="{}" name="volume-bar-thumb-color">
+                                </label>
+                
+                                <label>
+                                    <div class="labeltext">Border<span class="separator"></span><code>volume-bar-stroke</code></div>
+                                    <input data-jscolor="{}" name="volume-bar-stroke">
+                                </label>
+                                <label>
+                                    <div class="labeltext">Position</div>
+                                    <select name="volume-bar-position">
+                                        <option value="none">None</option>
+                                        <option value="left">Left</option>
+                                        <option value="right">Right</option>
+                                        <option value="top">Top</option>
+                                        <option value="bottom">Bottom</option>
+                                    </select>
+                                </label>
+                                <label>
+                                    <div class="labeltext">Size</div>
+                                    <input name="volume-bar-size" type="range" max="1" min="0.1" step="0.01" list="usual-opacities">
+                                </label>
+                            </div>
+                        </details>
+                        <details>
+                            <summary>Seek bar</summary>
+                            <div class="colors">
+                                <label>
+                                    <div class="labeltext">Background<span class="separator"></span><code>seek-bar-fill</code></div>
+                                    <input data-jscolor="{}" name="seek-bar-fill">
+                                </label>
+                
+                                <label>
+                                    <div class="labeltext">Progress fill<span class="separator"></span><code>seek-bar-progress-fill</code></div>
+                                    <input data-jscolor="{}" name="seek-bar-progress-fill">
+                                </label>
+                
+                                <label>
+                                    <div class="labeltext">Thumb color<span class="separator"></span><code>seek-bar-thumb-color</code></div>
+                                    <input data-jscolor="{}" name="seek-bar-thumb-color">
+                                </label>
+                
+                                <label>
+                                    <div class="labeltext">Border<span class="separator"></span><code>seek-bar-stroke</code></div>
+                                    <input data-jscolor="{}" name="seek-bar-stroke">
+                                </label>
+
+                                <label>
+                                    <div class="labeltext">Size</div>
+                                    <input name="seek-bar-size" type="range" max="1" min="0.1" step="0.01" list="usual-opacities">
+                                </label>
+                            </div>
+                        </details>
+                        <details>
+                            <summary>Stations</summary>
+                            <div class="colors">
+                                <label>
+                                    <div class="labeltext">Image hover color<span class="separator"></span><code>stations-play-background-color</code></div>
+                                    <input data-jscolor="{}" name="stations-play-background-color">
+                                </label>
+                                <label>
+                                    <div class="labeltext">Active station background<span class="separator"></span><code>stations-active-station-background</code></div>
+                                    <input data-jscolor="{}" name="stations-active-station-background">
+                                </label>
+                                <label>
+                                    <div class="labeltext">Active station text<span class="separator"></span><code>stations-active-station-color</code></div>
+                                    <input data-jscolor="{}" name="stations-active-station-color">
+                                </label>
+                            </div>
+                        </details>
+                        <details>
+                            <summary>Misc.</summary>
+                            <div class="colors">
+                                <label>
+                                    <div class="labeltext">Alternating row background<span class="separator"></span><code>alternating-row-background</code></div>
+                                    <input data-jscolor="{}" name="alternating-row-background">
+                                </label>
+    						</div>
+                        </details>
+						<details class="advanced">
+							<summary>Advanced - Custom CSS</summary>
+							<textarea name="customCSS" class="fancyInput"></textarea>
+						</details>
+					</div>
+					<div class="shown-if-match">
+						<p>
+							The system preset switches between the configured dark and light presets, based on your browser's color scheme.
+						</p>
+                        <p>
+                            On Firefox, this is <a href="https://bugzilla.mozilla.org/show_bug.cgi?id=1780028" target="_blank">based on what theme you have enabled</a>, <em>not</em> on the color scheme for website appearance.
+                        </p>
+						<h3>Dark mode preset</h3>
+						<div class="quick-preset-select" id="darkPresetSelection"></div>
+						<h3>Light mode preset</h3>
+						<div class="quick-preset-select" id="lightPresetSelection"></div>
+					</div>
+                </div>
+            </section>
+            <button type="button" class="hotkeys-button" id="reset_presets">
+                Reset all presets to default
+            </button>
+
+            <h2>Support</h2>
+            <section class="help">
+                <p>If you have any problems with Anesidora, please <a href="https://github.com/pvrs12/Anesidora/issues/new" target="_blank">file an issue</a>.</p>
+                <p>Make sure to include this debug information:</p>
+                <code class="debuginfo" id="debugInfo">
+
+                </code>
+            </section>
+        </form>
+        <script src="./js/options.js" type="text/javascript"></script>
     </body>
 </html>
