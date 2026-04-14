@@ -9,8 +9,9 @@ Chrome Installation:
 -----
 Pandora removed us from the Chrome Web Store, so currently the only option to install on Chrome is with the **Nightly build**:
 1. Download the [**Chrome Nightly build**](https://nightly.link/pvrs12/Anesidora/workflows/package.yaml/master/anesidora-chrome.zip) and extract the ZIP file.
-2. Go to `chrome://extensions/` and toggle `Developer mode` in the top right.
-3. Click `Load unpacked` in the top left and select the directory in which you extracted the ZIP file.
+2. Enable Manifest v2 extensions by following [these instructions](https://superuser.com/questions/1917854/is-there-any-way-to-still-use-manifest-v2-extensions-in-google-chrome-139#:~:text=You%20can%20create,features%3DExtensionManifestV2Unsupported%2CExtensionManifestV2Disabled)
+3. Go to `chrome://extensions/` and toggle `Developer mode` in the top right.
+4. Click `Load unpacked` in the top left and select the directory in which you extracted the ZIP file.
 
 Firefox Installation:
 ------
