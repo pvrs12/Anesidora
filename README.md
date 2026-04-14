@@ -4,20 +4,22 @@ Anesidora
 Anesidora - unofficial Pandora extension for Firefox and Chrome.
 
 <h3><a href="https://addons.mozilla.org/firefox/addon/anesidora/">Download/Install Firefox</a></h3>
-<br>
-<h3><a href="https://nightly.link/pvrs12/Anesidora/workflows/package.yaml/master/anesidora-chrome.zip">Chrome Nightly Build</a></h3>
-<h3><a href="https://nightly.link/pvrs12/Anesidora/workflows/package.yaml/master/anesidora-firefox.zip">Firefox Nightly Build</a></h3>
-
-<br>
-<br>
 
 Chrome Installation:
 -----
-Download the **Chrome Nightly Build** and extract the ZIP file. Go to `chrome://extensions/` and click `Developer mode` in the top right. Click `Load unpacked` in the top left and navigate to the directory in which you extracted the ZIP file.
+Pandora removed us from the Chrome Web Store, so currently the only option to install on Chrome is with the **Nightly build**:
+1. Download the [**Chrome Nightly build**](https://nightly.link/pvrs12/Anesidora/workflows/package.yaml/master/anesidora-chrome.zip) and extract the ZIP file.
+2. Go to `chrome://extensions/` and toggle `Developer mode` in the top right.
+3. Click `Load unpacked` in the top left and select the directory in which you extracted the ZIP file.
 
 Firefox Installation:
 ------
-Download the **Firefox Nightly Build**. Do _Not_ extract the ZIP file. Go to `about:debugging#/runtime/this-firefox` and click `Load Temporary Add-on...`. Navigate to the ZIP file you downloaded and select it.
+We're still on Firefox's addons store, so you can just [**install it from AMO**](https://addons.mozilla.org/firefox/addon/anesidora/).
+Alternatively, you can install the **Nightly build**:
+1. Download the [Nightly zip from here](https://nightly.link/pvrs12/Anesidora/workflows/package.yaml/master/anesidora-firefox.zip)
+2. Go to `about:debugging#/runtime/this-firefox`
+3. Click `Load Temporary Add-on...`
+4. Select the downloaded `.zip` file from step 1.
 
 Developing:
 ------------
@@ -25,15 +27,15 @@ In order to develop this for Firefox and Chrome, the majority of the code which 
 
 Additionally, you'll find numerous code stylings within the source files. This is because this project has seen many hands over the years. I'm gradually working to consolidate, however that isn't a top priority. 
 
-Finally, this documentation is amazing for all API level calls which need to be made https://6xq.net/pandora-apidoc/
+Finally, [this unofficial documentation](https://6xq.net/pandora-apidoc/) is an amazing reference for all API calls which need to be made.
 
 History:
 -----------
-The original developer has abandoned the project, therefore this GitHub repository is intended to give a second life to Anesidora project by collaborating with other developers.
+The original developers (of anesidora.tk) abandoned the project.
 
 This repository was originally imported from here:
 https://code.google.com/p/pandora-extension/
 
-As mentioned above this project was abandoned by the original authors (of anesidora.tk). It was then exported to Github from code.google.com (without the GPLv2 Lisence) I have forked that repo to generate a Firefox version of the addon. I have also included the orignial GPLv2 License from the project
-
-I've created a Firefox version and continued to update the Chrome version. The UI should be much more responsive now and aims to be flexible to varying sizes (specified on the options page)
+It was then exported to Github from code.google.com (without the GPLv2 license).
+@pvrs12 forked the repo to generate a Firefox version, included the original GPLv2 license, and maintained the project until 2026.
+@hucario has maintained the project since the v3 release.
