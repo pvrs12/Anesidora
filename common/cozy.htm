@@ -54,7 +54,7 @@
         <img class="background-blur" alt="" />
         <nav class="navigation">
             <a class="skipnav" href="#main" target="_self">Skip to active section</a>
-            <button class="navigate-previous navigation-button" aria-label="Previous section">
+            <button class="navigate-previous navigation-button" title="Previous section">
                 <svg class="icon feather-chevron-left" viewBox="0 0 24 24">
                     <polyline points="15 18 9 12 15 6"></polyline>
                 </svg>
@@ -67,7 +67,7 @@
                     <span>Account</span>
                 </div>
             </div>
-            <button class="navigate-next navigation-button" aria-label="Next section">
+            <button class="navigate-next navigation-button" title="Next section">
                 <svg class="icon feather-chevron-right" viewBox="0 0 24 24">
                     <polyline points="9 18 15 12 9 6"></polyline>
                 </svg>
@@ -83,24 +83,24 @@
                             <span class="title">[ This text should not appear ]</span>
                             <span class="sr-only">by </span><span class="artist">[ This text should not appear ]</span>
                             <ul class="actions">
-                                <button class="action thumbs-up" aria-label="Thumbs up">
+                                <button class="action thumbs-up" title="Thumbs up">
                                     <svg class="icon feather-thumbs-up" viewBox="0 0 24 24">
                                         <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/>
                                     </svg>
                                 </button>
-                                <button class="action play" aria-label="Play this again">
+                                <button class="action play" title="Play this again">
                                     <svg class="icon feather-play" viewBox="0 0 24 24">
                                         <polygon points="5 3 19 12 5 21 5 3"/>
                                     </svg>
                                 </button>
-                                <button class="action download" aria-label="Download">
+                                <button class="action download" title="Download">
                                     <svg class="icon feather-download-cloud" viewBox="0 0 24 24">
                                         <polyline points="8 17 12 21 16 17"></polyline>
                                         <line x1="12" y1="12" x2="12" y2="21"></line>
                                         <path d="M20.88 18.09A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.29"></path>
                                     </svg>
                                 </button>
-                                <button class="action thumbs-down" aria-label="Thumbs down">
+                                <button class="action thumbs-down" title="Thumbs down">
                                     <svg class="icon feather-thumbs-down" viewBox="0 0 24 24">
                                         <path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zm7-13h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17"/>
                                     </svg>
@@ -127,11 +127,11 @@
                 <div class="spacer"></div>
                 <div class="coverHolder">
                     <div class="volumewrap">
-                        <input aria-label="Volume" class="volume" type="range" min="0" max="100" value="0" step="any" />
+                        <input title="Volume" class="volume" type="range" min="0" max="100" value="0" step="any" />
                     </div>
                     <img class="cover" src="./images/default_cover.svg" alt="" />
                 </div>
-                <input aria-label="Seek" class="seekBar" type="range" min="0" max="100" value="0" step="any" />
+                <input title="Seek" class="seekBar" type="range" min="0" max="100" value="0" step="any" />
                 <div class="spacer"></div>
                 <div class="infoline" tabindex="0">
                     <div class="infoline-content">
@@ -141,19 +141,19 @@
                 <span class="artist">Choose a station to begin.</span>
                 <div class="actions">
                     <ul class="row">
-                        <button class="action skip-previous" aria-label="Skip back">
+                        <button class="action skip-previous" title="Skip back">
                             <svg class="icon feather-skip-back" viewBox="0 0 24 24">
                                 <polygon points="19 20 9 12 19 4 19 20"></polygon>
                                 <line x1="5" y1="19" x2="5" y2="5"></line>
                             </svg>
                         </button>
-                        <button class="action play big" aria-label="Play">
+                        <button class="action play big" title="Play">
                             <svg class="icon feather-play-circle" viewBox="0 0 40 40">
                                 <path d="M20 36.6667C29.2048 36.6667 36.6667 29.2048 36.6667 20C36.6667 10.7953 29.2048 3.33334 20 3.33334C10.7953 3.33334 3.33334 10.7953 3.33334 20C3.33334 29.2048 10.7953 36.6667 20 36.6667Z"/>
                                 <path d="M16.6667 13.3333L26.6667 20L16.6667 26.6667V13.3333Z" />
                             </svg>
                         </button>
-                        <button class="action skip-next" aria-label="Skip">
+                        <button class="action skip-next" title="Skip">
                             <svg class="icon feather-skip-forward" viewBox="0 0 24 24">
                                 <polygon points="5 4 15 12 5 20 5 4"></polygon>
                                 <line x1="19" y1="5" x2="19" y2="19"></line>
@@ -161,18 +161,18 @@
                         </button>
                     </ul>
                     <ul class="row small">
-                        <button class="action thumbs-down" aria-label="Thumbs down">
+                        <button class="action thumbs-down" title="Thumbs down">
                             <svg class="icon feather-thumbs-down" viewBox="0 0 24 24">
                                 <path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zm7-13h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17"/>
                             </svg>
                         </button>
-                        <button class="action tired-of-song" aria-label="I'm tired of this track">
+                        <button class="action tired-of-song" title="I'm tired of this track">
                             <svg class="icon feather-clock" viewBox="0 0 24 24">
                                 <circle cx="12" cy="12" r="10"></circle>
                                 <polyline points="12 6 12 12 16 14"></polyline>
                             </svg>
                         </button>
-                        <a class="action settings" aria-label="Settings" href="./options.htm">
+                        <a class="action settings" title="Settings" href="./options.htm">
                             <svg class="icon feather-sliders" viewBox="0 0 24 24">
                                 <line x1="4" y1="21" x2="4" y2="14"></line>
                                 <line x1="4" y1="10" x2="4" y2="3"></line>
@@ -185,14 +185,14 @@
                                 <line x1="17" y1="16" x2="23" y2="16"></line>
                             </svg>
                         </a>
-                        <button class="action download" aria-label="Download">
+                        <button class="action download" title="Download">
                             <svg class="icon feather-download-cloud" viewBox="0 0 24 24">
                                 <polyline points="8 17 12 21 16 17"></polyline>
                                 <line x1="12" y1="12" x2="12" y2="21"></line>
                                 <path d="M20.88 18.09A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.29"></path>
                             </svg>
                         </button>
-                        <button class="action thumbs-up" aria-label="Thumbs up">
+                        <button class="action thumbs-up" title="Thumbs up">
                             <svg class="icon feather-thumbs-up" viewBox="0 0 24 24">
                                 <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/>
                             </svg>
