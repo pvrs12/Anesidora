@@ -47,7 +47,7 @@
         <img class="background-blur" alt="" />
 
         <a class="skipnav" href="#main" target="_self">Skip to active section</a>
-        <button class="navigate-previous navigation-button" aria-label="Previous section">
+        <button class="navigate-previous navigation-button" title="Previous section">
             <svg class="icon anesidora-previous" width="16" height="56" viewBox="2 2 16 56">
                 <path d="m13 22.5-8 7.5 8 7.5z" fill="currentColor"/>
             </svg>
@@ -61,13 +61,13 @@
 
                         <div class="spacer"></div>
 
-                        <button class="action thumbs-up" aria-label="Thumbs up">
+                        <button class="action thumbs-up" title="Thumbs up">
                             <svg class="icon dull anesidora-thumbs-up" width="28" height="13" viewBox="1 1 28 13">
                                 <path d="m14.5 3c.8 0 1.6 0 1.5.7v2.3h3c.5 0 .5.5.5.8l-.2 3.2c-.1.5-1.6 2-2.1 2h-3.1c-2.1 0-2.1-2-3.6-2v-1.5c0-1.1.5-.5 1-.9 0 0 1-.6 1.6-1.2.7-.7 1.4-3.4 1.4-3.4z" fill="currentColor"/>
                                 <path class="check" d="m19 4-5 5-2.5-2.5-1.5 1.5 4 4 6.5-6.5z" fill="#13416f"/>
                             </svg>
                         </button>
-                        <button class="action download" aria-label="Download">
+                        <button class="action download" title="Download">
                             <svg class="icon anesidora-download" width="28" height="13" viewBox="1 1 28 13">
                                 <path d="m11 3.5h7v3.5h2l-5.5 5.5-5.5-5.5h2z" fill="currentColor"/>
                             </svg>
@@ -76,7 +76,7 @@
                 </template>
                 <ul></ul>
             </section>
-            <section class="player" aria-label="Now playing">
+            <section class="player" title="Now playing">
                 <img class="cover" src="./images/default_cover.svg" alt="" />
                 <div class="valign">
                     <div class="infoline" tabindex="0">
@@ -84,33 +84,33 @@
                             <a class="artist">Choose a station to begin.</a><span class="sep"> - </span><a class="title">Nothing is playing currently.</a>
                         </div>
                     </div>
-                    <input aria-label="Seek" class="seekBar" type="range" min="0" max="100" value="0" step="any" />
+                    <input title="Seek" class="seekBar" type="range" min="0" max="100" value="0" step="any" />
                     <ul class="actions">
-                        <button class="action play big" aria-label="Play">
+                        <button class="action play big" title="Play">
                             <svg class="icon anesidora-play" width="28" height="13" viewBox="1 1 28 13">
                                 <path d="m13 3 5 4.5-5 4.5z" fill="currentColor"/>
                             </svg>
                         </button>
-                        <button class="action skip-next" aria-label="Skip">
+                        <button class="action skip-next" title="Skip">
                             <svg class="icon anesidora-skip" width="28" height="22" viewBox="1 1 28 22">
                                 <path d="m8 6 6.5 6-6.5 6z" fill="currentColor"/>
                                 <path d="m14.5 6 6.5 6-6.5 6z" fill="currentColor"/>
                                 <rect x="21" y="6" width="2" height="12" fill="currentColor"/>
                             </svg>
                         </button>
-                        <button class="action thumbs-up" aria-label="Thumbs up">
+                        <button class="action thumbs-up" title="Thumbs up">
                             <svg class="icon dull anesidora-thumbs-up" width="28" height="13" viewBox="1 1 28 13">
                                 <path d="m14.5 3c.8 0 1.6 0 1.5.7v2.3h3c.5 0 .5.5.5.8l-.2 3.2c-.1.5-1.6 2-2.1 2h-3.1c-2.1 0-2.1-2-3.6-2v-1.5c0-1.1.5-.5 1-.9 0 0 1-.6 1.6-1.2.7-.7 1.4-3.4 1.4-3.4z" fill="currentColor"/>
                                 <path class="check" d="m19 4-5 5-2.5-2.5-1.5 1.5 4 4 6.5-6.5z" fill="#13416f"/>
                             </svg>
                         </button>
-                        <button class="action thumbs-down" aria-label="Thumbs down">
+                        <button class="action thumbs-down" title="Thumbs down">
                             <svg class="icon dull anesidora-thumbs-down" width="28" height="13" viewBox="1 1 28 13">
                                 <path d="m14.5 12c.8 0 1.6 0 1.5-.7v-2.3h3c.5 0 .5-.5.5-.8l-.2-3.2c-.1-.5-1.6-2-2.1-2h-3.1c-2.1 0-2.1 2-3.6 2v1.5c0 1.1.5.5 1 .9 0 0 1 .6 1.6 1.2.7.7 1.4 3.4 1.4 3.4z" fill="currentColor"/>
                                 <path class="check" d="m19 4-5 5-2.5-2.5-1.5 1.5 4 4 6.5-6.5z" fill="#13416f"/>
                             </svg>
                         </button>
-                        <button class="action tired-of-song" aria-label="I'm tired of this track">
+                        <button class="action tired-of-song" title="I'm tired of this track">
                             <svg class="icon dull anesidora-sleep" width="28" height="13" viewBox="1 1 28 13">
                                 <path d="m8 7h5v1l-3.75 3h3.75v1h-5v-1l3.75-3h-3.75z" fill="currentColor"/>
                                 <path d="m15 5h3v.75l-2 2.25h2v.75h-3v-.75l2-2.25h-2z" fill="currentColor"/>
@@ -118,12 +118,12 @@
                                 <path class="check" d="m19 4.5-5 5-2.5-2.5-1.5 1.5 4 4 6.5-6.5z" fill="#13416f"/>
                             </svg>
                         </button>
-                        <button class="action download" aria-label="Download">
+                        <button class="action download" title="Download">
                             <svg class="icon anesidora-download" width="28" height="13" viewBox="1 1 28 13">
                                 <path d="m11 3.5h7v3.5h2l-5.5 5.5-5.5-5.5h2z" fill="currentColor"/>
                             </svg>
                         </button>
-                        <a class="action settings" aria-label="Settings" href="./options.htm">
+                        <a class="action settings" title="Settings" href="./options.htm">
                             <svg class="icon dull anesidora-moreinfo" width="28" height="22" viewBox="1 1 28 22">
                                 <circle cx="10" cy="17" r="1.5" fill="currentColor"/>
                                 <circle cx="15" cy="17" r="1.5" fill="currentColor"/>
@@ -133,7 +133,7 @@
                     </ul>
                 </div>
                 <div class="volumewrap">
-                    <input aria-label="Volume" class="volume" type="range" data-vertical="true" min="0" max="100" value="100" step="any" />
+                    <input title="Volume" class="volume" type="range" data-vertical="true" min="0" max="100" value="100" step="any" />
                 </div>
             </section>
             <section class="stations" aria-label="Stations">
@@ -146,7 +146,7 @@
                 </template>
                 <div class="search">
                     <input class="stations-search" id="stations-search" placeholder="Filter stations...">
-                    <button class="refresh" aria-label="Refresh stations">
+                    <button class="refresh" title="Refresh stations">
                         <svg class="icon anesidora-refresh" width="28" height="13" viewBox="1 1 28 13">
                             <path d="m14 3s-3.64 0-3.66 4.5h-1.84l2.75 2.5 2.75-2.5h-1.85c0-3 1.85-3 1.85-3z" fill="currentColor"/>
                             <path d="m16.5 12s3.64 0 3.66-4.5h1.84l-2.75-2.5-2.75 2.5h1.85c0 3-1.85 3-1.85 3z" fill="currentColor"/>
@@ -204,7 +204,7 @@
                 </template>
             </section>
         </main>
-        <button class="navigate-next navigation-button" aria-label="Next section">
+        <button class="navigate-next navigation-button" title="Next section">
             <svg class="icon anesidora-next" width="16" height="56" viewBox="2 2 16 56">
                 <path d="m15 30-8-7.5v15z" fill="currentColor"/>
             </svg>
