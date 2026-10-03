@@ -2,6 +2,16 @@
 /** @type {keyof typeof ALL_SCREENS} */
 background?.interactionHappened();
 
+// A browser-action popup is destroyed when it closes. Reopen on the Playing
+// screen when audio is actively playing; otherwise use Stations. This is
+// decided from the persistent background player state, not the last popup tab.
+const playerStateAtOpen = background?.getPlayerState?.();
+bg_config.currentScreen = !background?.currentUserInfo?.logged_in
+    ? 'account'
+    : playerStateAtOpen?.playing && playerStateAtOpen?.stationToken
+        ? 'playing'
+        : 'stations';
+
 // Do this before page renders so transition animation does not play
 document.documentElement.style.setProperty("--current-screen-index", ALL_SCREENS.indexOf(bg_config.currentScreen));
 
@@ -40,11 +50,10 @@ const fuzzyStringSearch = (haystack, needle) => {
 };
 
 document.addEventListener('DOMContentLoaded', () => {
-    if (Math.abs(document.documentElement.clientWidth - document.body.clientWidth) > 10) {
-        // We're in a mobile context, or otherwise on a separate page
-        document.documentElement.style.setProperty('--viewport-width', '100vw');
-        document.documentElement.style.setProperty('--viewport-height', '100vh');
-    }
+    // Browser-action popups must keep the configured dimensions. Do not replace
+    // them with viewport units based on the first layout pass: that measurement
+    // can differ between popup openings and makes the popup resize after its
+    // initial open.
 
     const initializeNavigation = () => {
         const navigationScrollItems = document.querySelector('.navigation-scroll-items');
@@ -781,13 +790,24 @@ document.addEventListener('DOMContentLoaded', () => {
     initStations();
 
     if (background.currentUserInfo?.logged_in) {
-        updateStations();
+        const renderStationsAndFocusPlaying = () => {
+            updateStations();
+
+            // Only jump to the active station when something is actually playing.
+            // This keeps a stopped/paused player from selecting an old station.
+            const playerState = background?.getPlayerState?.();
+            if (playerState?.playing && playerState.stationToken && stationsScreen) {
+                const activeStation = stationsScreen.querySelector('.stationsList .active');
+                activeStation?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+            }
+        };
+
+        renderStationsAndFocusPlaying();
         background?.throttleRefreshStationsList?.().then?.(() => {
             if (stationsScreen && !stationsScreen.contains(document.activeElement)) {
                 // If user is typing in the stations search bar or otherwise interacting
                 // with the pane, don't shift it under them.
-
-                updateStations();
+                renderStationsAndFocusPlaying();
             }
         })
     }
