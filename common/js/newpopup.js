@@ -610,7 +610,23 @@ document.addEventListener('DOMContentLoaded', () => {
         const stationsListElement = stationsScreen.querySelector('.stationsList');
         let lastActiveStation = null;
         let newChildren = [];
-        let usedList = forceList || background.stationsArray || [];
+        let usedList = [...(forceList || background.stationsArray || [])];
+        // Keep stations in a predictable natural order: numbered stations first,
+        // followed by alphabetical stations. Numeric portions are compared
+        // numerically so e.g. "Station 2" comes before "Station 10".
+        const stationCollator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });
+        usedList.sort((a, b) => {
+            const aName = String(a?.stationName ?? '').trim();
+            const bName = String(b?.stationName ?? '').trim();
+            const aIsNumeric = /^\d/.test(aName);
+            const bIsNumeric = /^\d/.test(bName);
+
+            if (aIsNumeric !== bIsNumeric) {
+                return aIsNumeric ? -1 : 1;
+            }
+
+            return stationCollator.compare(aName, bName);
+        });
         for (let station of usedList) {
             const newStation = stationTemplate.content.children[0].cloneNode(true);
             newStation.querySelector('.title').innerText = station.stationName;
