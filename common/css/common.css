@@ -126,8 +126,18 @@
 	html.cozy, .cozy body,
 	html.compact, .compact body,
 	#anesidora {
-		height: var(--viewport-height);
-		width: var(--viewport-width);
+		height: var(--viewport-height) !important;
+		min-height: var(--viewport-height) !important;
+		max-height: var(--viewport-height) !important;
+		width: var(--viewport-width) !important;
+		min-width: var(--viewport-width) !important;
+		max-width: var(--viewport-width) !important;
+		margin: 0;
+	}
+
+	html.cozy, html.compact,
+	.cozy body, .compact body {
+		overflow: hidden;
 	}
 	
 }

@@ -30,6 +30,15 @@ get_browser().runtime.onInstalled.addListener(async () => {
 /** @type {HTMLAudioElement} */
 let mp3Player = document.getElementById('mp3Player');
 
+// Expose player state to popup documents. mp3Player is a top-level `let`, so
+// it is not available as background.mp3Player across the extension window boundary.
+var getPlayerState = function getPlayerState() {
+    return {
+        playing: Boolean(currentSong && mp3Player && !mp3Player.paused && !mp3Player.ended),
+        stationToken: currentStationToken,
+    };
+};
+
 var callbacks = {
     updatePlayer: [],
     drawPlayer: [],
